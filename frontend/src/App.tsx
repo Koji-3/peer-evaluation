@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes, BrowserRouter } from 'react-router-dom'
+import * as Theme from './theme'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
 
-function App() {
+/* libs, const, config */
+import { mediaSp } from 'lib/media-query'
+
+/* pages */
+import { Top } from 'pages'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const baseStyle = require('./assets/style/base.css')
+// グローバルスタイル設定
+const GlobalStyle = createGlobalStyle`
+  .sp {
+    display: none;
+    ${mediaSp`
+      display: block;
+    `}
+  }
+  .pc {
+    display: block;
+    ${mediaSp`
+      display: none;
+    `}
+  }
+  ${baseStyle}
+`
+
+export const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <ThemeProvider theme={Theme.theme}>
+      <GlobalStyle theme={Theme.theme} />
+      <BrowserRouter>
+        <main>
+          <Routes>
+            <Route path="/" element={<Top />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </ThemeProvider>
+  )
 }
-
-export default App;
+export default App

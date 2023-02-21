@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+/* reset */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  font-style: normal;
+  font-weight: 400;
+  vertical-align: baseline;
+  border: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+html {
+  overflow-y: scroll;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+  content: '';
+  content: none;
+}
+input,
+textarea {
+  padding: 0;
+  margin: 0;
+}
+ol,
+ul {
+  list-style: none;
+}
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+caption,
+th {
+  text-align: left;
+}
+a:focus {
+  outline: none;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+button,
+textarea,
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+input:not([type='checkbox']),
+select {
+  transition: 0.3s all;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+textarea {
+  cursor: auto;
+  transition: 0.3s all;
+  resize: none;
+}
+input:not([type='checkbox']):focus,
+select:focus,
+textarea:focus {
+  outline: 0;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #ddd;
+  font-weight: 500;
+}
+button {
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  outline: none;
+  appearance: none;
+  border: 0;
+}
+button:disabled {
+  cursor: auto;
+}
+input[type='submit'],
+select {
+  cursor: pointer;
+}
+/*------------------------*/
+
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  /* 標準サイズで10px 以降はremで */
+  font-size: 62.5%;
+  font-weight: 400;
+  color: #000;
+  background: #fff;
+  /* 描画時に読みやすさが最重要視される */
+  text-rendering: optimizeSpeed;
+  -webkit-text-size-adjust: 100%;
+  position: relative;
+}
+html *,
+body * {
+  font-family: 'M PLUS Rounded 1c', Hiragino Sans, 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, Osaka, sans-serif;
+}
+/* box-sizing */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
+  html,
+  body {
+    /* 標準サイズでデザイン上の10px 以降はremで */
+    font-size: 2.666vw;
+  }
+}

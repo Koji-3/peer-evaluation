@@ -38,7 +38,8 @@
       {
         "allow": ["warn", "error"]
       }
-    ]
+    ],
+    "react/react-in-jsx-scope": "off"
   },
   "parserOptions": {
     "sourceType": "module",
