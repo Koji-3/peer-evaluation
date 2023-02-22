@@ -6,7 +6,7 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { mediaSp } from 'lib/media-query'
 
 /* pages */
-import { Top } from 'pages'
+import { Top, LoginRedirect } from 'pages'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const baseStyle = require('./assets/style/base.css')
@@ -35,6 +35,7 @@ export const App: React.FC = () => {
         <main>
           <Routes>
             <Route path="/" element={<Top />} />
+            <Route path="/login/redirect" element={<LoginRedirect />} />
           </Routes>
         </main>
       </BrowserRouter>

@@ -1,6 +1,5 @@
 /**
  * Pages module
  */
-import { Top } from './top/top'
-
-export { Top }
+export * from './top/top'
+export * from './login/redirect'

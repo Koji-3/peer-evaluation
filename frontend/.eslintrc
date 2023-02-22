@@ -34,10 +34,7 @@
     ],
     "max-lines": "error",
     "no-console": [
-      "error",
-      {
-        "allow": ["warn", "error"]
-      }
+      "warn"
     ],
     "react/react-in-jsx-scope": "off"
   },
