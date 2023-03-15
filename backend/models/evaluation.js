@@ -3,7 +3,7 @@ const db = CyclicDb("motionless-crab-hoseCyclicDB")
 
 const evaluations = db.collection("evaluations")
 
-export const setEvaluation = async() => {
+const setEvaluation = async() => {
   // FIXME: "test"はevaluation IDで、UUIDになる想定。
   const testEvaluation = await evaluations.set("test_evaluation1", {
     user_id: 'test1',
@@ -16,14 +16,18 @@ export const setEvaluation = async() => {
   console.log('set', testEvaluation)
 }
 
-export const getEvaluation = async() => {
+const getEvaluation = async() => {
   const testEvaluation = await evaluations.get("test_evaluation1")
   console.log('get', testEvaluation)
 }
 
-export const getEvaluationsByUser = async() => {
+const getEvaluationsByUser = async() => {
   const evaluationsByUser = await evaluations.filter({user_id: 'test1', is_deleted: false})
   console.log('getEvaluationsByUser', evaluationsByUser)
 }
+
+exports.setEvaluation = setEvaluation
+exports.getEvaluation = getEvaluation
+exports.getEvaluationsByUser = getEvaluationsByUser
 
 
