@@ -6,7 +6,7 @@ require('dotenv').config()
 
 // cors
 const cors = require('cors');
-const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN, process.env.FRONTEND_PROD_ORIGIN]
+const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN, 'https://peer-evaluation.vercel.app/']
 app.use(cors({
     origin: allowedOrigins,
     credentials: true, 
