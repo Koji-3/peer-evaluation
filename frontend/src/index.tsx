@@ -7,7 +7,6 @@ import { Auth0Provider } from '@auth0/auth0-react'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 const auth0RedirectUri = `${window.location.origin}/login/callback`
-console.log('auth0RedirectUri', auth0RedirectUri)
 root.render(
   <Auth0Provider
     domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ''}
