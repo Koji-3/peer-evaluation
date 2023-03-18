@@ -13,17 +13,6 @@ app.use(cors({
     optionsSuccessStatus: 200
 }));
 
-// TODO: 
-// auth0 jwt config
-const { auth } = require('express-oauth2-jwt-bearer');
-const jwtCheck = auth({
-  // TODO: env
-  audience: 'https://peer-evaluation.com/api',
-  issuerBaseURL: 'https://peer-evaluation.jp.auth0.com/',
-  tokenSigningAlg: 'RS256'
-});
-app.use(jwtCheck);
-
 // routes
 const user = require('./routes/user');
 app.use('/user', user);

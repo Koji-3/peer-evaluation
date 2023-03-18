@@ -1,7 +1,6 @@
 const CyclicDb = require("@cyclic.sh/dynamodb")
 const db = CyclicDb("motionless-crab-hoseCyclicDB")
 const shortUuid = require('short-uuid')
-const { getAuth0UserInfo } = require('./auth0')
 
 const users = db.collection("users")
 
@@ -26,12 +25,8 @@ const getUserByAuth0Id = async(auth0Id) => {
   return userbyAuth0Id.results[0]
 }
 
-const getUserByAuth0Token = async(token) => {
-  console.log("token", token)
-  const auth0User = await getAuth0UserInfo(token)
-  console.log("auth0User", auth0User)
-  const user = await getUserByAuth0Id(auth0User.sub)
-  console.log("user", user)
+const getUserById = async(id) => {
+  const user = await users.get(id)
   return user
 }
 
@@ -43,6 +38,6 @@ const getUserList = async() => {
 
 exports.createUser = createUser
 exports.getUserByAuth0Id = getUserByAuth0Id
-exports.getUserByAuth0Token = getUserByAuth0Token
+exports.getUserById = getUserById
 
 
