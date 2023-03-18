@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from 'components/atoms'
 
 /* lib, types */
-import { post } from 'lib/fetch-api'
+import { post } from 'lib/axios'
 import { User, DBUser } from 'types/types'
 
 export const Signup: React.FC = () => {

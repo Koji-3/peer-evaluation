@@ -1,21 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const {createUser, getUserbyAuth0Id} = require('../models/user')
+const {createUser, getUserByAuth0Id, getUserByAuth0Token} = require('../models/user')
 
-router.get('/auth/:id', async(req, res) => {
-  const user = await getUserbyAuth0Id(req.params.id)
+// マイページでユーザー情報を取得する用
+router.get('/', async(req, res) => {
+  const {token} = req.auth
+  const user = await getUserByAuth0Token(token)
   if(user) {
     res.json({user});                                     
   } else {
     res.json({user: null})
   }
 });
-// TODO: マイページ用にidでuserを取得する
+
+// Auth0からのコールバック時にAuth0のidからuserIdを取得する用。
+router.get('/auth/:id', async(req, res) => {
+  const user = await getUserByAuth0Id(req.params.id)
+  if(user) {
+    res.json({user});                                     
+  } else {
+    res.json({user: null})
+  }
+});
 
 router.post('/signup', async(req, res, next) => {
   const user = await createUser(req.body.user)
   res.json({user});
 });
-
 
 module.exports = router;

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* lib, types */
-import { get } from 'lib/fetch-api'
+import { get } from 'lib/axios'
 import { DBUser } from 'types/types'
 
 export const LoginCallback: React.FC = () => {

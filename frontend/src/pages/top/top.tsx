@@ -18,7 +18,7 @@ export const Top: React.FC = () => {
       {isAuthenticated && (
         <button
           onClick={() => {
-            logout({logoutParams: { returnTo: window.location.origin }})
+            logout({ logoutParams: { returnTo: window.location.origin } })
           }}
         >
           ログアウト
