@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const get = async <T>(path: string, token: string): Promise<T> => {
+export const get = async <T>(path: string, token?: string): Promise<T> => {
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -12,7 +12,7 @@ export const get = async <T>(path: string, token: string): Promise<T> => {
   }
 }
 
-export const post = async <T, V>(path: string, token: string, data: V): Promise<T> => {
+export const post = async <T, V>(path: string, data: V, token?: string): Promise<T> => {
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
