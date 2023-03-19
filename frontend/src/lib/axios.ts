@@ -23,3 +23,15 @@ export const post = async <T, V>(path: string, data: V, token?: string): Promise
     throw e
   }
 }
+
+export const put = async <T, V>(path: string, data: V, token?: string): Promise<T> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }
+  try {
+    return await axios.put<T>(`${process.env.REACT_APP_API_ENDPOINT}${path}`, data, { headers }).then((r) => r.data)
+  } catch (e: unknown) {
+    throw e
+  }
+}
