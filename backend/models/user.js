@@ -30,14 +30,31 @@ const getUserById = async(id) => {
   return user
 }
 
-// データ確認用。
+const updateUser = async(id, user) => {
+  if(!id || !user) return
+  const {auth0_id, name, profile, icon_url, is_deleted} = user
+  const updatedUser = await users.set(id, {
+    auth0_id,
+    name,
+    profile,
+    icon_url,
+    is_deleted 
+  })
+  return updatedUser
+}
+
+// FIXME: データ確認用なので最後に消す
 const getUserList = async() => {
   const usersList = await users.list()
-  console.log('getUserList',usersList.results[0].props)
+  console.log('getUserList',usersList)
 }
 
 exports.createUser = createUser
 exports.getUserByAuth0Id = getUserByAuth0Id
 exports.getUserById = getUserById
+exports.updateUser = updateUser
+
+// FIXME: データ確認用なので最後に消す
+getUserList()
 
 
