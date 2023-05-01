@@ -35,3 +35,15 @@ export const put = async <T, V>(path: string, data: V, token?: string): Promise<
     throw e
   }
 }
+
+export const deleteData = async <T>(path: string, token?: string): Promise<T> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }
+  try {
+    return await axios.delete<T>(`${process.env.REACT_APP_API_ENDPOINT}${path}`, { headers }).then((r) => r.data)
+  } catch (e: unknown) {
+    throw e
+  }
+}

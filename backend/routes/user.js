@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { createUser, getUserByAuth0Id, getUserById, updateUser } = require('../models/user')
-const { updateEmail } = require('../models/auth0')
+const { createUser, getUserByAuth0Id, getUserById, updateUser, deleteUser } = require('../models/user')
+const { updateEmail, deleteUser:deleteAuth0User } = require('../models/auth0')
 
 /* auth0 jwt config */
 const { auth } = require('express-oauth2-jwt-bearer');
@@ -48,7 +48,6 @@ router.put('/update/:id', checkJwt, async(req, res) => {
   }
 });
 
-
 // メールアドレス変更
 router.put('/update-email/:auth0id', checkJwt, async(req, res) => {
   try {
@@ -57,6 +56,17 @@ router.put('/update-email/:auth0id', checkJwt, async(req, res) => {
     res.json({updateEmail: false})
   }
   res.json({updateEmail: true});
+});
+
+// 退会
+router.delete('/:auth0id', checkJwt, async(req, res) => {
+  Promise.all([deleteUser(req.params.auth0id), deleteAuth0User(req.params.auth0id)]).then(
+    () => {
+      res.json({deleteUser: true})
+    }
+  ).catch(() => {
+    res.json({deleteUser: false})
+  })
 });
 
 module.exports = router;
