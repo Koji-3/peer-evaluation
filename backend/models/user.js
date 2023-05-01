@@ -32,10 +32,11 @@ const getUserById = async(id) => {
   return user
 }
 
-const updateUser = async(id, user) => {
-  if(!id || !user) return
-  const {auth0_id, name, profile, icon_url, is_deleted} = user
-  const updatedUser = await users.set(id, {
+const updateUser = async(auth0Id, newUser) => {
+  if(!newUser) return
+  const user = await getUserByAuth0Id(auth0Id)
+  const {auth0_id, name, profile, icon_url, is_deleted} = newUser
+  const updatedUser = await users.set(user.key, {
     auth0_id,
     name,
     profile,
@@ -46,11 +47,7 @@ const updateUser = async(id, user) => {
 }
 
 const deleteUser = async(auth0Id) => {
-  if(!auth0Id) return
-  const userbyAuth0Id = await users.filter({auth0_id: auth0Id})
-  if(!userbyAuth0Id.results.length) throw 'ユーザー情報がありません'
-  // TODO: is_deletedがtrueのときの処理
-  const user = userbyAuth0Id.results[0]
+  const user = await getUserByAuth0Id(auth0Id)
   const uuid = crypto.randomUUID()
   
   // 退会処理でdynamoDB上のデータは論理削除する

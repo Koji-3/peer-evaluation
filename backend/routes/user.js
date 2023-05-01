@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createUser, getUserByAuth0Id, getUserById, updateUser, deleteUser } = require('../models/user')
-const { updateEmail, deleteUser:deleteAuth0User } = require('../models/auth0')
+const { updateName: updateAuth0Name, updateEmail: updateAuth0Email, deleteUser:deleteAuth0User } = require('../models/auth0')
 
 /* auth0 jwt config */
 const { auth } = require('express-oauth2-jwt-bearer');
@@ -33,14 +33,16 @@ router.get('/auth/:auth0id', checkJwt,  async(req, res) => {
 });
 
 // 新規登録
-router.post('/signup', checkJwt, async(req, res) => {
-  const user = await createUser(req.body.user)
+router.post('/signup/:auth0id', checkJwt, async(req, res) => {
+  // auth0の名前も変更する
+  const [user, _] = await Promise.all([createUser(req.body.user), updateAuth0Name(req.params.auth0id, req.body.user.name)])
   res.json({user});
 });
 
-// ユーザー情報変更(Auth0以外)
-router.put('/update/:id', checkJwt, async(req, res) => {
-  const user = await updateUser(req.params.id, req.body.user)
+// ユーザー情報変更
+router.put('/update/:auth0id', checkJwt, async(req, res) => {
+  // auth0の名前も変更する
+  const [user, _] = await Promise.all([updateUser(req.params.auth0id, req.body.user), updateAuth0Name(req.params.auth0id, req.body.user.name)])
   if(user) {
     res.json({user});                                     
   } else {
@@ -51,7 +53,7 @@ router.put('/update/:id', checkJwt, async(req, res) => {
 // メールアドレス変更
 router.put('/update-email/:auth0id', checkJwt, async(req, res) => {
   try {
-    await updateEmail(req.params.auth0id, req.body.email)
+    await updateAuth0Email(req.params.auth0id, req.body.email)
   } catch (e) {
     res.json({updateEmail: false})
   }
