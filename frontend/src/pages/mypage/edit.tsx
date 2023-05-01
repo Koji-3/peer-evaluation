@@ -7,7 +7,7 @@ import { Button } from 'components/atoms'
 import { AuthWrapper } from 'components/templates'
 
 /* lib, types */
-import { get, put } from 'lib/axios'
+import { get, put, deleteData } from 'lib/axios'
 import { DBUser, User, Auth0AuthenticatedBy } from 'types/types'
 
 export const MypageEdit: React.FC = () => {
@@ -29,10 +29,8 @@ export const MypageEdit: React.FC = () => {
   }
 
   const updateEmail = async (): Promise<void> => {
-    if (!auth0User || !auth0User.sub) {
-      // TODO: データ取得失敗のアラート出す
-      return
-    }
+    if (!auth0User || !auth0User.sub) return
+
     const token = await getAccessTokenSilently()
     const res = await put<{ user: DBUser }, { email: string }>(`/user/update-email/${auth0User.sub}`, { email }, token)
     if (res) {
@@ -44,10 +42,8 @@ export const MypageEdit: React.FC = () => {
   }
 
   const updateUser = async (): Promise<void> => {
-    if (!userInput) {
-      // TODO: データ取得失敗のアラート出す
-      return
-    }
+    if (!userInput) return
+
     const token = await getAccessTokenSilently()
     const res = await put<{ updateEmail: boolean }, { user: User }>(`/user/update/${params.id}`, { user: userInput }, token)
 
@@ -61,9 +57,23 @@ export const MypageEdit: React.FC = () => {
     }
   }
 
+  const deleteUser = async (): Promise<void> => {
+    if (!auth0User || !auth0User.sub) return
+
+    const token = await getAccessTokenSilently()
+    const res = await deleteData<{ deleteUser: boolean }>(`/user/${auth0User.sub}`, token)
+
+    if (res) {
+      // TODO: ホームに遷移して「退会しました」のアラート出す
+      navigate('/')
+    } else {
+      // TODO: メールアドレス変更に失敗したときの処理
+    }
+  }
+
   useEffect(() => {
     if (isLoading) return
-    if (!auth0User || !auth0User.email) {
+    if (!auth0User || !auth0User.email || !auth0User.sub) {
       // TODO: データ取得失敗のアラート出す
       return
     }
@@ -102,6 +112,7 @@ export const MypageEdit: React.FC = () => {
           </>
         )}
         <Button onClick={updateUser}>編集</Button>
+        <Button onClick={deleteUser}>退会</Button>
       </div>
     </AuthWrapper>
   )
