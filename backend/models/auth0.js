@@ -7,6 +7,12 @@ const auth0ManagementClient = new ManagementClient({
   scope: 'create:users read:users update:users delete:users'
 })
 
+const updateName = async (auth0id, newName) => {
+  await auth0ManagementClient.updateUser({id: auth0id}, {name: newName}, async(e) => {
+    if(e) throw e
+  })
+}
+
 const updateEmail = async (auth0id, newEmail) => {
   await auth0ManagementClient.updateUser({id: auth0id}, {email: newEmail}, async(e) => {
     if(e) throw e
@@ -24,5 +30,6 @@ const deleteUser = async (auth0id) => {
   })
 }
 
+exports.updateName = updateName
 exports.updateEmail = updateEmail
 exports.deleteUser = deleteUser

@@ -28,7 +28,7 @@ export const Signup: React.FC = () => {
 
   const registerUser = async (): Promise<void> => {
     const token = await getAccessTokenSilently()
-    const res = await post<{ user: DBUser }, { user: User }>('/user/signup', { user: userInput }, token)
+    const res = await post<{ user: DBUser }, { user: User }>(`/user/signup/${auth0User?.sub}`, { user: userInput }, token)
     navigate(`/mypage/${res.user.key}`)
   }
 

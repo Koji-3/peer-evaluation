@@ -42,16 +42,17 @@ export const MypageEdit: React.FC = () => {
   }
 
   const updateUser = async (): Promise<void> => {
-    if (!userInput) return
+    if (!auth0User || !auth0User.sub || !userInput) return
 
     const token = await getAccessTokenSilently()
-    const res = await put<{ updateEmail: boolean }, { user: User }>(`/user/update/${params.id}`, { user: userInput }, token)
+    const res = await put<{ updateEmail: boolean }, { user: User }>(`/user/update/${auth0User.sub}`, { user: userInput }, token)
 
     if (!!email && email !== auth0User?.email) {
       await updateEmail()
       return
     } else {
       if (res) {
+        console.log(res)
         // TODO: 変更しました的なアラート
       }
     }
