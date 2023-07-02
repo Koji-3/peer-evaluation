@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&display=swap');
 /* reset */
 html,
 body,
@@ -172,8 +171,8 @@ textarea:focus {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #ddd;
-  font-weight: 500;
+  color: rgba(0, 0, 0, 0.2);
+  font-weight: 400;
 }
 button {
   padding: 0;
@@ -209,7 +208,7 @@ body {
 }
 html *,
 body * {
-  font-family: 'M PLUS Rounded 1c', Hiragino Sans, 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, Osaka, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 /* box-sizing */
 * {
@@ -225,6 +224,6 @@ a {
   html,
   body {
     /* 標準サイズでデザイン上の10px 以降はremで */
-    font-size: 2.666vw;
+    font-size: 2.564vw;
   }
 }
