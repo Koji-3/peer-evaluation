@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-/* lib, types*/
+/* lib, types */
 import { mediaSp } from 'lib/media-query'
 
 type Props = {
