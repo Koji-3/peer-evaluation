@@ -1,6 +1,7 @@
 /**
  * Atoms modules
  */
-export * from './button'
 export * from './label'
+export * from './button'
+export * from './button-small'
 export * from './text-input'

@@ -38,7 +38,7 @@ export const Signup: React.FC = () => {
   return (
     <>
       <input name="name" placeholder="名前" value={userInput.name} onChange={changeUserInput} />
-      <Button onClick={registerUser}>登録</Button>
+      <Button buttonText="登録" buttonType="primary" onClick={registerUser} />
     </>
   )
 }

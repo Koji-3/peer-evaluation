@@ -112,8 +112,8 @@ export const MypageEdit: React.FC = () => {
             </div>
           </>
         )}
-        <Button onClick={updateUser}>編集</Button>
-        <Button onClick={deleteUser}>退会</Button>
+        <Button buttonText="編集" buttonType="primary" onClick={updateUser} />
+        <Button buttonText="退会" buttonType="primary" onClick={deleteUser} />
       </div>
     </AuthWrapper>
   )

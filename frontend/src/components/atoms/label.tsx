@@ -17,15 +17,14 @@ const StyledLabel = styled.label`
   letter-spacing: 0.1em;
 
   //FIXME: 不要なら消す
-  span {
+  /* span {
     margin-left: 7px;
-    color: ${(props): string => props.theme.errorText};
     font-size: 16px;
     line-height: 1.9;
     letter-spacing: 0.04em;
     vertical-align: top;
     display: inline-block;
-  }
+  } */
 
   ${mediaSp`
   `}

@@ -8,7 +8,7 @@ type Props = {
 }
 
 type StyleProps = {
-  buttonType: 'primary' | 'white'
+  buttonType: 'primary' | 'white' | 'dark'
 }
 
 const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): string => {
@@ -16,7 +16,6 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
     return `
       color: ${props.theme.white};
       background: ${props.theme.primary};
-      font-weight: 700;
 
       &:hover {
       }
@@ -31,14 +30,24 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
       }
     `
   }
+  if (props.buttonType === 'dark') {
+    return `
+      color: ${props.theme.white};
+      background: ${props.theme.darkGreen};
+
+      &:hover {
+      }
+    `
+  }
   return ''
 }
 
-const StyledButton = styled.button<StyleProps>`
-  width: 20rem;
-  height: 5rem;
-  font-size: 1.8rem;
-  border-radius: 2.5rem;
+const StyledButtonSmall = styled.button<StyleProps>`
+  width: auto;
+  height: 3rem;
+  padding: 0 1.5rem;
+  font-size: 1rem;
+  border-radius: 1.5rem;
   transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
   display: block;
 
@@ -47,10 +56,10 @@ const StyledButton = styled.button<StyleProps>`
   } */
 `
 
-export const Button: React.FC<Props & StyleProps> = ({ className = '', buttonText, buttonType, disabled, onClick }) => {
+export const ButtonSmall: React.FC<Props & StyleProps> = ({ className = '', buttonText, buttonType, disabled, onClick }) => {
   return (
-    <StyledButton disabled={disabled} buttonType={buttonType} onClick={onClick} className={className}>
+    <StyledButtonSmall disabled={disabled} buttonType={buttonType} onClick={onClick} className={className}>
       {buttonText}
-    </StyledButton>
+    </StyledButtonSmall>
   )
 }

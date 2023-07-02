@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
-import { Button } from 'components/atoms'
+import { Button, ButtonSmall } from 'components/atoms'
 import { TextInputWithLabel, RadarChart } from 'components/molecules'
 
 export const Top: React.FC = () => {
@@ -19,17 +19,27 @@ export const Top: React.FC = () => {
         borderWidth: 1,
       },
     ],
-  };
+  }
 
   return (
     <>
       <Button
+        buttonText="ログイン"
+        buttonType="primary"
         onClick={() => {
           loginWithRedirect()
         }}
-      >
-        Log in
-      </Button>
+      />
+      <Button
+        buttonText="ログイン2"
+        buttonType="white"
+        onClick={() => {
+          loginWithRedirect()
+        }}
+      />
+      <ButtonSmall buttonText="primary" buttonType="primary" onClick={() => {}} />
+      <ButtonSmall buttonText="white" buttonType="white" onClick={() => {}} />
+      <ButtonSmall buttonText="dark" buttonType="dark" onClick={() => {}} />
       {isAuthenticated && (
         <button
           onClick={() => {
