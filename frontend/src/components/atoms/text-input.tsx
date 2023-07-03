@@ -34,7 +34,7 @@ const StyledInput = styled.input<StyleProps>`
   }
 
   &::placeholder {
-    color: rgba(${(props): string => props.theme.placeholderRgb});
+    color: rgba(${(props): string => props.theme.placeholderRgba});
   }
 
   ${mediaSp`

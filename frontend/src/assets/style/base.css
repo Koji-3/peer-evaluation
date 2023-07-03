@@ -154,14 +154,14 @@ select {
 }
 input:not([type='checkbox']),
 select {
-  transition: 0.3s all;
+  transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
 textarea {
   cursor: auto;
-  transition: 0.3s all;
+  transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
   resize: none;
 }
 input:not([type='checkbox']):focus,

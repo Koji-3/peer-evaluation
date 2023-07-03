@@ -1,15 +1,37 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* lib, types */
 import { get } from 'lib/axios'
 import { DBUser } from 'types/types'
 
+/* components */
+import { MypageTopTpl, Layout } from 'components/templates'
+
+/* FIXME: 仮 */
+import { fixtureUser } from '__fixtures__/user'
+import { fixtureEvaluations } from '__fixtures__/evaluation'
+
 export const MypageTop: React.FC = () => {
   const [user, setUser] = useState<DBUser>()
-  const { isLoading, isAuthenticated } = useAuth0()
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [lastPage, setLastPage] = useState<number>(10)
+  const { isLoading } = useAuth0()
   const params = useParams()
+  const [searchParams] = useSearchParams()
+
+  const publishEvaluation = (id: string): void => {
+    console.log(`publish ${id}`)
+  }
+
+  const unpublishEvaluation = (id: string): void => {
+    console.log(`unpublish ${id}`)
+  }
+
+  const deleteEvaluation = (id: string): void => {
+    console.log(`delete ${id}`)
+  }
 
   useEffect(() => {
     if (isLoading) return
@@ -20,16 +42,27 @@ export const MypageTop: React.FC = () => {
         return
       }
       setUser(res.user)
+      setLastPage(10)
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
 
+  useEffect(() => {
+    setCurrentPage(Number(searchParams.get('page')) || 3)
+  }, [searchParams])
+
   return (
-    <>
-      <h1>{isAuthenticated ? 'ログイン中' : 'ログインしてない！'}</h1>
-      <h1>名前：{user?.props.name}</h1>
-      <h1>Auth0id: {user?.props.auth0_id}</h1>
-      <a href={`/mypage/${params.id}/edit`}>編集ページへ</a>
-    </>
+    <Layout>
+      {/* TODO: isDeletedの時エラーページへ */}
+      <MypageTopTpl
+        user={fixtureUser}
+        evaluations={fixtureEvaluations}
+        currentPage={currentPage}
+        lastPage={lastPage}
+        publishEvaluation={publishEvaluation}
+        unpublishEvaluation={unpublishEvaluation}
+        deleteEvaluation={deleteEvaluation}
+      />
+    </Layout>
   )
 }

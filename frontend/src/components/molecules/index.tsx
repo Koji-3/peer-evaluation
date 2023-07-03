@@ -1,5 +1,5 @@
 /**
  * Molecules modules
  */
-export * from './radar-chart'
+export * from './pagination'
 export * from './text-input-with-label'

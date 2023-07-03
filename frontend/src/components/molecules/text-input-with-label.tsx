@@ -23,7 +23,7 @@ type Props = {
 } & LabelProps &
   TextInputProps
 
-const Wrapper = styled.div`
+const StyledWrapper = styled.div`
   width: 100%;
 
   .label {
@@ -44,9 +44,9 @@ export const TextInputWithLabel: React.FC<Props> = ({
   onChange,
 }) => {
   return (
-    <Wrapper className={className}>
+    <StyledWrapper className={className}>
       <Label text={labelText} isRequired={isRequired} className="label" />
       <TextInput type={type} name={name} placeholder={placeholder} value={value} isError={isError} onChange={onChange} />
-    </Wrapper>
+    </StyledWrapper>
   )
 }

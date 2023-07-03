@@ -4,7 +4,7 @@ type Props = {
   className?: string
   buttonText: string
   disabled?: boolean
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 type StyleProps = {
@@ -25,6 +25,7 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
     return `
       color: ${props.theme.black};
       border: 0.1rem solid ${props.theme.primary};
+      line-height: 2.8rem;
 
       &:hover {
       }

@@ -25,3 +25,34 @@ export type Auth0User = {
 
 // TODO: google以外のログインも受け付けるなら要変更
 export type Auth0AuthenticatedBy = 'google' | 'auth0'
+
+export const EvaluationLabels = {
+  e1: '情熱',
+  e2: '情熱',
+  e3: '情熱',
+  e4: '情熱',
+  e5: '情熱',
+  e6: '情熱',
+} as const
+
+export type EvaluationLabels = (typeof EvaluationLabels)[keyof typeof EvaluationLabels]
+
+export type Evaluation = {
+  id: string
+  evaluateByName: string
+  evaluateByIconUrl: string
+  evaluateByRelationship: string
+  comment: string
+  e1: number
+  e1Reason: string | null
+  e2: number
+  e2Reason: string | null
+  e3: number
+  e3Reason: string | null
+  e4: number
+  e4Reason: string | null
+  e5: number
+  e5Reason: string | null
+  isPublished: boolean
+  isDeleted: boolean
+}
