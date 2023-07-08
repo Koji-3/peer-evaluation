@@ -6,7 +6,7 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { mediaSp } from 'lib/media-query'
 
 /* pages */
-import { Top, LoginCallback, Signup, UserTop, MypageEdit, EvaluationDetail, EvaluationForm } from 'pages'
+import { Top, LoginCallback, Signup, UserTop, UserEdit, EvaluationDetail, EvaluationForm } from 'pages'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const baseStyle = require('./assets/style/base.css')
@@ -40,7 +40,7 @@ export const App: React.FC = () => {
             <Route path="/:id" element={<UserTop />} />
             <Route path="/evaluation/:id" element={<EvaluationDetail />} />
             <Route path="/evaluation/form/:id" element={<EvaluationForm />} />
-            <Route path="/mypage/:id/edit" element={<MypageEdit />} />
+            <Route path="/:id/edit" element={<UserEdit />} />
           </Routes>
         </main>
       </BrowserRouter>

@@ -13,6 +13,7 @@ export const theme = {
   primaryRgb: '83,189,154',
   darkGreen: '#31565d',
   background: '#f8ece1',
+  blue: '#00bbe4',
 } as const
 
 type Theme = typeof theme
