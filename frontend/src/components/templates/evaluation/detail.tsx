@@ -6,7 +6,7 @@ import { mediaSp } from 'lib/media-query'
 import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
 
 /* components */
-import { ButtonSmall } from 'components/atoms'
+import { ButtonSmall, Icon } from 'components/atoms'
 import { EvaluationDetailItem } from 'components/organisms'
 
 /* images */
@@ -21,7 +21,7 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
-  .inner {
+  > .inner {
     width: 36rem;
     margin: 0 auto;
     padding: 1.8rem 0 4.2rem;
@@ -62,17 +62,8 @@ const StyledWrapper = styled.div`
       .evaluator {
         margin: 0 0 4.5rem;
 
-        .icon-wrapper {
-          width: 10rem;
-          height: 10rem;
+        .icon {
           margin: 0 auto 1.8rem;
-          border-radius: 50%;
-          overflow: hidden;
-
-          > img {
-            width: 100%;
-            height: 100%;
-          }
         }
 
         > p {
@@ -105,7 +96,13 @@ const StyledWrapper = styled.div`
   `}
 `
 
-export const EvaluationDetailTpl: React.FC<Props> = ({ evaluation, publishEvaluation, unpublishEvaluation, deleteEvaluation }) => {
+export const EvaluationDetailTpl: React.FC<Props> = ({
+  className,
+  evaluation,
+  publishEvaluation,
+  unpublishEvaluation,
+  deleteEvaluation,
+}) => {
   const navigate = useNavigate()
   const { isPublished, evaluatorIconUrl, evaluatorName, relationship, evaluatee, comment } = evaluation
 
@@ -114,7 +111,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({ evaluation, publishEvalua
   }
 
   return (
-    <StyledWrapper>
+    <StyledWrapper className={className}>
       <div className="inner">
         <header>
           <div className="to-user-top">
@@ -134,10 +131,8 @@ export const EvaluationDetailTpl: React.FC<Props> = ({ evaluation, publishEvalua
 
         <div className="content">
           <div className="evaluator">
-            <div className="icon-wrapper">
-              {/* TODO: デフォルトアイコン */}
-              <img src={evaluatorIconUrl ?? 'https://picsum.photos/200/200'} alt={evaluatorName} />
-            </div>
+            {/* TODO: デフォルトアイコン */}
+            <Icon src={evaluatorIconUrl || 'https://picsum.photos/200/200'} alt={evaluatorName} size={4.5} className="icon" />
             <p>
               {evaluatorName} / {relationship}
             </p>

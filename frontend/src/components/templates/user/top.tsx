@@ -5,6 +5,7 @@ import { mediaSp } from 'lib/media-query'
 import { User, Evaluation, AvarageEvaluation } from 'types/types'
 
 /* components */
+import { Icon } from 'components/atoms'
 import { Pagination } from 'components/molecules'
 import { EvaluationItem, RadarChart } from 'components/organisms'
 
@@ -26,17 +27,8 @@ const StyledWrapper = styled.div`
   .user {
     margin: 0 0 3rem;
 
-    .icon-wrapper {
-      width: 10rem;
-      height: 10rem;
+    .icon {
       margin: 0 auto 1.6rem;
-      border-radius: 50%;
-      overflow: hidden;
-
-      > img {
-        width: 100%;
-        height: 100%;
-      }
     }
 
     .name {
@@ -96,9 +88,7 @@ export const UserTopTpl: React.FC<Props> = ({
   return (
     <StyledWrapper>
       <div className="user">
-        <div className="icon-wrapper">
-          <img src={user.icon_url} alt={user.name} className="icon" />
-        </div>
+        <Icon src={user.icon_url} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>
         <p className="profile">{user.profile}</p>
       </div>

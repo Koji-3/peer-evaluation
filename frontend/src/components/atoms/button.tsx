@@ -4,7 +4,7 @@ type Props = {
   className?: string
   buttonText: string
   disabled?: boolean
-  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 type StyleProps = {
@@ -43,9 +43,14 @@ const StyledButton = styled.button<StyleProps>`
   transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
   display: block;
 
-  ${(props) => getButtonStyle(props)}/* FIXME */
-  /* &:disabled {
-  } */
+  ${(props) => getButtonStyle(props)}
+
+  &:disabled {
+    color: ${(props): string => props.theme.white};
+    background: ${(props): string => props.theme.disabledGray};
+    border: none;
+    line-height: 5rem;
+  }
 `
 
 export const Button: React.FC<Props & StyleProps> = ({ className = '', buttonText, buttonType, disabled, onClick }) => {

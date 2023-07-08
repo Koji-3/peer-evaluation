@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Evaluation } from 'types/types'
 
 /* components */
-import { ButtonSmall } from 'components/atoms'
+import { ButtonSmall, Icon } from 'components/atoms'
 
 type Props = {
   className?: string
@@ -18,7 +18,7 @@ const StyledWrapper = styled.a`
   width: 36rem;
   padding: 1.5rem 1.7rem 1.1rem 1.5rem;
   background: ${(props): string => props.theme.white};
-  border: 1px solid ${(props): string => props.theme.dividerGray};
+  border: 0.1rem solid ${(props): string => props.theme.dividerGray};
   border-radius: 1.5rem;
   display: block;
 
@@ -27,18 +27,6 @@ const StyledWrapper = styled.a`
     display: flex;
     gap: 1.5rem;
 
-    .icon-wrapper {
-      width: 4.5rem;
-      height: 4.5rem;
-      border-radius: 50%;
-      overflow: hidden;
-
-      > img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
     .right-content {
       width: 25.6rem;
       padding: 0.3rem 0 0;
@@ -46,7 +34,7 @@ const StyledWrapper = styled.a`
       .evaluateBy {
         padding: 0 0 0.5rem;
         font-size: 1.2rem;
-        border-bottom: 1px solid ${(props): string => props.theme.dividerGray};
+        border-bottom: 0.1rem solid ${(props): string => props.theme.dividerGray};
       }
 
       .comment {
@@ -80,9 +68,8 @@ export const EvaluationItem: React.FC<Props> = ({
   return (
     <StyledWrapper className={className} href={`/evaluation/${id}`}>
       <div className="flex-wrapper">
-        <div className="icon-wrapper">
-          <img src={evaluatorIconUrl} alt={evaluatorName} />
-        </div>
+        {/* TODO: デフォルトアイコン */}
+        <Icon src={evaluatorIconUrl || 'https://picsum.photos/200/200'} alt={evaluatorName} size={4.5} />
 
         <div className="right-content">
           <p className="evaluateBy">

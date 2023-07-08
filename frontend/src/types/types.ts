@@ -1,3 +1,11 @@
+export type RadioButton = {
+  id: string
+  name: string
+  value: string | number
+  label: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
 type DBProperties = {
   collection: string
   key: string
@@ -50,30 +58,61 @@ export type Evaluation = {
   comment: string
   e1: {
     point: number
-    reason: string | null
+    reason: string
   }
   e2: {
     point: number
-    reason: string | null
+    reason: string
   }
   e3: {
     point: number
-    reason: string | null
+    reason: string
   }
   e4: {
     point: number
-    reason: string | null
+    reason: string
   }
   e5: {
     point: number
-    reason: string | null
+    reason: string
   }
   e6: {
     point: number
-    reason: string | null
+    reason: string
   }
   isPublished: boolean
   isDeleted: boolean
+}
+
+export type EvaluationInput = {
+  evaluatorName: string
+  evaluatorIconUrl?: string
+  relationship: string
+  comment: string
+  e1: {
+    point: number
+    reason: string
+  }
+  e2: {
+    point: number
+    reason: string
+  }
+  e3: {
+    point: number
+    reason: string
+  }
+  e4: {
+    point: number
+    reason: string
+  }
+  e5: {
+    point: number
+    reason: string
+  }
+  e6: {
+    point: number
+    reason: string
+  }
 }
 
 export type AvarageEvaluation = Record<EvaluationLabelKeys | 'evaluatee', number | User>

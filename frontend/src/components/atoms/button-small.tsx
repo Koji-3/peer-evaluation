@@ -4,7 +4,7 @@ type Props = {
   className?: string
   buttonText: string
   disabled?: boolean
-  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 type StyleProps = {

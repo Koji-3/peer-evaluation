@@ -15,7 +15,7 @@ type TextInputProps = {
   value: string
   placeholder?: string
   isError?: boolean
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 type Props = {

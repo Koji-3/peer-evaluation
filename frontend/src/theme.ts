@@ -7,6 +7,7 @@ export const theme = {
   dividerGray: '#b9b9b9',
   inactiveGray: '#adadad',
   scaleGray: '#e8e8e8',
+  disabledGray: '#ccc',
   placeholderRgba: '0, 0, 0, 0.2',
   primary: '#53bd9a',
   primaryRgb: '83,189,154',

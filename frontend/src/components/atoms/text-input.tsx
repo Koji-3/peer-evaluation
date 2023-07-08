@@ -9,7 +9,7 @@ type Props = {
   name?: string
   value: string
   placeholder?: string
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 type StyleProps = {
@@ -24,13 +24,13 @@ const StyledInput = styled.input<StyleProps>`
   font-size: 14px;
   line-height: 42px;
   letter-spacing: 0.1em;
-  border: 1px solid ${(props): string => props.theme.borderGray};
+  border: 0.1rem solid ${(props): string => props.theme.borderGray};
   border-radius: 0.5rem;
 
   &:focus {
     outline: 0;
     /* FIXME: color */
-    border: 1px solid ${(props): string => (props.isError ? 'red' : props.theme.black)};
+    border: 0.1rem solid ${(props): string => (props.isError ? 'red' : props.theme.black)};
   }
 
   &::placeholder {

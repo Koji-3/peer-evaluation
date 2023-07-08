@@ -35,7 +35,6 @@ export const UserTop: React.FC = () => {
   }
 
   useEffect(() => {
-    console.log(isLoading)
     if (isLoading) return
     ;(async () => {
       const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
