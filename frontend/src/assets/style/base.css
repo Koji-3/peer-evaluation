@@ -131,6 +131,10 @@ caption,
 th {
   text-align: left;
 }
+a {
+  color: inherit;
+  font: inherit;
+}
 a:focus {
   outline: none;
 }

@@ -6,7 +6,7 @@ import { theme } from 'theme'
 
 /* lib, types */
 import { mediaSp } from 'lib/media-query'
-import { EvaluationLabels } from 'types/types'
+import { EvaluationLabelValues } from 'types/types'
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
 
@@ -25,6 +25,7 @@ const StyledWrapper = styled.div`
     font-weight: 700;
     position: absolute;
 
+    /* TODO: 場所要調整 */
     &.index0 {
       top: -1rem;
       left: calc(50% + 1.5rem);
@@ -57,7 +58,7 @@ const StyledWrapper = styled.div`
 
 export const RadarChart: React.FC<Props> = ({ className, data }) => {
   const chartData = {
-    labels: Object.values(EvaluationLabels),
+    labels: EvaluationLabelValues,
     datasets: [
       {
         label: '',

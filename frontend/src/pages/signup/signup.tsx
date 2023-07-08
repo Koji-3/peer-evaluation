@@ -12,6 +12,7 @@ import { User, DBUser } from 'types/types'
 export const Signup: React.FC = () => {
   const { user: auth0User, getAccessTokenSilently } = useAuth0()
   const initialUserInput: User = {
+    id: '',
     auth0_id: auth0User?.sub || '',
     name: '',
     profile: '',

@@ -74,7 +74,6 @@ export const Pagination: React.FC<Props> = ({ className = '', currentPage, lastP
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const params = new URLSearchParams(search)
-  console.log(currentPage, lastPage)
 
   const onClickPrev = (): void => {
     params.set('page', `${currentPage - 1}`)

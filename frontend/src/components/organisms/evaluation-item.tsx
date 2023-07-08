@@ -14,12 +14,13 @@ type Props = {
   deleteEvaluation: (id: string) => void
 }
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.a`
   width: 36rem;
   padding: 1.5rem 1.7rem 1.1rem 1.5rem;
   background: ${(props): string => props.theme.white};
   border: 1px solid ${(props): string => props.theme.dividerGray};
   border-radius: 1.5rem;
+  display: block;
 
   .flex-wrapper {
     margin: 0 0 0.2rem;
@@ -74,18 +75,18 @@ export const EvaluationItem: React.FC<Props> = ({
   unpublishEvaluation,
   deleteEvaluation,
 }) => {
-  const { id, evaluateByIconUrl, evaluateByName, evaluateByRelationship, comment, isPublished } = evaluation
+  const { id, evaluatorIconUrl, evaluatorName, relationship, comment, isPublished } = evaluation
 
   return (
-    <StyledWrapper className={className}>
+    <StyledWrapper className={className} href={`/evaluation/${id}`}>
       <div className="flex-wrapper">
         <div className="icon-wrapper">
-          <img src={evaluateByIconUrl} alt={evaluateByName} />
+          <img src={evaluatorIconUrl} alt={evaluatorName} />
         </div>
 
         <div className="right-content">
           <p className="evaluateBy">
-            {evaluateByName} / {evaluateByRelationship}
+            {evaluatorName} / {relationship}
           </p>
           <p className="comment">{comment}</p>
         </div>

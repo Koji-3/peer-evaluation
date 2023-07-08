@@ -10,6 +10,8 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
+  min-width: 100vw;
+  min-height: 100vh;
   background: ${(props): string => props.theme.background};
 
   ${mediaSp`

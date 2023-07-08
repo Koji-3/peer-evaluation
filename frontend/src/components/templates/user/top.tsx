@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 /* lib, types */
 import { mediaSp } from 'lib/media-query'
-import { User, Evaluation } from 'types/types'
+import { User, Evaluation, AvarageEvaluation } from 'types/types'
 
 /* components */
 import { Pagination } from 'components/molecules'
@@ -12,6 +12,7 @@ type Props = {
   className?: string
   user: User
   evaluations: Evaluation[]
+  avarageEvaluation: AvarageEvaluation
   currentPage: number
   lastPage: number
   publishEvaluation: (id: string) => void
@@ -77,15 +78,21 @@ const StyledWrapper = styled.div`
   `}
 `
 
-export const MypageTopTpl: React.FC<Props> = ({
+export const UserTopTpl: React.FC<Props> = ({
   user,
   evaluations,
+  avarageEvaluation,
   currentPage,
   lastPage,
   publishEvaluation,
   unpublishEvaluation,
   deleteEvaluation,
 }) => {
+  const getChartData = (): string[] => {
+    const values = Object.values(avarageEvaluation) as (number | User)[]
+    return values.splice(1).map((num) => `${num}`)
+  }
+
   return (
     <StyledWrapper>
       <div className="user">
@@ -96,8 +103,7 @@ export const MypageTopTpl: React.FC<Props> = ({
         <p className="profile">{user.profile}</p>
       </div>
 
-      {/* TODO: バックエンドから小数第1位までのstringにして返す */}
-      <RadarChart data={['5.0', '4.0', '3.3', '5.0', '4.2', '3.0']} className="chart" />
+      <RadarChart data={getChartData()} className="chart" />
 
       <div className="evaluations">
         <p className="title">{user.name}さんへの評価</p>

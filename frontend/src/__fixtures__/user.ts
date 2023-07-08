@@ -1,6 +1,7 @@
 import { User } from 'types/types'
 
 export const fixtureUser: User = {
+  id: 'a',
   auth0_id: 'hoge',
   name: 'koji',
   profile: 'よろしくお願いしまあああああす！！',

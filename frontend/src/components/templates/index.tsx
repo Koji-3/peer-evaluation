@@ -3,4 +3,5 @@
  */
 export * from './auth-wrapper'
 export * from './layout'
-export * from './mypage/top'
+export * from './user/top'
+export * from './evaluation/detail'

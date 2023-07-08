@@ -4,5 +4,6 @@
 export * from './top/top'
 export * from './login/callback'
 export * from './signup/signup'
-export * from './mypage/top'
+export * from './user/top'
 export * from './mypage/edit'
+export * from './evaluation/detail'
