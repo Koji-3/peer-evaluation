@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-/* lib, types */
-import { mediaSp } from 'lib/media-query'
-import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
-
 /* components */
 import { ButtonSmall, Icon } from 'components/atoms'
 import { EvaluationDetailItem } from 'components/organisms'
+
+/* lib, types */
+import { mediaSp } from 'lib/media-query'
+import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
 
 /* images */
 import pagePrevIcon from 'assets/images/icon/page-prev.svg'

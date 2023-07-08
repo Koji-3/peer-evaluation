@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
+/* components */
+import { EvaluationFormTpl, Layout } from 'components/templates'
+
 /* lib, types */
 import { get } from 'lib/axios'
 import { validateIcon } from 'lib/validate'
 import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
-
-/* components */
-import { EvaluationFormTpl, Layout } from 'components/templates'
 
 /* FIXME: 仮 */
 import { fixtureUser } from '__fixtures__/user'

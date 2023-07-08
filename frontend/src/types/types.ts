@@ -32,6 +32,12 @@ export type Auth0User = {
   updated_at: string
 }
 
+export type UserInput = {
+  name: string
+  profile: string
+  icon_url: string
+}
+
 // TODO: google以外のログインも受け付けるなら要変更
 export type Auth0AuthenticatedBy = 'google' | 'auth0'
 

@@ -17,6 +17,7 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
       color: ${props.theme.white};
       background: ${props.theme.primary};
       font-weight: 700;
+      line-height: 5rem;
 
       &:hover {
       }

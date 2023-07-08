@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 
-/* lib, types */
-import { type EvaluationLabels, RadioButton as RadioButtonType } from 'types/types'
-
 /* components */
 import { Textarea } from 'components/atoms'
 import { RadioButton } from 'components/molecules'
+
+/* lib, types */
+import { type EvaluationLabels, RadioButton as RadioButtonType } from 'types/types'
 
 /* images */
 import arrowDownIcon from 'assets/images/icon/arrow-down.svg'

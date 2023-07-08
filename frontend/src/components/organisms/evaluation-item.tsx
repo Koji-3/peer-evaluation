@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
-/* lib, types */
-import { Evaluation } from 'types/types'
-
 /* components */
 import { ButtonSmall, Icon } from 'components/atoms'
+
+/* lib, types */
+import { Evaluation } from 'types/types'
 
 type Props = {
   className?: string

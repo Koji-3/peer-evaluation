@@ -1,13 +1,13 @@
 import styled from 'styled-components'
 
-/* lib, types */
-import { mediaSp } from 'lib/media-query'
-import { User, Evaluation, AvarageEvaluation } from 'types/types'
-
 /* components */
 import { Icon } from 'components/atoms'
 import { Pagination } from 'components/molecules'
 import { EvaluationItem, RadarChart } from 'components/organisms'
+
+/* lib, types */
+import { mediaSp } from 'lib/media-query'
+import { User, Evaluation, AvarageEvaluation } from 'types/types'
 
 type Props = {
   className?: string

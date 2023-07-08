@@ -1,14 +1,14 @@
 import styled from 'styled-components'
 
-/* lib, types, options */
-import { mediaSp } from 'lib/media-query'
-import { getE1Options, getE2Options, getE3Options, getE4Options, getE5Options, getE6Options } from 'lib/options'
-import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
-
 /* components */
 import { Button, Icon, Textarea } from 'components/atoms'
 import { TextInputWithLabel, IconInput } from 'components/molecules'
 import { EvaluationFormItem } from 'components/organisms'
+
+/* lib, types, options */
+import { mediaSp } from 'lib/media-query'
+import { getE1Options, getE2Options, getE3Options, getE4Options, getE5Options, getE6Options } from 'lib/options'
+import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 
 type Props = {
   className?: string
@@ -146,7 +146,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
             <p className="title">あなたは誰ですか？</p>
             <TextInputWithLabel
               labelText="名前（ニックネーム可）"
-              placeholder="hiroyuki"
+              placeholder="taro"
               name="evaluatorName"
               value={evaluatorName}
               onChange={onChangeEvaluationInput}

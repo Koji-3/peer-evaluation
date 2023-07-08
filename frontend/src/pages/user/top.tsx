@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
+/* components */
+import { UserTopTpl, Layout } from 'components/templates'
+
 /* lib, types */
 import { get } from 'lib/axios'
 import { DBUser, User, AvarageEvaluation } from 'types/types'
-
-/* components */
-import { UserTopTpl, Layout } from 'components/templates'
 
 /* FIXME: 仮 */
 import { fixtureUser } from '__fixtures__/user'

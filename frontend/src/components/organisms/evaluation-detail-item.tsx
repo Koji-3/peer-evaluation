@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 
+/* components */
+import { Scale } from 'components/molecules'
+
 /* lib, types */
 import { type EvaluationLabels } from 'types/types'
 import { parseNumberToOneDecimalText } from 'lib/function'
-
-/* components */
-import { Scale } from 'components/molecules'
 
 type Props = {
   className?: string

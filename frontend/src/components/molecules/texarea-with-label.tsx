@@ -1,25 +1,23 @@
 import styled from 'styled-components'
 
 /* components */
-import { Label, TextInput } from 'components/atoms'
+import { Label, Textarea } from 'components/atoms'
 
 type LabelProps = {
   labelText: string
 }
 
-type TextInputProps = {
-  type?: string
+type TextareaProps = {
   name?: string
   value: string
   placeholder?: string
-  isError?: boolean
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 
 type Props = {
   className?: string
 } & LabelProps &
-  TextInputProps
+  TextareaProps
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -30,11 +28,11 @@ const StyledWrapper = styled.div`
   }
 `
 
-export const TextInputWithLabel: React.FC<Props> = ({ className = '', labelText, type, name, value, placeholder, isError, onChange }) => {
+export const TextareaWithLabel: React.FC<Props> = ({ className = '', labelText, name, value, placeholder, onChange }) => {
   return (
     <StyledWrapper className={className}>
       <Label text={labelText} className="label" />
-      <TextInput type={type} name={name} placeholder={placeholder} value={value} isError={isError} onChange={onChange} />
+      <Textarea name={name} placeholder={placeholder} value={value} onChange={onChange} />
     </StyledWrapper>
   )
 }

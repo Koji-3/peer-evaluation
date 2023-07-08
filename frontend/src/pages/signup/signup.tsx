@@ -3,43 +3,59 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router-dom'
 
 /* components */
-import { Button } from 'components/atoms'
+import { SignupTpl, Layout } from 'components/templates'
 
 /* lib, types */
 import { post } from 'lib/axios'
-import { User, DBUser } from 'types/types'
+import { validateIcon } from 'lib/validate'
+import { UserInput, DBUser } from 'types/types'
 
 export const Signup: React.FC = () => {
   const { user: auth0User, getAccessTokenSilently } = useAuth0()
-  const initialUserInput: User = {
-    id: '',
-    auth0_id: auth0User?.sub || '',
+  const initialUserInput: UserInput = {
     name: '',
     profile: '',
     icon_url: '',
-    is_deleted: false,
   }
-  const [userInput, setUserInput] = useState<User>(initialUserInput)
+  const [userInput, setUserInput] = useState<UserInput>(initialUserInput)
+  const [iconFile, setIconFile] = useState<File>()
+  const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
+  const [iconInputError, setIconInputError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  const changeUserInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onChangeUserInput = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
     const { name, value } = e.target
     setUserInput({ ...userInput, [name]: value })
   }
 
-  const registerUser = async (): Promise<void> => {
+  const onChangeIconInput = (file: File): void => {
+    const error = validateIcon(file)
+    setIconInputError(error)
+    if (!error) {
+      setIconObjectUrl(URL.createObjectURL(file))
+      // 後でs3にアップするためにセット
+      setIconFile(file)
+    }
+  }
+
+  const register = async (): Promise<void> => {
+    // TODO: アイコンをs3にアップロードする機能
+    console.log(iconFile)
     const token = await getAccessTokenSilently()
-    const res = await post<{ user: DBUser }, { user: User }>(`/user/signup/${auth0User?.sub}`, { user: userInput }, token)
+    const res = await post<{ user: DBUser }, { user: UserInput }>(`/user/signup/${auth0User?.sub}`, { user: userInput }, token)
     navigate(`/mypage/${res.user.key}`)
   }
 
-  // TODO: バリデーション
-  // TODO: アイコンをs3にアップロードする機能
-
   return (
-    <>
-      <input name="name" placeholder="名前" value={userInput.name} onChange={changeUserInput} />
-      <Button buttonText="登録" buttonType="primary" onClick={registerUser} />
-    </>
+    <Layout>
+      <SignupTpl
+        userInput={userInput}
+        iconObjectUrl={iconObjectUrl}
+        iconInputError={iconInputError}
+        onChangeUserInput={onChangeUserInput}
+        onChangeIconInput={onChangeIconInput}
+        register={register}
+      />
+    </Layout>
   )
 }

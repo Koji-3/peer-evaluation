@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
+/* components */
+import { EvaluationDetailTpl, Layout } from 'components/templates'
+
 /* lib, types */
 import { get } from 'lib/axios'
 import { Evaluation } from 'types/types'
-
-/* components */
-import { EvaluationDetailTpl, Layout } from 'components/templates'
 
 /* FIXME: 仮 */
 import { fixtureEvaluation } from '__fixtures__/evaluation'
