@@ -1,13 +1,10 @@
-import { useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
-import { Button, ButtonSmall } from 'components/atoms'
-import { TextInputWithLabel } from 'components/molecules'
+import { Button } from 'components/atoms'
 
 export const Top: React.FC = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
-  const [value, setValue] = useState<string>('')
 
   return (
     <>
@@ -19,15 +16,12 @@ export const Top: React.FC = () => {
         }}
       />
       <Button
-        buttonText="ログイン2"
+        buttonText="新規登録"
         buttonType="white"
         onClick={() => {
-          loginWithRedirect()
+          loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } })
         }}
       />
-      <ButtonSmall buttonText="primary" buttonType="primary" onClick={() => {}} />
-      <ButtonSmall buttonText="white" buttonType="white" onClick={() => {}} />
-      <ButtonSmall buttonText="dark" buttonType="dark" onClick={() => {}} />
       {isAuthenticated && (
         <button
           onClick={() => {
@@ -37,7 +31,6 @@ export const Top: React.FC = () => {
           ログアウト
         </button>
       )}
-      <TextInputWithLabel value={value} onChange={(e) => setValue(e.target.value)} placeholder="placeholder" labelText="ラベル" />
     </>
   )
 }

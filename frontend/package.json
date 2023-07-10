@@ -61,5 +61,9 @@
   },
   "resolutions": {
     "styled-components": "^5"
+  },
+  "volta": {
+    "node": "18.12.1",
+    "yarn": "1.22.19"
   }
 }

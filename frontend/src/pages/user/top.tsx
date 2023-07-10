@@ -40,11 +40,10 @@ export const UserTop: React.FC = () => {
       const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
       if (!res.user) {
         // TODO: データ取得失敗のアラート出す
-        // return
+        return
       }
 
-      // setUser(res.user.props)
-      setUser(fixtureUser)
+      setUser(res.user.props)
       setLastPage(10)
       setAvarageEvaluation(fixtureAvarageEvaluation)
     })()

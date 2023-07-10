@@ -88,7 +88,7 @@ export const UserTopTpl: React.FC<Props> = ({
   return (
     <StyledWrapper>
       <div className="user">
-        <Icon src={user.icon_url} alt={user.name} size={10} className="icon" />
+        <Icon src={user.icon_key} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>
         <p className="profile">{user.profile}</p>
       </div>

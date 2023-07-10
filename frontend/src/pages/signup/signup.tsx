@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { SignupTpl, Layout } from 'components/templates'
 
 /* lib, types */
-import { post } from 'lib/axios'
+import { post, get } from 'lib/axios'
 import { validateIcon } from 'lib/validate'
 import { UserInput, DBUser } from 'types/types'
 
@@ -15,7 +15,7 @@ export const Signup: React.FC = () => {
   const initialUserInput: UserInput = {
     name: '',
     profile: '',
-    icon_url: '',
+    icon_key: '',
   }
   const [userInput, setUserInput] = useState<UserInput>(initialUserInput)
   const [iconFile, setIconFile] = useState<File>()
@@ -38,12 +38,37 @@ export const Signup: React.FC = () => {
     }
   }
 
-  const register = async (): Promise<void> => {
+  const uploadIconToS3 = async (): Promise<string | undefined> => {
     // TODO: アイコンをs3にアップロードする機能
-    console.log(iconFile)
+    if (!iconFile) return
+    try {
+      const formData = new FormData()
+      formData.append('icon_file', iconFile)
+      const token = await getAccessTokenSilently()
+      const { uploadIcon } = await post<{ uploadIcon: boolean }, FormData>(
+        `/s3/upload-icon/${auth0User?.sub}`,
+        formData,
+        token,
+        'multipart/form-data',
+      )
+      if (uploadIcon) return `${auth0User?.sub}/${iconFile.name}`
+    } catch (e) {
+      // TODO: エラー処理
+      console.log(e)
+    }
+  }
+
+  const register = async (): Promise<void> => {
+    const iconKey = await uploadIconToS3()
+    // TODO: エラー処理
+    if (!iconKey) return
     const token = await getAccessTokenSilently()
-    const res = await post<{ user: DBUser }, { user: UserInput }>(`/user/signup/${auth0User?.sub}`, { user: userInput }, token)
-    navigate(`/mypage/${res.user.key}`)
+    const res = await post<{ user: DBUser }, { user: UserInput }>(
+      `/user/signup/${auth0User?.sub}`,
+      { user: { ...userInput, icon_key: iconKey } },
+      token,
+    )
+    navigate(`/user/${res.user.key}`)
   }
 
   return (

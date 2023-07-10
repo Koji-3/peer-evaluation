@@ -16,5 +16,7 @@ app.use(cors({
 // routes
 const user = require('./routes/user');
 app.use('/user', user);
+const s3 = require('./routes/s3');
+app.use('/s3', s3);
 
 app.listen(port)

@@ -16,6 +16,7 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
     return `
       color: ${props.theme.white};
       background: ${props.theme.primary};
+      line-height: 3rem;
 
       &:hover {
       }
@@ -35,6 +36,7 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
     return `
       color: ${props.theme.white};
       background: ${props.theme.darkGreen};
+      line-height: 3rem;
 
       &:hover {
       }

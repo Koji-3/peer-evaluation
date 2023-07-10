@@ -137,7 +137,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
     <StyledWrapper className={className}>
       <div className="evaluatee">
         <p>{evaluatee.name}さんを紹介しよう！</p>
-        <Icon src={evaluatee.icon_url} alt={evaluatee.name} size={10} />
+        <Icon src={evaluatee.icon_key} alt={evaluatee.name} size={10} />
       </div>
 
       <div className="content">

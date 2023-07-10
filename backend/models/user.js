@@ -8,12 +8,12 @@ const users = db.collection("users")
 const createUser = async(user) => {
   const uuid = shortUuid.generate()
   if(!user) return
-  const {auth0_id, name, profile, icon_url, is_deleted} = user
+  const {auth0_id, name, profile, icon_key, is_deleted} = user
   const newUser = await users.set(uuid, {
     auth0_id,
     name,
     profile,
-    icon_url,
+    icon_key,
     is_deleted 
   })
   return newUser
@@ -28,6 +28,7 @@ const getUserByAuth0Id = async(auth0Id) => {
 
 const getUserById = async(id) => {
   const user = await users.get(id)
+  // TODO: そのidのユーザーがいないときの処理
   // TODO: is_deletedがtrueのときの処理
   return user
 }
@@ -35,12 +36,12 @@ const getUserById = async(id) => {
 const updateUser = async(auth0Id, newUser) => {
   if(!newUser) return
   const user = await getUserByAuth0Id(auth0Id)
-  const {auth0_id, name, profile, icon_url, is_deleted} = newUser
+  const {auth0_id, name, profile, icon_key, is_deleted} = newUser
   const updatedUser = await users.set(user.key, {
     auth0_id,
     name,
     profile,
-    icon_url,
+    icon_key,
     is_deleted 
   })
   return updatedUser
@@ -55,7 +56,7 @@ const deleteUser = async(auth0Id) => {
     auth0_id: uuid, // auth0_idは一意のidを生成
     name: '退会済みユーザー',
     profile: '',
-    icon_url: '',
+    icon_key: '',
     is_deleted: true
   })
   return deletedUser

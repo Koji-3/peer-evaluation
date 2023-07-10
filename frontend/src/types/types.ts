@@ -16,7 +16,7 @@ export type User = {
   auth0_id: string
   name: string
   profile: string
-  icon_url: string
+  icon_key: string
   is_deleted: boolean
 }
 
@@ -35,7 +35,7 @@ export type Auth0User = {
 export type UserInput = {
   name: string
   profile: string
-  icon_url: string
+  icon_key: string
 }
 
 // TODO: google以外のログインも受け付けるなら要変更

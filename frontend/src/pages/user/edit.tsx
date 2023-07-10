@@ -120,6 +120,19 @@ export const UserEdit: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
 
+  useEffect(() => {
+    // アイコン取得コード参考
+    // ;(async () => {
+    //   const token = await getAccessTokenSilently()
+    //   const res = await get<{ file: {type: 'Buffer', data: Buffer} }, {key: string}>(`/s3/get-icon`,token, {key: 'auth0|64aa3c5f1e94a96b00c0eb8f/201_01.png'})
+    //   console.log(res)
+    //   const byteArray = new Uint8Array(res.file.data);
+    //   const blob = new Blob([byteArray], { type: 'image/png' });
+    //   const dataUrl = URL.createObjectURL(blob);
+    //   console.log(dataUrl)
+    // })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
     <Layout>
       {/* TODO: auth */}
