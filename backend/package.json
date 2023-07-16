@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "ts-node app.ts",
+    "start": "node app.js",
+    "start:ts": "ts-node app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint --ext .tsx,.ts .",
     "eslint:fix": "eslint --ext .tsx,.ts . --fix",
