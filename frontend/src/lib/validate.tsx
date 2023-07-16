@@ -4,10 +4,10 @@ export const validateIcon = (file: File): string | null => {
   const MAX_FILE_SIZE = 2
 
   if (type !== 'image/jpeg' && type !== 'image/png') {
-    message = 'サポートしているファイル形式は、JPEG、PNGです'
+    message = '※サポートしているファイル形式はjpeg、pngです。'
   }
   if (size > MAX_FILE_SIZE * 1024 * 1024) {
-    message = '最大ファイルサイズは2MBです'
+    message = '※最大ファイルサイズは2MBです。'
   }
 
   return message
@@ -18,7 +18,7 @@ export const validateEmail = (email: string): string | null => {
   let message = null
 
   if (!re.test(email)) {
-    message = 'メールアドレスの形式が違います'
+    message = '※メールアドレスの形式が異なります。'
   }
   return message
 }

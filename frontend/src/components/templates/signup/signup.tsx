@@ -9,7 +9,7 @@ import { mediaSp } from 'lib/media-query'
 import { UserInput } from 'types/types'
 
 /* images */
-import defaultIcon from 'assets/images/icon/default_icon.png'
+import defaultIcon from 'assets/images/icon/default-icon.svg'
 
 type Props = {
   className?: string
@@ -87,6 +87,7 @@ export const SignupTpl: React.FC<Props> = ({
           name="profile"
           value={profile}
           placeholder="よろしくお願いします！"
+          maxLength={200}
           onChange={onChangeUserInput}
           className="profile"
         />

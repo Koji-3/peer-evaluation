@@ -25,6 +25,14 @@ const StyledInputWrapper = styled.div`
     cursor: pointer;
   }
 
+  .error {
+    padding: 1.5rem 0 0;
+    color: ${(props): string => props.theme.errorText};
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
   ${mediaSp`
   `}
 `
@@ -56,7 +64,6 @@ export const IconInput: React.FC<Props> = ({ className = '', name, label, error,
       <label htmlFor="icon_input" className="select-file-button">
         {label}
       </label>
-      {/* TODO: スタイル */}
       {!!error && <p className="error">{error}</p>}
     </StyledInputWrapper>
   )

@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
 /* components */
-import { Button, Icon, Textarea } from 'components/atoms'
-import { TextInputWithLabel, IconInput } from 'components/molecules'
+import { Button, Icon } from 'components/atoms'
+import { TextInputWithLabel, IconInput, TextareaWithLabel } from 'components/molecules'
 import { EvaluationFormItem } from 'components/organisms'
 
 /* lib, types, options */
@@ -11,7 +11,7 @@ import { getE1Options, getE2Options, getE3Options, getE4Options, getE5Options, g
 import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 
 /* images */
-import defaultIcon from 'assets/images/icon/default_icon.png'
+import defaultIcon from 'assets/images/icon/default-icon.svg'
 
 type Props = {
   className?: string
@@ -185,7 +185,13 @@ export const EvaluationFormTpl: React.FC<Props> = ({
           <div className="inner">
             <p className="title">紹介コメントを簡単にお願いします！</p>
             <p className="description">{evaluatee.name}さんのプロフィールトップに表示されます。</p>
-            <Textarea placeholder="コメント記入" name="comment" value={comment} onChange={onChangeEvaluationInput} />
+            <TextareaWithLabel
+              placeholder="コメント記入"
+              name="comment"
+              value={comment}
+              maxLength={200}
+              onChange={onChangeEvaluationInput}
+            />
           </div>
         </div>
 

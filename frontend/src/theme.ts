@@ -12,8 +12,9 @@ export const theme = {
   primary: '#53bd9a',
   primaryRgb: '83,189,154',
   darkGreen: '#31565d',
-  background: '#f8ece1',
+  background: '#fcfaf8',
   blue: '#00bbe4',
+  errorText: '#ee0e00',
 } as const
 
 type Theme = typeof theme

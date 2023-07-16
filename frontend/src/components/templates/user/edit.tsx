@@ -13,6 +13,7 @@ type Props = {
   className?: string
   userInput: User
   email: string
+  emailError: string | null
   shouldShowEmailInput: boolean
   iconObjectUrl: string
   iconInputError: string | null
@@ -103,6 +104,7 @@ const StyledWrapper = styled.div`
 export const UserEditTpl: React.FC<Props> = ({
   userInput,
   email,
+  emailError,
   shouldShowEmailInput,
   iconObjectUrl,
   iconInputError,
@@ -132,7 +134,14 @@ export const UserEditTpl: React.FC<Props> = ({
           <TextInputWithLabel labelText="表示名" name="name" value={userInput.name} onChange={onChangeUserInput} />
           {/* googleアカウントでログインしている場合はemail, passwordは変更できない */}
           {shouldShowEmailInput && (
-            <TextInputWithLabel labelText="メールアドレス" name="email" value={email} onChange={onChangeEmail} className="email" />
+            <TextInputWithLabel
+              labelText="メールアドレス"
+              name="email"
+              value={email}
+              error={emailError ?? undefined}
+              onChange={onChangeEmail}
+              className="email"
+            />
           )}
         </div>
 

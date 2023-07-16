@@ -7,7 +7,7 @@ import { UserEditTpl, AuthWrapper, Layout } from 'components/templates'
 
 /* lib, types */
 import { get, put, deleteData } from 'lib/axios'
-import { validateIcon } from 'lib/validate'
+import { validateIcon, validateEmail } from 'lib/validate'
 import { DBUser, User, Auth0AuthenticatedBy } from 'types/types'
 
 // FIXME: 仮
@@ -16,6 +16,7 @@ import { fixtureUser } from '__fixtures__/user'
 export const UserEdit: React.FC = () => {
   const [userInput, setUserInput] = useState<User>()
   const [email, setEmail] = useState<string>('')
+  const [emailError, setEmailError] = useState<string | null>(null)
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
@@ -47,7 +48,10 @@ export const UserEdit: React.FC = () => {
   }
 
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value)
+    const { value } = e.target
+    setEmail(value)
+    const error = validateEmail(value)
+    setEmailError(error)
   }
 
   const updateEmail = async (): Promise<void> => {
@@ -107,11 +111,11 @@ export const UserEdit: React.FC = () => {
       // return
     }
     ;(async () => {
-      const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
-      if (!res.user) {
-        // TODO: データ取得失敗のアラートだす
-        // return
-      }
+      // const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
+      // if (!res.user) {
+      //   // TODO: データ取得失敗のアラートだす
+      //   // return
+      // }
       // setUserInput(res.user.props)
       setUserInput(fixtureUser)
       // setEmail(auth0User?.email || '')
@@ -141,6 +145,7 @@ export const UserEdit: React.FC = () => {
         <UserEditTpl
           userInput={userInput}
           email={email}
+          emailError={emailError}
           shouldShowEmailInput={shouldShowEmailInput}
           iconObjectUrl={iconObjectUrl}
           iconInputError={iconInputError}

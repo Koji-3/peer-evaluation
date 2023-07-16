@@ -2,8 +2,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 /* components */
-import { Textarea } from 'components/atoms'
-import { RadioButton } from 'components/molecules'
+import { RadioButton, TextareaWithLabel } from 'components/molecules'
 
 /* lib, types */
 import { type EvaluationLabels, RadioButton as RadioButtonType } from 'types/types'
@@ -63,7 +62,7 @@ const StyledWrapper = styled.div`
     overflow: hidden;
 
     &.open {
-      min-height: 16rem;
+      min-height: 18.5rem;
     }
   }
 `
@@ -102,7 +101,7 @@ export const EvaluationFormItem: React.FC<Props> = ({
       </button>
 
       <div className={`reason-input${isOpenReasonInput ? ' open' : ''}`}>
-        <Textarea placeholder="理由記入" name="" value={reasonInput} onChange={onChangeReasonInput} />
+        <TextareaWithLabel placeholder="理由記入" name="" value={reasonInput} maxLength={200} onChange={onChangeReasonInput} />
       </div>
     </StyledWrapper>
   )

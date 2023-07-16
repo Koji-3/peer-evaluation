@@ -7,17 +7,18 @@ import { ButtonSmall, Icon } from 'components/atoms'
 import { Evaluation } from 'types/types'
 
 /* images */
-import defaultIcon from 'assets/images/icon/default_icon.png'
+import defaultIcon from 'assets/images/icon/default-icon.svg'
 
 type Props = {
   className?: string
   evaluation: Evaluation
+  shouldShowButtons: boolean
   publishEvaluation: (id: string) => void
   unpublishEvaluation: (id: string) => void
   deleteEvaluation: (id: string) => void
 }
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ shouldShowButtons: boolean }>`
   width: 36rem;
   padding: 1.5rem 1.7rem 1.1rem 1.5rem;
   background: ${(props): string => props.theme.white};
@@ -27,7 +28,7 @@ const StyledWrapper = styled.div`
 
   > a {
     .flex-wrapper {
-      padding: 0 0 3.2rem;
+      padding: 0 0 ${(props): string => (props.shouldShowButtons ? '3.2rem' : '0.6rem')};
       display: flex;
       gap: 1.5rem;
 
@@ -66,6 +67,7 @@ const StyledWrapper = styled.div`
 export const EvaluationItem: React.FC<Props> = ({
   className = '',
   evaluation,
+  shouldShowButtons,
   publishEvaluation,
   unpublishEvaluation,
   deleteEvaluation,
@@ -73,7 +75,7 @@ export const EvaluationItem: React.FC<Props> = ({
   const { id, evaluatorIconUrl, evaluatorName, relationship, comment, is_published } = evaluation
 
   return (
-    <StyledWrapper>
+    <StyledWrapper shouldShowButtons={shouldShowButtons}>
       <a className={className} href={`/evaluation/${id}`}>
         <div className="flex-wrapper">
           <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} />
@@ -86,14 +88,16 @@ export const EvaluationItem: React.FC<Props> = ({
           </div>
         </div>
       </a>
-      <div className="buttons">
-        {is_published ? (
-          <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => unpublishEvaluation(id)} />
-        ) : (
-          <ButtonSmall buttonText="公開する" buttonType="primary" onClick={() => publishEvaluation(id)} />
-        )}
-        <ButtonSmall buttonText="削除" buttonType="dark" onClick={() => deleteEvaluation(id)} />
-      </div>
+      {shouldShowButtons && (
+        <div className="buttons">
+          {is_published ? (
+            <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => unpublishEvaluation(id)} />
+          ) : (
+            <ButtonSmall buttonText="公開する" buttonType="primary" onClick={() => publishEvaluation(id)} />
+          )}
+          <ButtonSmall buttonText="削除" buttonType="dark" onClick={() => deleteEvaluation(id)} />
+        </div>
+      )}
     </StyledWrapper>
   )
 }

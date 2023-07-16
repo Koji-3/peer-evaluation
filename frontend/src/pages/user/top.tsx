@@ -159,6 +159,7 @@ export const UserTop: React.FC = () => {
           evaluations={evaluations}
           currentPage={currentPage}
           lastPage={lastPage}
+          shouldShowControlEvaluationButtons={isAuthenticated}
           publishEvaluation={publishEvaluation}
           unpublishEvaluation={unpublishEvaluation}
           deleteEvaluation={deleteEvaluation}

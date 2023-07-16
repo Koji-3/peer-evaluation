@@ -8,6 +8,7 @@ type Props = {
   name?: string
   value: string
   placeholder?: string
+  maxLength?: number
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 
@@ -24,13 +25,15 @@ const StyledTextarea = styled.textarea`
 
   &:focus {
     outline: 0;
-    border: 0.1rem solid ${(props): string => props.theme.black};
+    border: 0.15rem solid ${(props): string => props.theme.primary};
   }
 
   ${mediaSp`
   `}
 `
 
-export const Textarea: React.FC<Props> = ({ className = '', name, value, placeholder, onChange }) => {
-  return <StyledTextarea className={className} name={name} value={value} placeholder={placeholder} onChange={onChange} />
+export const Textarea: React.FC<Props> = ({ className = '', name, value, placeholder, maxLength, onChange }) => {
+  return (
+    <StyledTextarea className={className} name={name} value={value} placeholder={placeholder} maxLength={maxLength} onChange={onChange} />
+  )
 }

@@ -17,6 +17,7 @@ type Props = {
   evaluations: Evaluation[]
   currentPage: number
   lastPage: number
+  shouldShowControlEvaluationButtons: boolean
   publishEvaluation: (id: string) => void
   unpublishEvaluation: (id: string) => void
   deleteEvaluation: (id: string) => void
@@ -77,6 +78,7 @@ export const UserTopTpl: React.FC<Props> = ({
   evaluations,
   currentPage,
   lastPage,
+  shouldShowControlEvaluationButtons,
   publishEvaluation,
   unpublishEvaluation,
   deleteEvaluation,
@@ -85,8 +87,6 @@ export const UserTopTpl: React.FC<Props> = ({
     const values = Object.values(user.averageEvaluation) as number[]
     return values.map((num) => (num === 0 ? '0' : parseNumberToOneDecimalText(num)))
   }
-
-  console.log('template', lastPage)
 
   return (
     <StyledWrapper>
@@ -106,10 +106,11 @@ export const UserTopTpl: React.FC<Props> = ({
             {evaluations.map((evaluation) => (
               <EvaluationItem
                 evaluation={evaluation}
-                key={evaluation.id}
+                shouldShowButtons={shouldShowControlEvaluationButtons}
                 publishEvaluation={publishEvaluation}
                 unpublishEvaluation={unpublishEvaluation}
                 deleteEvaluation={deleteEvaluation}
+                key={evaluation.id}
               />
             ))}
           </div>

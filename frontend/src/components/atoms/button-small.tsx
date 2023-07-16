@@ -17,9 +17,6 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
       color: ${props.theme.white};
       background: ${props.theme.primary};
       line-height: 3rem;
-
-      &:hover {
-      }
     `
   }
   if (props.buttonType === 'white') {
@@ -27,9 +24,6 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
       color: ${props.theme.black};
       border: 0.1rem solid ${props.theme.primary};
       line-height: 2.8rem;
-
-      &:hover {
-      }
     `
   }
   if (props.buttonType === 'dark') {
@@ -37,9 +31,6 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
       color: ${props.theme.white};
       background: ${props.theme.darkGreen};
       line-height: 3rem;
-
-      &:hover {
-      }
     `
   }
   return ''
@@ -54,9 +45,11 @@ const StyledButtonSmall = styled.button<StyleProps>`
   transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
   display: block;
 
-  ${(props) => getButtonStyle(props)}/* FIXME */
-  /* &:disabled {
-  } */
+  ${(props) => getButtonStyle(props)}
+
+  &:hover {
+    opacity: 0.6;
+  }
 `
 
 export const ButtonSmall: React.FC<Props & StyleProps> = ({ className = '', buttonText, buttonType, disabled, onClick }) => {

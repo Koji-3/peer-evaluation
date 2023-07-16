@@ -18,19 +18,13 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
       background: ${props.theme.primary};
       font-weight: 700;
       line-height: 5rem;
-
-      &:hover {
-      }
     `
   }
   if (props.buttonType === 'white') {
     return `
       color: ${props.theme.black};
-      border: 0.1rem solid ${props.theme.primary};
+      border: 0.1rem solid ${props.theme.black};
       line-height: 4.8rem;
-
-      &:hover {
-      }
     `
   }
   return ''
@@ -45,6 +39,10 @@ const StyledButton = styled.button<StyleProps>`
   display: block;
 
   ${(props) => getButtonStyle(props)}
+
+  &:hover {
+    opacity: 0.7;
+  }
 
   &:disabled {
     color: ${(props): string => props.theme.white};

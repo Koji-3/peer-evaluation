@@ -11,7 +11,7 @@ import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/ty
 
 /* images */
 import pagePrevIcon from 'assets/images/icon/page-prev.svg'
-import defaultIcon from 'assets/images/icon/default_icon.png'
+import defaultIcon from 'assets/images/icon/default-icon.svg'
 
 type Props = {
   className?: string
