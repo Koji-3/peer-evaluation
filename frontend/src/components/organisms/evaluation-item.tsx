@@ -17,45 +17,49 @@ type Props = {
   deleteEvaluation: (id: string) => void
 }
 
-const StyledWrapper = styled.a`
+const StyledWrapper = styled.div`
   width: 36rem;
   padding: 1.5rem 1.7rem 1.1rem 1.5rem;
   background: ${(props): string => props.theme.white};
   border: 0.1rem solid ${(props): string => props.theme.dividerGray};
   border-radius: 1.5rem;
-  display: block;
+  position: relative;
 
-  .flex-wrapper {
-    margin: 0 0 0.2rem;
-    display: flex;
-    gap: 1.5rem;
+  > a {
+    .flex-wrapper {
+      padding: 0 0 3.2rem;
+      display: flex;
+      gap: 1.5rem;
 
-    .right-content {
-      width: 25.6rem;
-      padding: 0.3rem 0 0;
+      .right-content {
+        width: 25.6rem;
+        padding: 0.3rem 0 0;
 
-      .evaluateBy {
-        padding: 0 0 0.5rem;
-        font-size: 1.2rem;
-        border-bottom: 0.1rem solid ${(props): string => props.theme.dividerGray};
-      }
+        .evaluateBy {
+          padding: 0 0 0.5rem;
+          font-size: 1.2rem;
+          border-bottom: 0.1rem solid ${(props): string => props.theme.dividerGray};
+        }
 
-      .comment {
-        padding: 0.5rem 0 0;
-        font-size: 1.2rem;
-        line-height: 1.7;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
+        .comment {
+          padding: 0.5rem 0 0;
+          font-size: 1.2rem;
+          line-height: 1.7;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+        }
       }
     }
   }
 
   .buttons {
     display: flex;
-    justify-content: flex-end;
     gap: 0.8rem;
+    position: absolute;
+    bottom: 1.1rem;
+    right: 1.7rem;
   }
 `
 
@@ -69,17 +73,19 @@ export const EvaluationItem: React.FC<Props> = ({
   const { id, evaluatorIconUrl, evaluatorName, relationship, comment, is_published } = evaluation
 
   return (
-    <StyledWrapper className={className} href={`/evaluation/${id}`}>
-      <div className="flex-wrapper">
-        <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} />
+    <StyledWrapper>
+      <a className={className} href={`/evaluation/${id}`}>
+        <div className="flex-wrapper">
+          <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} />
 
-        <div className="right-content">
-          <p className="evaluateBy">
-            {evaluatorName} / {relationship}
-          </p>
-          <p className="comment">{comment}</p>
+          <div className="right-content">
+            <p className="evaluateBy">
+              {evaluatorName} / {relationship}
+            </p>
+            <p className="comment">{comment}</p>
+          </div>
         </div>
-      </div>
+      </a>
       <div className="buttons">
         {is_published ? (
           <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => unpublishEvaluation(id)} />

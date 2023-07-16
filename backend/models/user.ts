@@ -1,7 +1,7 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import shortUuid from 'short-uuid'
 import crypto from 'crypto'
-import { UserInput, DBUser, User, AverageEvaluation, EvaluationInput } from '../types/types'
+import { UserInput, DBUser, User, AverageEvaluation, DBEvaluation } from '../types/types'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
 const users = db.collection('users')
@@ -15,7 +15,8 @@ export const createUser = async (user: UserInput, auth0id: string): Promise<DBUs
     is_deleted: false,
     auth0_id: auth0id,
     averageEvaluation: defaultAverageEvaluation,
-    evaluationNum: 0,
+    publishedEvaluationNum: 0,
+    allEvaluationNum: 0,
   }
   const result = await users.set(uuid, newUser)
   return result
@@ -36,25 +37,46 @@ export const getUserById = async (id: string): Promise<User | undefined> => {
 }
 
 export const updateUser = async (auth0Id: string, newUser: UserInput): Promise<DBUser | undefined> => {
-  if (!newUser) return
   const user = (await getUserByAuth0Id(auth0Id)) as DBUser
   const updatedUser = await users.set(user.key, newUser)
   return updatedUser
 }
 
-export const updateUserAvarageEvaluation = async (userId: string, evaluation: EvaluationInput): Promise<void> => {
+export const increaseUserAllEvaluationNum = async (userId: string): Promise<void> => {
   const user: DBUser = await users.get(userId)
-  const { averageEvaluation, evaluationNum } = user.props
+  const { allEvaluationNum } = user.props
+  const newAllEvaluationNum = allEvaluationNum + 1
+  await users.set(user.key, { ...user, allEvaluationNum: newAllEvaluationNum })
+}
+
+export const increaseUserAvarageEvaluation = async (userId: string, evaluation: DBEvaluation['props']): Promise<void> => {
+  const user: DBUser = await users.get(userId)
+  const { averageEvaluation, publishedEvaluationNum } = user.props
   const newAverageEvaluation = {
-    e1: (averageEvaluation.e1 * evaluationNum + evaluation.e1.point) / (evaluationNum + 1),
-    e2: (averageEvaluation.e2 * evaluationNum + evaluation.e2.point) / (evaluationNum + 1),
-    e3: (averageEvaluation.e3 * evaluationNum + evaluation.e3.point) / (evaluationNum + 1),
-    e4: (averageEvaluation.e4 * evaluationNum + evaluation.e4.point) / (evaluationNum + 1),
-    e5: (averageEvaluation.e5 * evaluationNum + evaluation.e5.point) / (evaluationNum + 1),
-    e6: (averageEvaluation.e6 * evaluationNum + evaluation.e6.point) / (evaluationNum + 1),
+    e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum + evaluation.e1.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+    e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum + evaluation.e2.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+    e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum + evaluation.e3.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+    e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum + evaluation.e4.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+    e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum + evaluation.e5.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+    e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum + evaluation.e6.point) / (publishedEvaluationNum + 1)) * 10) / 10,
   }
-  const newEvaluationNum = evaluationNum + 1
-  await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, evaluationNum: newEvaluationNum })
+  const newPublishedEvaluationNum = publishedEvaluationNum + 1
+  await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
+}
+
+export const decreaseUserAvarageEvaluation = async (userId: string, evaluation: DBEvaluation['props']): Promise<void> => {
+  const user: DBUser = await users.get(userId)
+  const { averageEvaluation, publishedEvaluationNum } = user.props
+  const newAverageEvaluation = {
+    e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum - evaluation.e1.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+    e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum - evaluation.e2.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+    e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum - evaluation.e3.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+    e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum - evaluation.e4.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+    e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum - evaluation.e5.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+    e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum - evaluation.e6.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+  }
+  const newPublishedEvaluationNum = publishedEvaluationNum - 1
+  await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
 }
 
 export const deleteUser = async (auth0Id: string): Promise<DBUser | undefined> => {

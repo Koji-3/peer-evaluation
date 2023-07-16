@@ -1,7 +1,7 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import crypto from 'crypto'
 import { getIcon } from './s3'
-import { updateUserAvarageEvaluation } from './user'
+import { increaseUserAvarageEvaluation, decreaseUserAvarageEvaluation, increaseUserAllEvaluationNum } from './user'
 import { EvaluationInput, DBEvaluation, Evaluation } from '../types/types'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
@@ -12,7 +12,7 @@ export const createEvaluation = async (evaluation: EvaluationInput, evaluateeId:
   if (!evaluation) return
   const newEvaluation: Omit<DBEvaluation['props'], 'created'> = { ...evaluation, is_published: false, is_deleted: false, evaluateeId }
   const result = await evaluations.set(uuid, newEvaluation)
-  await updateUserAvarageEvaluation(evaluateeId, evaluation)
+  await increaseUserAllEvaluationNum(evaluateeId)
   return result
 }
 
@@ -58,6 +58,30 @@ export const getPublishedEvaluations = async (evaluateeId: string): Promise<Eval
   if (!res.results.length) return []
   const sortedResults = sortByCreatedAt(res.results)
   return addParamsForReturnValueToEvaluations(sortedResults)
+}
+
+export const updateEvaluation = async ({
+  evaluationId,
+  isPublished,
+  isDeleted,
+}: {
+  evaluationId: string
+  isPublished?: boolean
+  isDeleted?: boolean
+}): Promise<{ update: boolean }> => {
+  const evaluation: DBEvaluation = await evaluations.get(evaluationId)
+  const res = await evaluations.set(evaluationId, {
+    ...evaluation,
+    is_published: isPublished ?? evaluation.props.is_published,
+    is_deleted: isDeleted ?? evaluation.props.is_deleted,
+  })
+  if (isPublished) {
+    await increaseUserAvarageEvaluation(evaluation.props.evaluateeId, evaluation.props)
+  } else {
+    await decreaseUserAvarageEvaluation(evaluation.props.evaluateeId, evaluation.props)
+  }
+  if (!!res) return { update: true }
+  return { update: false }
 }
 
 // FIXME: データ確認用なので最後に消す

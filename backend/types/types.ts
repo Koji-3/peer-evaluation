@@ -11,7 +11,8 @@ export type User = {
   icon_key: string
   is_deleted: boolean
   averageEvaluation: AverageEvaluation
-  evaluationNum: number
+  publishedEvaluationNum: number
+  allEvaluationNum: number
   created: string
 }
 

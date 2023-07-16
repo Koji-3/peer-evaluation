@@ -43,6 +43,21 @@ router.get('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.json({ evaluations: null });
     }
 }));
+// 評価を公開する
+router.put('/publish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: true });
+    res.json(result);
+}));
+// 評価を非公開にする
+router.put('/unpublish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: false });
+    res.json(result);
+}));
+// 評価を削除する
+router.delete('/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isDeleted: true });
+    res.json(result);
+}));
 // 評価一覧を取得する(ユーザー自身)
 router.get('/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const evaluations = yield (0, evaluation_1.getAllEvaluations)(req.params.evaluateeId);

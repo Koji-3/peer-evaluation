@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPublishedEvaluations = exports.getAllEvaluations = exports.createEvaluation = void 0;
+exports.updateEvaluation = exports.getPublishedEvaluations = exports.getAllEvaluations = exports.createEvaluation = void 0;
 const dynamodb_1 = __importDefault(require("@cyclic.sh/dynamodb"));
 const crypto_1 = __importDefault(require("crypto"));
 const s3_1 = require("./s3");
@@ -25,7 +25,7 @@ const createEvaluation = (evaluation, evaluateeId) => __awaiter(void 0, void 0, 
         return;
     const newEvaluation = Object.assign(Object.assign({}, evaluation), { is_published: false, is_deleted: false, evaluateeId });
     const result = yield evaluations.set(uuid, newEvaluation);
-    yield (0, user_1.updateUserAvarageEvaluation)(evaluateeId, evaluation);
+    yield (0, user_1.increaseUserAllEvaluationNum)(evaluateeId);
     return result;
 });
 exports.createEvaluation = createEvaluation;
@@ -71,6 +71,20 @@ const getPublishedEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 
     return addParamsForReturnValueToEvaluations(sortedResults);
 });
 exports.getPublishedEvaluations = getPublishedEvaluations;
+const updateEvaluation = ({ evaluationId, isPublished, isDeleted, }) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluation = yield evaluations.get(evaluationId);
+    const res = yield evaluations.set(evaluationId, Object.assign(Object.assign({}, evaluation), { is_published: isPublished !== null && isPublished !== void 0 ? isPublished : evaluation.props.is_published, is_deleted: isDeleted !== null && isDeleted !== void 0 ? isDeleted : evaluation.props.is_deleted }));
+    if (isPublished) {
+        yield (0, user_1.increaseUserAvarageEvaluation)(evaluation.props.evaluateeId, evaluation.props);
+    }
+    else {
+        yield (0, user_1.decreaseUserAvarageEvaluation)(evaluation.props.evaluateeId, evaluation.props);
+    }
+    if (!!res)
+        return { update: true };
+    return { update: false };
+});
+exports.updateEvaluation = updateEvaluation;
 // FIXME: データ確認用なので最後に消す
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllEvaluations = () => __awaiter(void 0, void 0, void 0, function* () {

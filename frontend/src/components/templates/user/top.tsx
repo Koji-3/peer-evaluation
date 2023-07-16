@@ -86,6 +86,8 @@ export const UserTopTpl: React.FC<Props> = ({
     return values.map((num) => (num === 0 ? '0' : parseNumberToOneDecimalText(num)))
   }
 
+  console.log('template', lastPage)
+
   return (
     <StyledWrapper>
       <a href={`/evaluation/form/${user.id}`}>評価を書く</a>
@@ -117,7 +119,7 @@ export const UserTopTpl: React.FC<Props> = ({
         )}
       </div>
 
-      <Pagination currentPage={currentPage} lastPage={lastPage} />
+      {!!lastPage && <Pagination currentPage={currentPage} lastPage={lastPage} />}
     </StyledWrapper>
   )
 }

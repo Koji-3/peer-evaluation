@@ -19,7 +19,7 @@ const StyledWrapper = styled.div`
 `
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const { isAuthenticated } = useAuth0()
+  const { isAuthenticated, logout } = useAuth0()
 
   useEffect(() => {
     // TODO: ヘッダーだしわけ
@@ -29,6 +29,15 @@ export const Layout: React.FC<Props> = ({ children }) => {
   return (
     <StyledWrapper>
       {/* TODO: ヘッダー */}
+      {isAuthenticated && (
+        <button
+          onClick={() => {
+            logout({ logoutParams: { returnTo: window.location.origin } })
+          }}
+        >
+          ログアウト
+        </button>
+      )}
       {children}
     </StyledWrapper>
   )

@@ -119,7 +119,6 @@ export const Pagination: React.FC<Props> = ({ className = '', currentPage, lastP
     }
   }
 
-  // 1ページしかなかったらページネーションごと非表示に
   if (lastPage === 1) return null
   return (
     <Wrapper className={className}>

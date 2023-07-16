@@ -7,7 +7,8 @@ export const fixtureUser: User = {
   profile: 'よろしくお願いしまあああああす！！',
   icon_key: 'https://placekitten.com/200/200',
   is_deleted: false,
-  evaluationNum: 2,
+  publishedEvaluationNum: 2,
+  allEvaluationNum: 2,
   averageEvaluation: {
     e1: 0,
     e2: 0,
