@@ -107,7 +107,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
   const { isPublished, evaluatorIconUrl, evaluatorName, relationship, evaluatee, comment } = evaluation
 
   const goToUserTop = (): void => {
-    navigate(`/${evaluation.evaluatee.id}`)
+    navigate(`/user/${evaluation.evaluatee.id}`)
   }
 
   return (

@@ -133,6 +133,12 @@ export const EvaluationFormTpl: React.FC<Props> = ({
     onChangeEvaluationPoint('e6', e)
   })
 
+  const isDisableSubmit = (): boolean => {
+    if (!evaluatorName || !relationship || !comment || !e1.point || !e2.point || !e3.point || !e4.point || !e5.point || !e6.point)
+      return true
+    return false
+  }
+
   return (
     <StyledWrapper className={className}>
       <div className="evaluatee">
@@ -253,7 +259,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
         </div>
       </div>
 
-      <Button buttonText="送信する" buttonType="primary" onClick={submit} className="submit-btn" />
+      <Button buttonText="送信する" buttonType="primary" disabled={isDisableSubmit()} onClick={submit} className="submit-btn" />
     </StyledWrapper>
   )
 }

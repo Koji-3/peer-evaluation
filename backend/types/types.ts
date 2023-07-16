@@ -1,11 +1,3 @@
-export type RadioButton = {
-  id: string
-  name: string
-  value: string | number
-  label: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
-
 type DBProperties = {
   collection: string
   key: string

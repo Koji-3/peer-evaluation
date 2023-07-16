@@ -38,8 +38,8 @@ export const App: React.FC = () => {
             <Route path="/login/callback" element={<LoginCallback />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/user/:id" element={<UserTop />} />
-            <Route path="/evaluation/:id" element={<EvaluationDetail />} />
             <Route path="/evaluation/form/:id" element={<EvaluationForm />} />
+            <Route path="/evaluation/:id" element={<EvaluationDetail />} />
             <Route path="/user/:id/edit" element={<UserEdit />} />
           </Routes>
         </main>

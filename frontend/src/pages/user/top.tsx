@@ -10,7 +10,6 @@ import { get } from 'lib/axios'
 import { DBUser, User, AvarageEvaluation } from 'types/types'
 
 /* FIXME: 仮 */
-import { fixtureUser } from '__fixtures__/user'
 import { fixtureEvaluations, fixtureAvarageEvaluation } from '__fixtures__/evaluation'
 
 export const UserTop: React.FC = () => {

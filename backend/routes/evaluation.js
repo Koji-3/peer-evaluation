@@ -12,28 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getIcon = exports.uploadIcon = void 0;
-const aws_sdk_1 = __importDefault(require("aws-sdk"));
-const s3 = new aws_sdk_1.default.S3();
-const uploadIcon = (file, auth0id, evaluatorName) => __awaiter(void 0, void 0, void 0, function* () {
-    const iconBuffer = Buffer.from(file.buffer);
-    const result = yield s3
-        .putObject({
-        Body: iconBuffer,
-        Bucket: process.env.CYCLIC_BUCKET_NAME || '',
-        Key: auth0id ? `user/${auth0id}/${file.originalname}` : `evaluator/${evaluatorName}/${file.originalname}`,
-    })
-        .promise();
-    return result;
-});
-exports.uploadIcon = uploadIcon;
-const getIcon = (key) => __awaiter(void 0, void 0, void 0, function* () {
-    const icon = yield s3
-        .getObject({
-        Bucket: process.env.CYCLIC_BUCKET_NAME || '',
-        Key: key,
-    })
-        .promise();
-    return icon;
-});
-exports.getIcon = getIcon;
+const express_1 = __importDefault(require("express"));
+const evaluation_1 = require("../models/evaluation");
+// import {auth} from'express-oauth2-jwt-bearer'
+/* auth0 jwt config */
+// const checkJwt = auth({
+//   audience: process.env.AUTH0_API_AUDIENCE,
+//   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+//   tokenSigningAlg: process.env.AUTH0_TOKEN_SIGNING_ALG
+// });
+const router = express_1.default.Router();
+/* router */
+// ユーザーTOPでユーザー情報を取得する
+router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluation = yield (0, evaluation_1.createEvaluation)(req.body.evaluation);
+    if (evaluation) {
+        res.json({ evaluation });
+    }
+    else {
+        res.json({ evaluation: null });
+    }
+}));
+exports.default = router;

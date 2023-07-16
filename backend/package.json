@@ -4,8 +4,15 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint --ext .tsx,.ts .",
+    "eslint:fix": "eslint --ext .tsx,.ts . --fix",
+    "prettier": "prettier .tsx,.ts .",
+    "prettier:fix": "prettier --write './**/*.{tsx,ts}'",
+    "tsc:noEmit": "tsc --noEmit",
+    "tsc": "tsc",
+    "pre-push": "yarn tsc:noEmit; yarn eslint:fix; yarn prettier:fix"
   },
   "author": "",
   "license": "ISC",
@@ -24,5 +31,18 @@
   },
   "volta": {
     "node": "18.12.1"
+  },
+  "devDependencies": {
+    "@types/auth0": "^3.3.3",
+    "@types/cors": "^2.8.13",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^20.4.2",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.6.0",
+    "prettier": "^2.8.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   }
 }

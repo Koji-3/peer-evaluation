@@ -1,0 +1,39 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+  },
+  "plugins": [
+    "@typescript-eslint",
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "@typescript-eslint/camelcase": 0,
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true
+      }
+    ],
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": ["arrowFunctions"]
+      }
+    ],
+    "max-lines": "error",
+    "no-console": [
+      "warn"
+    ],
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  }
+}

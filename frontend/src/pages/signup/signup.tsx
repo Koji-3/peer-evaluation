@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 /* components */
 import { SignupTpl, Layout } from 'components/templates'
 
 /* lib, types */
-import { post, get } from 'lib/axios'
+import { post } from 'lib/axios'
+import { userUploadIconToS3 } from 'lib/upload-icon'
 import { validateIcon } from 'lib/validate'
 import { UserInput, DBUser } from 'types/types'
 
@@ -22,6 +23,7 @@ export const Signup: React.FC = () => {
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const onChangeUserInput = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
     const { name, value } = e.target
@@ -38,31 +40,17 @@ export const Signup: React.FC = () => {
     }
   }
 
-  const uploadIconToS3 = async (): Promise<string | undefined> => {
-    // TODO: アイコンをs3にアップロードする機能
-    if (!iconFile) return
+  const register = async (): Promise<void> => {
+    if (!iconFile || !auth0User || !auth0User.sub) return
+    const token = await getAccessTokenSilently()
+    let iconKey: string | undefined
     try {
-      const formData = new FormData()
-      formData.append('icon_file', iconFile)
-      const token = await getAccessTokenSilently()
-      const { uploadIcon } = await post<{ uploadIcon: boolean }, FormData>(
-        `/s3/upload-icon/${auth0User?.sub}`,
-        formData,
-        token,
-        'multipart/form-data',
-      )
-      if (uploadIcon) return `${auth0User?.sub}/${iconFile.name}`
+      iconKey = await userUploadIconToS3({ file: iconFile, token, auth0Id: auth0User.sub })
     } catch (e) {
       // TODO: エラー処理
-      console.log(e)
     }
-  }
-
-  const register = async (): Promise<void> => {
-    const iconKey = await uploadIconToS3()
     // TODO: エラー処理
     if (!iconKey) return
-    const token = await getAccessTokenSilently()
     const res = await post<{ user: DBUser }, { user: UserInput }>(
       `/user/signup/${auth0User?.sub}`,
       { user: { ...userInput, icon_key: iconKey } },
@@ -70,6 +58,14 @@ export const Signup: React.FC = () => {
     )
     navigate(`/user/${res.user.key}`)
   }
+
+  // TODO: Auth0からのコールバックじゃなければエラー表示
+  useEffect(() => {
+    console.log(searchParams.get('supportSignUp'))
+    if (!searchParams.get('supportSignUp')) {
+      console.log('error')
+    }
+  }, [searchParams])
 
   return (
     <Layout>
