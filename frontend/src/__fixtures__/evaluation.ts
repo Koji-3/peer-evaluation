@@ -1,4 +1,4 @@
-import { Evaluation, AvarageEvaluation } from 'types/types'
+import { Evaluation, AverageEvaluation } from 'types/types'
 
 export const fixtureEvaluation: Evaluation = {
   id: 'a',
@@ -184,8 +184,7 @@ export const fixtureEvaluations: Evaluation[] = [
   },
 ]
 
-export const fixtureAvarageEvaluation: AvarageEvaluation = {
-  evaluateeId: 'evaluatee',
+export const fixtureAverageEvaluation: AverageEvaluation = {
   e1: 3,
   e2: 2.9,
   e3: 4.3,

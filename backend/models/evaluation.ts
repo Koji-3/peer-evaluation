@@ -1,6 +1,7 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import crypto from 'crypto'
 import { getIcon } from './s3'
+import { updateUserAvarageEvaluation } from './user'
 import { EvaluationInput, DBEvaluation, Evaluation } from '../types/types'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
@@ -11,6 +12,7 @@ export const createEvaluation = async (evaluation: EvaluationInput, evaluateeId:
   if (!evaluation) return
   const newEvaluation: Omit<DBEvaluation['props'], 'created'> = { ...evaluation, is_published: false, is_deleted: false, evaluateeId }
   const result = await evaluations.set(uuid, newEvaluation)
+  await updateUserAvarageEvaluation(evaluateeId, evaluation)
   return result
 }
 

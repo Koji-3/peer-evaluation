@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.getUserById = exports.getUserByAuth0Id = exports.createUser = void 0;
+exports.deleteUser = exports.updateUserAvarageEvaluation = exports.updateUser = exports.getUserById = exports.getUserByAuth0Id = exports.createUser = void 0;
 const dynamodb_1 = __importDefault(require("@cyclic.sh/dynamodb"));
 const short_uuid_1 = __importDefault(require("short-uuid"));
 const crypto_1 = __importDefault(require("crypto"));
@@ -22,7 +22,8 @@ const createUser = (user, auth0id) => __awaiter(void 0, void 0, void 0, function
     const uuid = short_uuid_1.default.generate();
     if (!user)
         return undefined;
-    const newUser = Object.assign(Object.assign({}, user), { is_deleted: false, auth0_id: auth0id });
+    const defaultAverageEvaluation = { e1: 0, e2: 0, e3: 0, e4: 0, e5: 0, e6: 0 };
+    const newUser = Object.assign(Object.assign({}, user), { is_deleted: false, auth0_id: auth0id, averageEvaluation: defaultAverageEvaluation, evaluationNum: 0 });
     const result = yield users.set(uuid, newUser);
     return result;
 });
@@ -50,6 +51,21 @@ const updateUser = (auth0Id, newUser) => __awaiter(void 0, void 0, void 0, funct
     return updatedUser;
 });
 exports.updateUser = updateUser;
+const updateUserAvarageEvaluation = (userId, evaluation) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield users.get(userId);
+    const { averageEvaluation, evaluationNum } = user.props;
+    const newAverageEvaluation = {
+        e1: (averageEvaluation.e1 * evaluationNum + evaluation.e1.point) / (evaluationNum + 1),
+        e2: (averageEvaluation.e2 * evaluationNum + evaluation.e2.point) / (evaluationNum + 1),
+        e3: (averageEvaluation.e3 * evaluationNum + evaluation.e3.point) / (evaluationNum + 1),
+        e4: (averageEvaluation.e4 * evaluationNum + evaluation.e4.point) / (evaluationNum + 1),
+        e5: (averageEvaluation.e5 * evaluationNum + evaluation.e5.point) / (evaluationNum + 1),
+        e6: (averageEvaluation.e6 * evaluationNum + evaluation.e6.point) / (evaluationNum + 1),
+    };
+    const newEvaluationNum = evaluationNum + 1;
+    yield users.set(user.key, Object.assign(Object.assign({}, user), { averageEvaluation: newAverageEvaluation, evaluationNum: newEvaluationNum }));
+});
+exports.updateUserAvarageEvaluation = updateUserAvarageEvaluation;
 const deleteUser = (auth0Id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = (yield (0, exports.getUserByAuth0Id)(auth0Id));
     const uuid = crypto_1.default.randomUUID();

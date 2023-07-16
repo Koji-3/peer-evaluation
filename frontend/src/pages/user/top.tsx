@@ -7,15 +7,14 @@ import { UserTopTpl, Layout } from 'components/templates'
 
 /* lib, types */
 import { get } from 'lib/axios'
-import { User, AvarageEvaluation, Evaluation } from 'types/types'
+import { User, AverageEvaluation, Evaluation } from 'types/types'
 
 /* FIXME: 仮 */
-import { fixtureAvarageEvaluation } from '__fixtures__/evaluation'
+import { fixtureAverageEvaluation } from '__fixtures__/evaluation'
 
 export const UserTop: React.FC = () => {
   const [user, setUser] = useState<User>()
   const [userIconUrl, setUserIconUrl] = useState<string>('')
-  const [avarageEvaluation, setAvarageEvaluation] = useState<AvarageEvaluation>()
   const [evaluations, setEvaluations] = useState<Evaluation[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lastPage, setLastPage] = useState<number>(10)
@@ -105,7 +104,6 @@ export const UserTop: React.FC = () => {
       setUserIconUrl(iconUrl)
       setEvaluations(evaluations)
       setLastPage(10)
-      setAvarageEvaluation(fixtureAvarageEvaluation)
     })()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,12 +116,11 @@ export const UserTop: React.FC = () => {
   return (
     <Layout>
       {/* TODO: is_deletedの時エラーページへ */}
-      {user && avarageEvaluation && (
+      {user && (
         <UserTopTpl
           user={user}
           userIconUrl={userIconUrl}
           evaluations={evaluations}
-          avarageEvaluation={avarageEvaluation}
           currentPage={currentPage}
           lastPage={lastPage}
           publishEvaluation={publishEvaluation}

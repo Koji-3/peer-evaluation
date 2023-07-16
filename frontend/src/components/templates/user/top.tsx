@@ -7,14 +7,14 @@ import { EvaluationItem, RadarChart } from 'components/organisms'
 
 /* lib, types */
 import { mediaSp } from 'lib/media-query'
-import { User, Evaluation, AvarageEvaluation } from 'types/types'
+import { parseNumberToOneDecimalText } from 'lib/function'
+import { User, Evaluation } from 'types/types'
 
 type Props = {
   className?: string
   user: User
   userIconUrl: string
   evaluations: Evaluation[]
-  avarageEvaluation: AvarageEvaluation
   currentPage: number
   lastPage: number
   publishEvaluation: (id: string) => void
@@ -75,7 +75,6 @@ export const UserTopTpl: React.FC<Props> = ({
   user,
   userIconUrl,
   evaluations,
-  avarageEvaluation,
   currentPage,
   lastPage,
   publishEvaluation,
@@ -83,12 +82,13 @@ export const UserTopTpl: React.FC<Props> = ({
   deleteEvaluation,
 }) => {
   const getChartData = (): string[] => {
-    const values = Object.values(avarageEvaluation) as (number | User)[]
-    return values.splice(1).map((num) => `${num}`)
+    const values = Object.values(user.averageEvaluation) as number[]
+    return values.map((num) => (num === 0 ? '0' : parseNumberToOneDecimalText(num)))
   }
 
   return (
     <StyledWrapper>
+      <a href={`/evaluation/form/${user.id}`}>評価を書く</a>
       <div className="user">
         <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>

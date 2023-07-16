@@ -16,6 +16,7 @@ exports.getPublishedEvaluations = exports.getAllEvaluations = exports.createEval
 const dynamodb_1 = __importDefault(require("@cyclic.sh/dynamodb"));
 const crypto_1 = __importDefault(require("crypto"));
 const s3_1 = require("./s3");
+const user_1 = require("./user");
 const db = (0, dynamodb_1.default)('motionless-crab-hoseCyclicDB');
 const evaluations = db.collection('evaluations');
 const createEvaluation = (evaluation, evaluateeId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -24,6 +25,7 @@ const createEvaluation = (evaluation, evaluateeId) => __awaiter(void 0, void 0, 
         return;
     const newEvaluation = Object.assign(Object.assign({}, evaluation), { is_published: false, is_deleted: false, evaluateeId });
     const result = yield evaluations.set(uuid, newEvaluation);
+    yield (0, user_1.updateUserAvarageEvaluation)(evaluateeId, evaluation);
     return result;
 });
 exports.createEvaluation = createEvaluation;

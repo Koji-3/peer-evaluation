@@ -18,6 +18,8 @@ export type User = {
   profile: string
   icon_key: string
   is_deleted: boolean
+  averageEvaluation: AverageEvaluation
+  evaluationNum: number
   created: string
 }
 
@@ -101,4 +103,4 @@ export type Evaluation = DBEvaluation['props'] & {
   evaluatorIconUrl?: string
 }
 
-export type AvarageEvaluation = Record<EvaluationLabelKeys | 'evaluateeId', number | string>
+export type AverageEvaluation = Record<EvaluationLabelKeys, number>
