@@ -1,16 +1,17 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import shortUuid from 'short-uuid'
 import crypto from 'crypto'
-import { UserInput, DBUser } from '../types/types'
+import { UserInput, DBUser, User } from '../types/types'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
 const users = db.collection('users')
 
-export const createUser = async (user: UserInput): Promise<DBUser | undefined> => {
+export const createUser = async (user: UserInput, auth0id: string): Promise<DBUser | undefined> => {
   const uuid = shortUuid.generate()
   if (!user) return undefined
-  const newUser = await users.set(uuid, { ...user, is_deleted: false })
-  return newUser
+  const newUser: Omit<DBUser['props'], 'created'> = { ...user, is_deleted: false, auth0_id: auth0id }
+  const result = await users.set(uuid, newUser)
+  return result
 }
 
 export const getUserByAuth0Id = async (auth0Id: string): Promise<DBUser | undefined> => {
@@ -20,11 +21,11 @@ export const getUserByAuth0Id = async (auth0Id: string): Promise<DBUser | undefi
   return userbyAuth0Id.results[0]
 }
 
-export const getUserById = async (id: string): Promise<DBUser | undefined> => {
-  const user = await users.get(id)
+export const getUserById = async (id: string): Promise<User | undefined> => {
+  const user: DBUser = await users.get(id)
   // TODO: そのidのユーザーがいないときの処理
   // TODO: is_deletedがtrueのときの処理
-  return user
+  return { ...user.props, id: user.key }
 }
 
 export const updateUser = async (auth0Id: string, newUser: UserInput): Promise<DBUser | undefined> => {

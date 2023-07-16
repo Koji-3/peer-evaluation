@@ -7,17 +7,19 @@ import { UserTopTpl, Layout } from 'components/templates'
 
 /* lib, types */
 import { get } from 'lib/axios'
-import { DBUser, User, AvarageEvaluation } from 'types/types'
+import { User, AvarageEvaluation, Evaluation } from 'types/types'
 
 /* FIXME: 仮 */
-import { fixtureEvaluations, fixtureAvarageEvaluation } from '__fixtures__/evaluation'
+import { fixtureAvarageEvaluation } from '__fixtures__/evaluation'
 
 export const UserTop: React.FC = () => {
   const [user, setUser] = useState<User>()
+  const [userIconUrl, setUserIconUrl] = useState<string>('')
   const [avarageEvaluation, setAvarageEvaluation] = useState<AvarageEvaluation>()
+  const [evaluations, setEvaluations] = useState<Evaluation[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lastPage, setLastPage] = useState<number>(10)
-  const { isLoading } = useAuth0()
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const [searchParams] = useSearchParams()
 
@@ -36,30 +38,91 @@ export const UserTop: React.FC = () => {
   useEffect(() => {
     if (isLoading) return
     ;(async () => {
-      const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
-      if (!res.user) {
+      let user: User
+      try {
+        const res = await get<{ user: User | null }>(`/user/${params.id}`)
+        if (!res.user) {
+          // TODO: データ取得失敗のアラート出す
+          console.log('user is null')
+          return
+        }
+        console.log('get user', res)
+        user = res.user
+      } catch (e) {
         // TODO: データ取得失敗のアラート出す
+        console.log(`/user/${params.id} error`, e)
         return
       }
 
-      setUser(res.user.props)
+      let iconUrl: string
+      try {
+        const { file } = await get<{ file: string }, { key: string }>('/s3/get-icon', undefined, { key: user.icon_key })
+        if (!file) {
+          // TODO: データ取得失敗のアラート出す
+          console.log('file undefined')
+          return
+        }
+        iconUrl = file
+      } catch (e) {
+        // TODO: データ取得失敗のアラート出す
+        console.log(`get icon error`, e)
+        return
+      }
+
+      let evaluations: Evaluation[]
+      if (isAuthenticated) {
+        try {
+          const token = await getAccessTokenSilently()
+          const { evaluations: res } = await get<{ evaluations: Evaluation[] | null }>(`/evaluation/self/${params.id}`, token)
+          if (!res) {
+            // TODO: データ取得失敗のアラート出す
+            console.log('evaluations null')
+            return
+          }
+          evaluations = res
+        } catch (e) {
+          // TODO: データ取得失敗のアラート出す
+          console.log('evaluations error', e)
+          return
+        }
+      } else {
+        try {
+          const { evaluations: res } = await get<{ evaluations: Evaluation[] | null }>(`/evaluation/${params.id}`)
+          if (!res) {
+            // TODO: データ取得失敗のアラート出す
+            console.log('evaluations null')
+            return
+          }
+          evaluations = res
+        } catch (e) {
+          // TODO: データ取得失敗のアラート出す
+          console.log('evaluations error', e)
+          return
+        }
+      }
+
+      setUser(user)
+      setUserIconUrl(iconUrl)
+      setEvaluations(evaluations)
       setLastPage(10)
       setAvarageEvaluation(fixtureAvarageEvaluation)
     })()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
 
   useEffect(() => {
-    setCurrentPage(Number(searchParams.get('page')) || 3)
+    setCurrentPage(Number(searchParams.get('page')) || 1)
   }, [searchParams])
 
   return (
     <Layout>
-      {/* TODO: isDeletedの時エラーページへ */}
+      {/* TODO: is_deletedの時エラーページへ */}
       {user && avarageEvaluation && (
         <UserTopTpl
           user={user}
-          evaluations={fixtureEvaluations}
+          userIconUrl={userIconUrl}
+          evaluations={evaluations}
           avarageEvaluation={avarageEvaluation}
           currentPage={currentPage}
           lastPage={lastPage}

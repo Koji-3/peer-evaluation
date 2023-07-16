@@ -1,11 +1,9 @@
 import { Evaluation, AvarageEvaluation } from 'types/types'
-import { fixtureUser } from '__fixtures__/user'
 
 export const fixtureEvaluation: Evaluation = {
   id: 'a',
-  evaluatee: fixtureUser,
+  evaluateeId: 'evaluatee',
   evaluatorName: 'miyabi',
-  evaluatorIconUrl: 'https://picsum.photos/id/237/200/200.jpg',
   relationship: '飼われた',
   comment:
     'わん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”う',
@@ -34,16 +32,16 @@ export const fixtureEvaluation: Evaluation = {
     point: 5,
     reason: 'ああああああ',
   },
-  isPublished: true,
-  isDeleted: false,
+  is_published: true,
+  is_deleted: false,
+  created: '',
 }
 
 export const fixtureEvaluations: Evaluation[] = [
   {
     id: 'a',
-    evaluatee: fixtureUser,
+    evaluateeId: 'evaluatee',
     evaluatorName: 'miyabi',
-    evaluatorIconUrl: 'https://picsum.photos/id/237/200/200.jpg',
     relationship: '飼われた',
     comment: '短い',
     e1: {
@@ -71,14 +69,14 @@ export const fixtureEvaluations: Evaluation[] = [
       reason: 'ああああああ',
     },
 
-    isPublished: false,
-    isDeleted: false,
+    is_published: false,
+    is_deleted: false,
+    created: '',
   },
   {
     id: 'aa',
-    evaluatee: fixtureUser,
+    evaluateeId: 'evaluatee',
     evaluatorName: 'miyabi',
-    evaluatorIconUrl: 'https://picsum.photos/id/237/200/200.jpg',
     relationship: '飼われた',
     comment:
       'わん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”う',
@@ -107,14 +105,14 @@ export const fixtureEvaluations: Evaluation[] = [
       reason: 'ああああああ',
     },
 
-    isPublished: true,
-    isDeleted: false,
+    is_published: true,
+    is_deleted: false,
+    created: '',
   },
   {
     id: 'aaa',
-    evaluatee: fixtureUser,
+    evaluateeId: 'evaluatee',
     evaluatorName: 'miyabi',
-    evaluatorIconUrl: 'https://picsum.photos/id/237/200/200.jpg',
     relationship: '飼われた',
     comment:
       'わん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”うわん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”うわん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”うわん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”う',
@@ -143,14 +141,14 @@ export const fixtureEvaluations: Evaluation[] = [
       reason: 'ああああああ',
     },
 
-    isPublished: false,
-    isDeleted: false,
+    is_published: false,
+    is_deleted: false,
+    created: '',
   },
   {
     id: 'aaaa',
-    evaluatee: fixtureUser,
+    evaluateeId: 'evaluatee',
     evaluatorName: 'miyabi',
-    evaluatorIconUrl: 'https://picsum.photos/id/237/200/200.jpg',
     relationship: '飼われた',
     comment:
       'わん！わぉ～～～ん！わん！わんわんっ！わん！う”う”う”う”～わん！！わん！わぉ～～～ん！わん！わんわんっ！わん！わん！”う”うう”う”う',
@@ -180,13 +178,14 @@ export const fixtureEvaluations: Evaluation[] = [
       reason: 'ああああああ',
     },
 
-    isPublished: true,
-    isDeleted: false,
+    is_published: true,
+    is_deleted: false,
+    created: '',
   },
 ]
 
 export const fixtureAvarageEvaluation: AvarageEvaluation = {
-  evaluatee: fixtureUser,
+  evaluateeId: 'evaluatee',
   e1: 3,
   e2: 2.9,
   e3: 4.3,

@@ -13,16 +13,6 @@ const checkJwt = auth({
 /* router */
 const router = express.Router()
 
-// ユーザーTOPでユーザー情報を取得する
-router.get('/:id', async (req, res) => {
-  const user = await getUserById(req.params.id)
-  if (user) {
-    res.json({ user })
-  } else {
-    res.json({ user: null })
-  }
-})
-
 // Auth0からのコールバック時にAuth0のidからuserIdを取得する
 router.get('/auth/:auth0id', checkJwt, async (req, res) => {
   const user = await getUserByAuth0Id(req.params.auth0id)
@@ -36,8 +26,18 @@ router.get('/auth/:auth0id', checkJwt, async (req, res) => {
 // 新規登録
 router.post('/signup/:auth0id', checkJwt, async (req, res) => {
   // auth0の名前も変更する
-  const [user] = await Promise.all([createUser(req.body.user), updateAuth0Name(req.params.auth0id, req.body.user.name)])
+  const [user] = await Promise.all([createUser(req.body.user, req.params.auth0id), updateAuth0Name(req.params.auth0id, req.body.user.name)])
   res.json({ user })
+})
+
+// ユーザーTOPでユーザー情報を取得する
+router.get('/:id', async (req, res) => {
+  const user = await getUserById(req.params.id)
+  if (user) {
+    res.json({ user })
+  } else {
+    res.json({ user: null })
+  }
 })
 
 // ユーザー情報変更

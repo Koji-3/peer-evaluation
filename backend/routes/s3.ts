@@ -50,13 +50,15 @@ router.post('/upload-icon/user/:auth0id', checkJwt, upload.single('icon_file'), 
 })
 
 // s3からアイコンを取得する
-router.get('/get-icon', checkJwt, async (req, res) => {
+router.get('/get-icon', async (req, res) => {
   if (!req.query.key) {
     res.json({ file: false })
     return
   }
   const icon = await getIcon(req.query.key as string)
-  res.send({ file: icon.Body })
+  const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
+  const imageSrc = `data:image/jpeg;base64,${base64Image}`
+  res.send({ file: imageSrc })
 })
 
 export default router

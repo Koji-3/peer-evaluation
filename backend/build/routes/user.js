@@ -24,16 +24,6 @@ const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
 });
 /* router */
 const router = express_1.default.Router();
-// ユーザーTOPでユーザー情報を取得する
-router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield (0, user_1.getUserById)(req.params.id);
-    if (user) {
-        res.json({ user });
-    }
-    else {
-        res.json({ user: null });
-    }
-}));
 // Auth0からのコールバック時にAuth0のidからuserIdを取得する
 router.get('/auth/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield (0, user_1.getUserByAuth0Id)(req.params.auth0id);
@@ -47,8 +37,18 @@ router.get('/auth/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, v
 // 新規登録
 router.post('/signup/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // auth0の名前も変更する
-    const [user] = yield Promise.all([(0, user_1.createUser)(req.body.user), (0, auth0_1.updateName)(req.params.auth0id, req.body.user.name)]);
+    const [user] = yield Promise.all([(0, user_1.createUser)(req.body.user, req.params.auth0id), (0, auth0_1.updateName)(req.params.auth0id, req.body.user.name)]);
     res.json({ user });
+}));
+// ユーザーTOPでユーザー情報を取得する
+router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield (0, user_1.getUserById)(req.params.id);
+    if (user) {
+        res.json({ user });
+    }
+    else {
+        res.json({ user: null });
+    }
 }));
 // ユーザー情報変更
 router.put('/update/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

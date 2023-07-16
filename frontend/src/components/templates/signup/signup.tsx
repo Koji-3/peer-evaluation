@@ -8,6 +8,9 @@ import { TextInputWithLabel, TextareaWithLabel, IconInput } from 'components/mol
 import { mediaSp } from 'lib/media-query'
 import { UserInput } from 'types/types'
 
+/* images */
+import defaultIcon from 'assets/images/icon/default_icon.png'
+
 type Props = {
   className?: string
   userInput: UserInput
@@ -74,8 +77,7 @@ export const SignupTpl: React.FC<Props> = ({
       <div className="inner">
         <h1>新規会員登録</h1>
         <div className="icon">
-          {/* TODO: デフォルト画像 */}
-          <Icon src={iconObjectUrl || 'https://picsum.photos/200/200'} alt={name} size={14.6} className="icon" />
+          <Icon src={iconObjectUrl || defaultIcon} alt={name} size={14.6} className="icon" />
           <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
         </div>
 

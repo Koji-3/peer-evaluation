@@ -18,9 +18,10 @@ export type User = {
   profile: string
   icon_key: string
   is_deleted: boolean
+  created: string
 }
 
-export type DBUser = DBProperties & { props: User }
+export type DBUser = DBProperties & { props: Omit<User, 'id'> }
 
 export type Auth0User = {
   email: string
@@ -54,46 +55,9 @@ export type EvaluationLabels = (typeof EvaluationLabels)[keyof typeof Evaluation
 export const EvaluationLabelKeys = Object.keys(EvaluationLabels) as EvaluationLabelKeys[]
 export const EvaluationLabelValues = Object.values(EvaluationLabels)
 
-// TODO: pointは小数点以下一桁で返す
-export type Evaluation = {
-  id: string
-  evaluatee: User
-  evaluatorName: string
-  evaluatorIconUrl?: string
-  relationship: string
-  comment: string
-  e1: {
-    point: number
-    reason: string
-  }
-  e2: {
-    point: number
-    reason: string
-  }
-  e3: {
-    point: number
-    reason: string
-  }
-  e4: {
-    point: number
-    reason: string
-  }
-  e5: {
-    point: number
-    reason: string
-  }
-  e6: {
-    point: number
-    reason: string
-  }
-  isPublished: boolean
-  isDeleted: boolean
-}
-export type DBEvaluation = DBProperties & { props: Evaluation }
-
 export type EvaluationInput = {
   evaluatorName: string
-  evaluatorIconUrl?: string
+  evaluatorIconKey?: string
   relationship: string
   comment: string
   e1: {
@@ -122,4 +86,19 @@ export type EvaluationInput = {
   }
 }
 
-export type AvarageEvaluation = Record<EvaluationLabelKeys | 'evaluatee', number | User>
+export type DBEvaluation = DBProperties & {
+  props: EvaluationInput & {
+    evaluateeId: string
+    is_published: boolean
+    is_deleted: boolean
+    created: string
+  }
+}
+
+// TODO: pointは小数点以下一桁で返す
+export type Evaluation = DBEvaluation['props'] & {
+  id: string
+  evaluatorIconUrl?: string
+}
+
+export type AvarageEvaluation = Record<EvaluationLabelKeys | 'evaluateeId', number | string>

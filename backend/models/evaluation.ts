@@ -1,15 +1,17 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import crypto from 'crypto'
-import { EvaluationInput, DBEvaluation } from '../types/types'
+import { getIcon } from './s3'
+import { EvaluationInput, DBEvaluation, Evaluation } from '../types/types'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
 const evaluations = db.collection('evaluations')
 
-export const createEvaluation = async (evaluation: EvaluationInput): Promise<DBEvaluation | undefined> => {
+export const createEvaluation = async (evaluation: EvaluationInput, evaluateeId: string): Promise<DBEvaluation | undefined> => {
   const uuid = crypto.randomUUID()
   if (!evaluation) return
-  const newEvaluation = await evaluations.set(uuid, evaluation)
-  return newEvaluation
+  const newEvaluation: Omit<DBEvaluation['props'], 'created'> = { ...evaluation, is_published: false, is_deleted: false, evaluateeId }
+  const result = await evaluations.set(uuid, newEvaluation)
+  return result
 }
 
 // export const getEvaluation = async(): Promise<any> => {
@@ -17,12 +19,41 @@ export const createEvaluation = async (evaluation: EvaluationInput): Promise<DBE
 //   console.log('get', testEvaluation)
 // }
 
-// export const getAllEvaluationsByUser = async(): Promise<any> => {
-//   const evaluationsByUser = await evaluations.filter({user_id: 'test1', is_deleted: false})
-//   console.log('getEvaluationsByUser', evaluationsByUser)
-// }
+const sortByCreatedAt = (results: DBEvaluation[]): DBEvaluation[] => {
+  const sortedResults = results.sort((a, b) => {
+    const unixTimeA = new Date(a.props.created).getTime()
+    const unixTimeB = new Date(b.props.created).getTime()
+    return unixTimeB - unixTimeA
+  })
+  return sortedResults
+}
 
-// export const getPublishedEvaluationsByUser = async(): Promise<any> => {
-//   const evaluationsByUser = await evaluations.filter({user_id: 'test1', is_published: true, is_deleted: false})
-//   console.log('getEvaluationsByUser', evaluationsByUser)
-// }
+const addParamsForReturnValueToEvaluations = async (results: DBEvaluation[]): Promise<Evaluation[]> => {
+  const returnValue = await Promise.all(
+    results.map(async (result) => {
+      if (!result.props.evaluatorIconKey) {
+        return { ...result.props, id: result.key, evaluatorIconUrl: undefined }
+      } else {
+        const icon = await getIcon(result.props.evaluatorIconKey)
+        const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
+        const imageSrc = `data:image/jpeg;base64,${base64Image}`
+        return { ...result.props, id: result.key, evaluatorIconUrl: imageSrc }
+      }
+    }),
+  )
+  return returnValue
+}
+
+export const getAllEvaluations = async (evaluateeId: string): Promise<Evaluation[]> => {
+  const res: { results: DBEvaluation[] } = await evaluations.filter({ evaluateeId, is_deleted: false })
+  if (!res.results.length) return []
+  const sortedResults = sortByCreatedAt(res.results)
+  return addParamsForReturnValueToEvaluations(sortedResults)
+}
+
+export const getPublishedEvaluations = async (evaluateeId: string): Promise<Evaluation[]> => {
+  const res: { results: DBEvaluation[] } = await evaluations.filter({ evaluateeId, is_published: true, is_deleted: false })
+  if (!res.results.length) return []
+  const sortedResults = sortByCreatedAt(res.results)
+  return addParamsForReturnValueToEvaluations(sortedResults)
+}

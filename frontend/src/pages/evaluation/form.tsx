@@ -8,14 +8,14 @@ import { EvaluationFormTpl, Layout } from 'components/templates'
 /* lib, types */
 import { get, post } from 'lib/axios'
 import { validateIcon } from 'lib/validate'
-import { evaluatorUploadIconToS3 } from 'lib/upload-icon'
+import { evaluatorUploadIconToS3 } from 'lib/icon'
 import { User, DBUser, DBEvaluation, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 import { fixtureUser } from '__fixtures__/user'
 
 export const EvaluationForm: React.FC = () => {
   const initialEvaluationInput: EvaluationInput = {
     evaluatorName: '',
-    evaluatorIconUrl: '',
+    evaluatorIconKey: '',
     relationship: '',
     comment: '',
     e1: {
@@ -44,6 +44,7 @@ export const EvaluationForm: React.FC = () => {
     },
   }
   const [evaluatee, setEvaluatee] = useState<User>()
+  const [evaluateeIconUrl, setEvaluateeIconUrl] = useState<string>('')
   const [evaluationInput, setEvaluationInput] = useState<EvaluationInput>(initialEvaluationInput)
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
@@ -78,23 +79,28 @@ export const EvaluationForm: React.FC = () => {
   }
 
   const submit = async (): Promise<void> => {
-    if (!iconFile) return
     let iconKey: string | undefined
-    try {
-      iconKey = await evaluatorUploadIconToS3({ file: iconFile, evaluatorName: evaluationInput.evaluatorName })
-      if (!iconKey) return
-    } catch (e) {
-      // TODO: エラー処理
+    if (iconFile) {
+      try {
+        iconKey = await evaluatorUploadIconToS3({ file: iconFile, evaluatorName: evaluationInput.evaluatorName })
+        if (!iconKey) return
+      } catch (e) {
+        // TODO: エラー処理
+        console.log(e)
+        return
+      }
     }
+
     try {
       const res = await post<{ evaluation: DBEvaluation | null }, { evaluation: EvaluationInput }>(`/evaluation/${params.id}`, {
-        evaluation: { ...evaluationInput, evaluatorIconUrl: iconKey ?? '' },
+        evaluation: { ...evaluationInput, evaluatorIconKey: iconKey },
       })
 
       console.log(res.evaluation)
 
       if (!res.evaluation) {
         // TODO: エラー処理
+        console.log('res.evaluation null')
         return
       }
       navigate(`/user/${params.id}`)
@@ -106,15 +112,44 @@ export const EvaluationForm: React.FC = () => {
   useEffect(() => {
     if (isLoading) return
     ;(async () => {
-      const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
-      if (!res.user) {
+      let evaluatee: User
+      try {
+        const res = await get<{ user: User | null }>(`/user/${params.id}`)
+        if (!res.user) {
+          // TODO: データ取得失敗のアラート出す
+          console.log('user is null')
+          return
+        }
+        console.log('get user', res)
+        evaluatee = res.user
+      } catch (e) {
         // TODO: データ取得失敗のアラート出す
+        console.log(`/user/${params.id} error`, e)
         return
       }
-      // setEvaluatee(res.user.props)
-    })()
 
-    setEvaluatee(fixtureUser)
+      let evaluateeIconUrl: string
+      try {
+        const { file } = await get<{ file: { type: 'Buffer'; data: Buffer } }, { key: string }>('/s3/get-icon', undefined, {
+          key: evaluatee.icon_key,
+        })
+        if (!file) {
+          // TODO: データ取得失敗のアラート出す
+          console.log('file undefined')
+          return
+        }
+        const arrayBuffer = Uint8Array.from(file.data).buffer
+        const blob = new Blob([arrayBuffer], { type: 'image/jpeg' })
+        const url = URL.createObjectURL(blob)
+        evaluateeIconUrl = url
+      } catch (e) {
+        // TODO: データ取得失敗のアラート出す
+        console.log(`get icon error`, e)
+        return
+      }
+      setEvaluatee(evaluatee)
+      setEvaluateeIconUrl(evaluateeIconUrl)
+    })()
 
     // TODO: ログイン済みならアイコン取得
     console.log(isAuthenticated)
@@ -126,6 +161,7 @@ export const EvaluationForm: React.FC = () => {
       {evaluatee && (
         <EvaluationFormTpl
           evaluatee={evaluatee}
+          evaluateeIconUrl={evaluateeIconUrl}
           evaluationInput={evaluationInput}
           iconObjectUrl={iconObjectUrl}
           iconInputError={iconInputError}

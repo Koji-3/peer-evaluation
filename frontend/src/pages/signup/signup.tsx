@@ -7,7 +7,7 @@ import { SignupTpl, Layout } from 'components/templates'
 
 /* lib, types */
 import { post } from 'lib/axios'
-import { userUploadIconToS3 } from 'lib/upload-icon'
+import { userUploadIconToS3 } from 'lib/icon'
 import { validateIcon } from 'lib/validate'
 import { UserInput, DBUser } from 'types/types'
 
@@ -48,15 +48,25 @@ export const Signup: React.FC = () => {
       iconKey = await userUploadIconToS3({ file: iconFile, token, auth0Id: auth0User.sub })
     } catch (e) {
       // TODO: エラー処理
+      console.log('iconkey error', e)
     }
-    // TODO: エラー処理
-    if (!iconKey) return
-    const res = await post<{ user: DBUser }, { user: UserInput }>(
-      `/user/signup/${auth0User?.sub}`,
-      { user: { ...userInput, icon_key: iconKey } },
-      token,
-    )
-    navigate(`/user/${res.user.key}`)
+    if (!iconKey) {
+      // TODO: エラー処理
+      console.log('iconkey is undefined')
+      return
+    }
+
+    try {
+      const res = await post<{ user: DBUser }, { user: UserInput }>(
+        `/user/signup/${auth0User?.sub}`,
+        { user: { ...userInput, icon_key: iconKey } },
+        token,
+      )
+      navigate(`/user/${res.user.key}`)
+    } catch (e) {
+      // TODO: エラー処理
+      console.log('create user error', e)
+    }
   }
 
   // TODO: Auth0からのコールバックじゃなければエラー表示

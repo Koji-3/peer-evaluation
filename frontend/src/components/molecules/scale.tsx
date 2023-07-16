@@ -1,10 +1,8 @@
+import { ReactElement } from 'react'
 import styled from 'styled-components'
 
-/* lib, types*/
+/* lib, types */
 import { mediaSp } from 'lib/media-query'
-
-/* images */
-import { ReactElement } from 'react'
 
 type Props = {
   className?: string

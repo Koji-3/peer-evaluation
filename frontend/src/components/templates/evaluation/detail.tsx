@@ -11,10 +11,12 @@ import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/ty
 
 /* images */
 import pagePrevIcon from 'assets/images/icon/page-prev.svg'
+import defaultIcon from 'assets/images/icon/default_icon.png'
 
 type Props = {
   className?: string
   evaluation: Evaluation
+  evaluateeName: string
   publishEvaluation: () => void
   unpublishEvaluation: () => void
   deleteEvaluation: () => void
@@ -99,15 +101,16 @@ const StyledWrapper = styled.div`
 export const EvaluationDetailTpl: React.FC<Props> = ({
   className,
   evaluation,
+  evaluateeName,
   publishEvaluation,
   unpublishEvaluation,
   deleteEvaluation,
 }) => {
   const navigate = useNavigate()
-  const { isPublished, evaluatorIconUrl, evaluatorName, relationship, evaluatee, comment } = evaluation
+  const { is_published, evaluatorIconUrl, evaluatorName, relationship, evaluateeId, comment } = evaluation
 
   const goToUserTop = (): void => {
-    navigate(`/user/${evaluation.evaluatee.id}`)
+    navigate(`/user/${evaluateeId}`)
   }
 
   return (
@@ -120,7 +123,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
           </div>
 
           <div className="buttons">
-            {isPublished ? (
+            {is_published ? (
               <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={unpublishEvaluation} />
             ) : (
               <ButtonSmall buttonText="公開する" buttonType="primary" onClick={publishEvaluation} />
@@ -131,13 +134,12 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
 
         <div className="content">
           <div className="evaluator">
-            {/* TODO: デフォルトアイコン */}
-            <Icon src={evaluatorIconUrl || 'https://picsum.photos/200/200'} alt={evaluatorName} size={4.5} className="icon" />
+            <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} className="icon" />
             <p>
               {evaluatorName} / {relationship}
             </p>
           </div>
-          <p className="title">{evaluatee.name}について</p>
+          <p className="title">{evaluateeName}について</p>
           <p className="comment">{comment}</p>
 
           {[...Array(6)].map((_, index) => {
@@ -154,7 +156,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
         </div>
 
         <div className="footer-buttons">
-          {isPublished ? (
+          {is_published ? (
             <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={unpublishEvaluation} />
           ) : (
             <ButtonSmall buttonText="公開する" buttonType="primary" onClick={publishEvaluation} />

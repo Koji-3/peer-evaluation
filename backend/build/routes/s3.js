@@ -60,12 +60,14 @@ router.post('/upload-icon/user/:auth0id', checkJwt, upload.single('icon_file'), 
     }
 }));
 // s3からアイコンを取得する
-router.get('/get-icon', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/get-icon', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.query.key) {
         res.json({ file: false });
         return;
     }
     const icon = yield (0, s3_1.getIcon)(req.query.key);
-    res.send({ file: icon.Body });
+    const base64Image = Buffer.from(icon.Body).toString('base64');
+    const imageSrc = `data:image/jpeg;base64,${base64Image}`;
+    res.send({ file: imageSrc });
 }));
 exports.default = router;

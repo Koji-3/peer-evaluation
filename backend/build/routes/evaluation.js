@@ -14,23 +14,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const evaluation_1 = require("../models/evaluation");
-// import {auth} from'express-oauth2-jwt-bearer'
+const express_oauth2_jwt_bearer_1 = require("express-oauth2-jwt-bearer");
 /* auth0 jwt config */
-// const checkJwt = auth({
-//   audience: process.env.AUTH0_API_AUDIENCE,
-//   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-//   tokenSigningAlg: process.env.AUTH0_TOKEN_SIGNING_ALG
-// });
+const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
+    audience: process.env.AUTH0_API_AUDIENCE,
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+    tokenSigningAlg: process.env.AUTH0_TOKEN_SIGNING_ALG,
+});
 const router = express_1.default.Router();
 /* router */
-// ユーザーTOPでユーザー情報を取得する
+// 評価を投稿する
 router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluation = yield (0, evaluation_1.createEvaluation)(req.body.evaluation);
+    const evaluation = yield (0, evaluation_1.createEvaluation)(req.body.evaluation, req.params.evaluateeId);
     if (evaluation) {
         res.json({ evaluation });
     }
     else {
         res.json({ evaluation: null });
+    }
+}));
+// 評価一覧を取得する(未ログイン or 他のユーザー)
+router.get('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluations = yield (0, evaluation_1.getPublishedEvaluations)(req.params.evaluateeId);
+    if (evaluations) {
+        res.json({ evaluations });
+    }
+    else {
+        res.json({ evaluations: null });
+    }
+}));
+// 評価一覧を取得する(ユーザー自身)
+router.get('/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluations = yield (0, evaluation_1.getAllEvaluations)(req.params.evaluateeId);
+    if (evaluations) {
+        res.json({ evaluations });
+    }
+    else {
+        res.json({ evaluations: null });
     }
 }));
 exports.default = router;

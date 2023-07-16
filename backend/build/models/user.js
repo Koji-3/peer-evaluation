@@ -18,12 +18,13 @@ const short_uuid_1 = __importDefault(require("short-uuid"));
 const crypto_1 = __importDefault(require("crypto"));
 const db = (0, dynamodb_1.default)('motionless-crab-hoseCyclicDB');
 const users = db.collection('users');
-const createUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
+const createUser = (user, auth0id) => __awaiter(void 0, void 0, void 0, function* () {
     const uuid = short_uuid_1.default.generate();
     if (!user)
         return undefined;
-    const newUser = yield users.set(uuid, Object.assign(Object.assign({}, user), { is_deleted: false }));
-    return newUser;
+    const newUser = Object.assign(Object.assign({}, user), { is_deleted: false, auth0_id: auth0id });
+    const result = yield users.set(uuid, newUser);
+    return result;
 });
 exports.createUser = createUser;
 const getUserByAuth0Id = (auth0Id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,7 +39,7 @@ const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users.get(id);
     // TODO: そのidのユーザーがいないときの処理
     // TODO: is_deletedがtrueのときの処理
-    return user;
+    return Object.assign(Object.assign({}, user.props), { id: user.key });
 });
 exports.getUserById = getUserById;
 const updateUser = (auth0Id, newUser) => __awaiter(void 0, void 0, void 0, function* () {

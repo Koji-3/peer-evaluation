@@ -14,6 +14,7 @@ import { fixtureEvaluation } from '__fixtures__/evaluation'
 
 export const EvaluationDetail: React.FC = () => {
   const [evaluation, setEvaluation] = useState<Evaluation>()
+  const [evaluateeName, setEvaluateeName] = useState<string>('')
   const { isLoading } = useAuth0()
   const params = useParams()
 
@@ -41,16 +42,18 @@ export const EvaluationDetail: React.FC = () => {
       // }
 
       setEvaluation(fixtureEvaluation)
+      setEvaluateeName('name')
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
 
   return (
     <Layout>
-      {/* TODO: isDeletedの時エラーページへ */}
+      {/* TODO: is_deletedの時エラーページへ */}
       {evaluation && (
         <EvaluationDetailTpl
           evaluation={evaluation}
+          evaluateeName={evaluateeName}
           publishEvaluation={publishEvaluation}
           unpublishEvaluation={unpublishEvaluation}
           deleteEvaluation={deleteEvaluation}

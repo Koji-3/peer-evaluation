@@ -6,6 +6,9 @@ import { ButtonSmall, Icon } from 'components/atoms'
 /* lib, types */
 import { Evaluation } from 'types/types'
 
+/* images */
+import defaultIcon from 'assets/images/icon/default_icon.png'
+
 type Props = {
   className?: string
   evaluation: Evaluation
@@ -63,13 +66,12 @@ export const EvaluationItem: React.FC<Props> = ({
   unpublishEvaluation,
   deleteEvaluation,
 }) => {
-  const { id, evaluatorIconUrl, evaluatorName, relationship, comment, isPublished } = evaluation
+  const { id, evaluatorIconUrl, evaluatorName, relationship, comment, is_published } = evaluation
 
   return (
     <StyledWrapper className={className} href={`/evaluation/${id}`}>
       <div className="flex-wrapper">
-        {/* TODO: デフォルトアイコン */}
-        <Icon src={evaluatorIconUrl || 'https://picsum.photos/200/200'} alt={evaluatorName} size={4.5} />
+        <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} />
 
         <div className="right-content">
           <p className="evaluateBy">
@@ -79,7 +81,7 @@ export const EvaluationItem: React.FC<Props> = ({
         </div>
       </div>
       <div className="buttons">
-        {isPublished ? (
+        {is_published ? (
           <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => unpublishEvaluation(id)} />
         ) : (
           <ButtonSmall buttonText="公開する" buttonType="primary" onClick={() => publishEvaluation(id)} />

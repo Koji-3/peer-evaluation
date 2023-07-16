@@ -10,9 +10,13 @@ import { mediaSp } from 'lib/media-query'
 import { getE1Options, getE2Options, getE3Options, getE4Options, getE5Options, getE6Options } from 'lib/options'
 import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 
+/* images */
+import defaultIcon from 'assets/images/icon/default_icon.png'
+
 type Props = {
   className?: string
   evaluatee: User
+  evaluateeIconUrl: string
   evaluationInput: EvaluationInput
   iconObjectUrl: string
   iconInputError: string | null
@@ -103,6 +107,7 @@ const StyledWrapper = styled.div`
 export const EvaluationFormTpl: React.FC<Props> = ({
   className,
   evaluatee,
+  evaluateeIconUrl,
   evaluationInput,
   iconObjectUrl,
   iconInputError,
@@ -143,7 +148,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
     <StyledWrapper className={className}>
       <div className="evaluatee">
         <p>{evaluatee.name}さんを紹介しよう！</p>
-        <Icon src={evaluatee.icon_key} alt={evaluatee.name} size={10} />
+        <Icon src={evaluateeIconUrl} alt={evaluatee.name} size={10} />
       </div>
 
       <div className="content">
@@ -171,8 +176,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
         <div className="form-item icon">
           <div className="inner">
             <p className="title">アイコン画像の登録（任意）</p>
-            {/* TODO: デフォルト画像 */}
-            <Icon src={iconObjectUrl || 'https://picsum.photos/200/200'} alt={evaluatorName} size={14.6} className="icon" />
+            <Icon src={iconObjectUrl || defaultIcon} alt={evaluatorName} size={14.6} className="icon" />
             <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
           </div>
         </div>

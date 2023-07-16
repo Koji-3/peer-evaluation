@@ -12,6 +12,7 @@ import { User, Evaluation, AvarageEvaluation } from 'types/types'
 type Props = {
   className?: string
   user: User
+  userIconUrl: string
   evaluations: Evaluation[]
   avarageEvaluation: AvarageEvaluation
   currentPage: number
@@ -72,6 +73,7 @@ const StyledWrapper = styled.div`
 
 export const UserTopTpl: React.FC<Props> = ({
   user,
+  userIconUrl,
   evaluations,
   avarageEvaluation,
   currentPage,
@@ -88,7 +90,7 @@ export const UserTopTpl: React.FC<Props> = ({
   return (
     <StyledWrapper>
       <div className="user">
-        <Icon src={user.icon_key} alt={user.name} size={10} className="icon" />
+        <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>
         <p className="profile">{user.profile}</p>
       </div>
@@ -97,17 +99,22 @@ export const UserTopTpl: React.FC<Props> = ({
 
       <div className="evaluations">
         <p className="title">{user.name}さんへの評価</p>
-        <div className="evaluation-items-wrapper">
-          {evaluations.map((evaluation) => (
-            <EvaluationItem
-              evaluation={evaluation}
-              key={evaluation.id}
-              publishEvaluation={publishEvaluation}
-              unpublishEvaluation={unpublishEvaluation}
-              deleteEvaluation={deleteEvaluation}
-            />
-          ))}
-        </div>
+        {evaluations.length ? (
+          <div className="evaluation-items-wrapper">
+            {evaluations.map((evaluation) => (
+              <EvaluationItem
+                evaluation={evaluation}
+                key={evaluation.id}
+                publishEvaluation={publishEvaluation}
+                unpublishEvaluation={unpublishEvaluation}
+                deleteEvaluation={deleteEvaluation}
+              />
+            ))}
+          </div>
+        ) : (
+          // TODO:
+          <p style={{ textAlign: 'center' }}>評価はありません</p>
+        )}
       </div>
 
       <Pagination currentPage={currentPage} lastPage={lastPage} />
