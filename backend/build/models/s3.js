@@ -17,14 +17,16 @@ const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const s3 = new aws_sdk_1.default.S3();
 const uploadIcon = (file, auth0id, evaluatorName) => __awaiter(void 0, void 0, void 0, function* () {
     const iconBuffer = Buffer.from(file.buffer);
-    const result = yield s3
+    const fileName = `${new Date().getTime()}.${file.mimetype.split('/')[1]}`;
+    const key = auth0id ? `user/${auth0id}/${fileName}` : `evaluator/${evaluatorName}/${fileName}`;
+    yield s3
         .putObject({
         Body: iconBuffer,
         Bucket: process.env.CYCLIC_BUCKET_NAME || '',
-        Key: auth0id ? `user/${auth0id}/${file.originalname}` : `evaluator/${evaluatorName}/${file.originalname}`,
+        Key: key,
     })
         .promise();
-    return result;
+    return key;
 });
 exports.uploadIcon = uploadIcon;
 const getIcon = (key) => __awaiter(void 0, void 0, void 0, function* () {

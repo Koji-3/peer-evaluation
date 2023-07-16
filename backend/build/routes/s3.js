@@ -29,45 +29,45 @@ const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
 router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
-            res.json({ uploadIcon: false });
+            res.json({ key: null });
             return;
         }
-        const result = yield (0, s3_1.uploadIcon)(req.file, null, req.params.evaluatorName);
-        if (!!result) {
-            res.json({ uploadIcon: true });
+        const key = yield (0, s3_1.uploadIcon)(req.file, null, req.params.evaluatorName);
+        if (!!key) {
+            res.json({ key });
         }
     }
     catch (e) {
         // TODO: エラー処理
-        res.json({ uploadIcon: false });
+        res.json({ key: null });
     }
 }));
 // s3にユーザーアイコンをアップロードする
 router.post('/upload-icon/user/:auth0id', checkJwt, upload.single('icon_file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
-            res.json({ uploadIcon: false });
+            res.json({ key: null });
             return;
         }
-        const result = yield (0, s3_1.uploadIcon)(req.file, req.params.auth0id, null);
-        if (!!result) {
-            res.json({ uploadIcon: true });
+        const key = yield (0, s3_1.uploadIcon)(req.file, req.params.auth0id, null);
+        if (!!key) {
+            res.json({ key });
         }
     }
     catch (e) {
         // TODO: エラー処理
-        res.json({ uploadIcon: false });
+        res.json({ key: null });
     }
 }));
 // s3からアイコンを取得する
 router.get('/get-icon', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.query.key) {
-        res.json({ file: false });
+        res.json({ imageSrc: false });
         return;
     }
     const icon = yield (0, s3_1.getIcon)(req.query.key);
     const base64Image = Buffer.from(icon.Body).toString('base64');
     const imageSrc = `data:image/jpeg;base64,${base64Image}`;
-    res.send({ file: imageSrc });
+    res.send({ imageSrc });
 }));
 exports.default = router;

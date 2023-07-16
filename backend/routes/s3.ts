@@ -19,16 +19,16 @@ const checkJwt = auth({
 router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'), async (req, res) => {
   try {
     if (!req.file) {
-      res.json({ uploadIcon: false })
+      res.json({ key: null })
       return
     }
-    const result = await uploadIcon(req.file, null, req.params.evaluatorName)
-    if (!!result) {
-      res.json({ uploadIcon: true })
+    const key = await uploadIcon(req.file, null, req.params.evaluatorName)
+    if (!!key) {
+      res.json({ key })
     }
   } catch (e) {
     // TODO: エラー処理
-    res.json({ uploadIcon: false })
+    res.json({ key: null })
   }
 })
 
@@ -36,29 +36,29 @@ router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'),
 router.post('/upload-icon/user/:auth0id', checkJwt, upload.single('icon_file'), async (req, res) => {
   try {
     if (!req.file) {
-      res.json({ uploadIcon: false })
+      res.json({ key: null })
       return
     }
-    const result = await uploadIcon(req.file, req.params.auth0id, null)
-    if (!!result) {
-      res.json({ uploadIcon: true })
+    const key = await uploadIcon(req.file, req.params.auth0id, null)
+    if (!!key) {
+      res.json({ key })
     }
   } catch (e) {
     // TODO: エラー処理
-    res.json({ uploadIcon: false })
+    res.json({ key: null })
   }
 })
 
 // s3からアイコンを取得する
 router.get('/get-icon', async (req, res) => {
   if (!req.query.key) {
-    res.json({ file: false })
+    res.json({ imageSrc: false })
     return
   }
   const icon = await getIcon(req.query.key as string)
   const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
   const imageSrc = `data:image/jpeg;base64,${base64Image}`
-  res.send({ file: imageSrc })
+  res.send({ imageSrc })
 })
 
 export default router

@@ -60,7 +60,7 @@ export const getPublishedEvaluations = async (evaluateeId: string): Promise<Eval
 
 // FIXME: データ確認用なので最後に消す
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const deleteAllEvaluations= async (): Promise<void> => {
+const deleteAllEvaluations = async (): Promise<void> => {
   const usersList = await evaluations.list()
   const targetKeys: string[] = usersList.results.map((result: DBEvaluation) => result.key)
   targetKeys.forEach(async (key) => {

@@ -130,18 +130,15 @@ export const EvaluationForm: React.FC = () => {
 
       let evaluateeIconUrl: string
       try {
-        const { file } = await get<{ file: { type: 'Buffer'; data: Buffer } }, { key: string }>('/s3/get-icon', undefined, {
+        const { imageSrc } = await get<{ imageSrc: string }, { key: string }>('/s3/get-icon', undefined, {
           key: evaluatee.icon_key,
         })
-        if (!file) {
+        if (!imageSrc) {
           // TODO: データ取得失敗のアラート出す
-          console.log('file undefined')
+          console.log('imageSrc undefined')
           return
         }
-        const arrayBuffer = Uint8Array.from(file.data).buffer
-        const blob = new Blob([arrayBuffer], { type: 'image/jpeg' })
-        const url = URL.createObjectURL(blob)
-        evaluateeIconUrl = url
+        evaluateeIconUrl = imageSrc
       } catch (e) {
         // TODO: データ取得失敗のアラート出す
         console.log(`get icon error`, e)

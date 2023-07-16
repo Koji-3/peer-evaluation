@@ -56,13 +56,13 @@ export const UserTop: React.FC = () => {
 
       let iconUrl: string
       try {
-        const { file } = await get<{ file: string }, { key: string }>('/s3/get-icon', undefined, { key: user.icon_key })
-        if (!file) {
+        const { imageSrc } = await get<{ imageSrc: string }, { key: string }>('/s3/get-icon', undefined, { key: user.icon_key })
+        if (!imageSrc) {
           // TODO: データ取得失敗のアラート出す
-          console.log('file undefined')
+          console.log('imageSrc undefined')
           return
         }
-        iconUrl = file
+        iconUrl = imageSrc
       } catch (e) {
         // TODO: データ取得失敗のアラート出す
         console.log(`get icon error`, e)
