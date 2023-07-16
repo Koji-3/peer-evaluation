@@ -69,3 +69,14 @@ const getPublishedEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 
     return addParamsForReturnValueToEvaluations(sortedResults);
 });
 exports.getPublishedEvaluations = getPublishedEvaluations;
+// FIXME: データ確認用なので最後に消す
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const deleteAllEvaluations = () => __awaiter(void 0, void 0, void 0, function* () {
+    const usersList = yield evaluations.list();
+    const targetKeys = usersList.results.map((result) => result.key);
+    targetKeys.forEach((key) => __awaiter(void 0, void 0, void 0, function* () {
+        yield evaluations.delete(key);
+    }));
+});
+// FIXME: データ確認用なので最後に消す
+// deleteAllEvaluations()

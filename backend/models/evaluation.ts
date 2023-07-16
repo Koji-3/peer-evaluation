@@ -57,3 +57,16 @@ export const getPublishedEvaluations = async (evaluateeId: string): Promise<Eval
   const sortedResults = sortByCreatedAt(res.results)
   return addParamsForReturnValueToEvaluations(sortedResults)
 }
+
+// FIXME: データ確認用なので最後に消す
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const deleteAllEvaluations= async (): Promise<void> => {
+  const usersList = await evaluations.list()
+  const targetKeys: string[] = usersList.results.map((result: DBEvaluation) => result.key)
+  targetKeys.forEach(async (key) => {
+    await evaluations.delete(key)
+  })
+}
+
+// FIXME: データ確認用なので最後に消す
+// deleteAllEvaluations()
