@@ -15,6 +15,7 @@ const port = 3001
 app.use(express.json())
 
 // cors
+console.log(process.env.FRONTEND_PROD_ORIGIN)
 const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN as string, process.env.FRONTEND_PROD_ORIGIN as string]
 app.use(
   cors({

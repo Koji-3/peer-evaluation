@@ -40,6 +40,7 @@ const app = (0, express_1.default)();
 const port = 3001;
 app.use(express_1.default.json());
 // cors
+console.log(process.env.FRONTEND_PROD_ORIGIN);
 const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN, process.env.FRONTEND_PROD_ORIGIN];
 app.use((0, cors_1.default)({
     origin: allowedOrigins,
