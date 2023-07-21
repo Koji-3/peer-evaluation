@@ -13,9 +13,9 @@ type Props = {
   className?: string
   evaluation: Evaluation
   shouldShowButtons: boolean
-  publishEvaluation: (id: string) => void
-  unpublishEvaluation: (id: string) => void
-  deleteEvaluation: (id: string) => void
+  onClickPublish: (id: string) => void
+  onClickUnpublish: (id: string) => void
+  onClickDelete: (id: string) => void
 }
 
 const StyledWrapper = styled.div<{ shouldShowButtons: boolean }>`
@@ -68,9 +68,9 @@ export const EvaluationItem: React.FC<Props> = ({
   className = '',
   evaluation,
   shouldShowButtons,
-  publishEvaluation,
-  unpublishEvaluation,
-  deleteEvaluation,
+  onClickPublish,
+  onClickUnpublish,
+  onClickDelete,
 }) => {
   const { id, evaluatorIconUrl, evaluatorName, relationship, comment, is_published } = evaluation
 
@@ -91,11 +91,11 @@ export const EvaluationItem: React.FC<Props> = ({
       {shouldShowButtons && (
         <div className="buttons">
           {is_published ? (
-            <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => unpublishEvaluation(id)} />
+            <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => onClickUnpublish(id)} />
           ) : (
-            <ButtonSmall buttonText="公開する" buttonType="primary" onClick={() => publishEvaluation(id)} />
+            <ButtonSmall buttonText="公開する" buttonType="primary" onClick={() => onClickPublish(id)} />
           )}
-          <ButtonSmall buttonText="削除" buttonType="dark" onClick={() => deleteEvaluation(id)} />
+          <ButtonSmall buttonText="削除" buttonType="dark" onClick={() => onClickDelete(id)} />
         </div>
       )}
     </StyledWrapper>

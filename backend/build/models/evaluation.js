@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEvaluation = exports.getPublishedEvaluations = exports.getAllEvaluations = exports.createEvaluation = void 0;
+exports.updateEvaluation = exports.getPublishedEvaluations = exports.getAllEvaluations = exports.getEvaluation = exports.createEvaluation = void 0;
 const dynamodb_1 = __importDefault(require("@cyclic.sh/dynamodb"));
 const crypto_1 = __importDefault(require("crypto"));
 const s3_1 = require("./s3");
@@ -29,10 +29,11 @@ const createEvaluation = (evaluation, evaluateeId) => __awaiter(void 0, void 0, 
     return result;
 });
 exports.createEvaluation = createEvaluation;
-// export const getEvaluation = async(): Promise<any> => {
-//   const testEvaluation = await evaluations.get("test_evaluation1")
-//   console.log('get', testEvaluation)
-// }
+const getEvaluation = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluation = yield evaluations.get(id);
+    return Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key });
+});
+exports.getEvaluation = getEvaluation;
 const sortByCreatedAt = (results) => {
     const sortedResults = results.sort((a, b) => {
         const unixTimeA = new Date(a.props.created).getTime();

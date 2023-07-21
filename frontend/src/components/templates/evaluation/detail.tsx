@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 /* components */
@@ -17,9 +16,9 @@ type Props = {
   className?: string
   evaluation: Evaluation
   evaluateeName: string
-  publishEvaluation: () => void
-  unpublishEvaluation: () => void
-  deleteEvaluation: () => void
+  onClickPublish: () => void
+  onClickUnpublish: () => void
+  onClickDelete: () => void
 }
 
 const StyledWrapper = styled.div`
@@ -38,14 +37,19 @@ const StyledWrapper = styled.div`
         display: flex;
         align-items: center;
         gap: 1.6rem;
+        transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
 
         > .icon {
           width: 0.8rem;
           height: 1.2rem;
         }
 
-        > p {
+        > span {
           font-size: 1.2rem;
+        }
+
+        &:hover {
+          opacity: 0.7;
         }
       }
 
@@ -102,33 +106,28 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
   className,
   evaluation,
   evaluateeName,
-  publishEvaluation,
-  unpublishEvaluation,
-  deleteEvaluation,
+  onClickPublish,
+  onClickUnpublish,
+  onClickDelete,
 }) => {
-  const navigate = useNavigate()
   const { is_published, evaluatorIconUrl, evaluatorName, relationship, evaluateeId, comment } = evaluation
-
-  const goToUserTop = (): void => {
-    navigate(`/user/${evaluateeId}`)
-  }
 
   return (
     <StyledWrapper className={className}>
       <div className="inner">
         <header>
-          <div className="to-user-top">
-            <img src={pagePrevIcon} onClick={goToUserTop} alt="評価一覧ページへ" className="icon" />
-            <p>評価一覧ページへ</p>
-          </div>
+          <a href={`/user/${evaluateeId}`} className="to-user-top">
+            <img src={pagePrevIcon} alt="評価一覧ページへ" className="icon" />
+            <span>評価一覧ページへ</span>
+          </a>
 
           <div className="buttons">
             {is_published ? (
-              <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={unpublishEvaluation} />
+              <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
             ) : (
-              <ButtonSmall buttonText="公開する" buttonType="primary" onClick={publishEvaluation} />
+              <ButtonSmall buttonText="公開する" buttonType="primary" onClick={onClickPublish} />
             )}
-            <ButtonSmall buttonText="削除" buttonType="dark" onClick={deleteEvaluation} />
+            <ButtonSmall buttonText="削除" buttonType="dark" onClick={onClickDelete} />
           </div>
         </header>
 
@@ -157,11 +156,11 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
 
         <div className="footer-buttons">
           {is_published ? (
-            <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={unpublishEvaluation} />
+            <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
           ) : (
-            <ButtonSmall buttonText="公開する" buttonType="primary" onClick={publishEvaluation} />
+            <ButtonSmall buttonText="公開する" buttonType="primary" onClick={onClickPublish} />
           )}
-          <ButtonSmall buttonText="削除" buttonType="dark" onClick={deleteEvaluation} />
+          <ButtonSmall buttonText="削除" buttonType="dark" onClick={onClickDelete} />
         </div>
       </div>
     </StyledWrapper>

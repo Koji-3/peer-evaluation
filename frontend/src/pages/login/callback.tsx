@@ -34,7 +34,7 @@ export const LoginCallback: React.FC = () => {
     ;(async () => {
       const userId = await getUserId()
       if (!!user && !!userId) {
-        navigate(`/mypage/${userId}`)
+        navigate(`/user/${userId}`)
       } else {
         navigate('/signup')
       }

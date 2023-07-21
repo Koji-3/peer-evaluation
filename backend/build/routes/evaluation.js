@@ -34,13 +34,43 @@ router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 }));
 // 評価一覧を取得する(未ログイン or 他のユーザー)
-router.get('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/list/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const evaluations = yield (0, evaluation_1.getPublishedEvaluations)(req.params.evaluateeId);
     if (evaluations) {
         res.json({ evaluations });
     }
     else {
         res.json({ evaluations: null });
+    }
+}));
+// 評価一覧を取得する(ユーザー自身)
+router.get('/list/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluations = yield (0, evaluation_1.getAllEvaluations)(req.params.evaluateeId);
+    if (evaluations) {
+        res.json({ evaluations });
+    }
+    else {
+        res.json({ evaluations: null });
+    }
+}));
+// 評価を取得する(未ログイン or 他のユーザー)
+router.get('/:evaluationId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId);
+    if (evaluation && evaluation.is_published && !evaluation.is_deleted) {
+        res.json({ evaluation });
+    }
+    else {
+        res.json({ evaluation: null });
+    }
+}));
+// 評価を取得する(ユーザー自身)
+router.get('/self/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId);
+    if (evaluation && !evaluation.is_deleted) {
+        res.json({ evaluation });
+    }
+    else {
+        res.json({ evaluation: null });
     }
 }));
 // 評価を公開する
@@ -57,15 +87,5 @@ router.put('/unpublish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0,
 router.delete('/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isDeleted: true });
     res.json(result);
-}));
-// 評価一覧を取得する(ユーザー自身)
-router.get('/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluations = yield (0, evaluation_1.getAllEvaluations)(req.params.evaluateeId);
-    if (evaluations) {
-        res.json({ evaluations });
-    }
-    else {
-        res.json({ evaluations: null });
-    }
 }));
 exports.default = router;

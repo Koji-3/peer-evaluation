@@ -23,16 +23,15 @@ export const createUser = async (user: UserInput, auth0id: string): Promise<DBUs
 }
 
 export const getUserByAuth0Id = async (auth0Id: string): Promise<DBUser | undefined> => {
-  const userbyAuth0Id = await users.filter({ auth0_id: auth0Id })
+  const userbyAuth0Id: { results: DBUser[] } = await users.filter({ auth0_id: auth0Id })
   if (!userbyAuth0Id.results.length) return undefined
-  // TODO: is_deletedがtrueのときの処理
+  if (userbyAuth0Id.results[0].props.is_deleted) return undefined
   return userbyAuth0Id.results[0]
 }
 
 export const getUserById = async (id: string): Promise<User | undefined> => {
   const user: DBUser = await users.get(id)
-  // TODO: そのidのユーザーがいないときの処理
-  // TODO: is_deletedがtrueのときの処理
+  if (!user || user.props.is_deleted) return undefined
   return { ...user.props, id: user.key }
 }
 

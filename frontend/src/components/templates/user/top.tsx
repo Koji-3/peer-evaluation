@@ -18,9 +18,9 @@ type Props = {
   currentPage: number
   lastPage: number
   shouldShowControlEvaluationButtons: boolean
-  publishEvaluation: (id: string) => void
-  unpublishEvaluation: (id: string) => void
-  deleteEvaluation: (id: string) => void
+  onClickPublish: (id: string) => void
+  onClickUnpublish: (id: string) => void
+  onClickDelete: (id: string) => void
 }
 
 const StyledWrapper = styled.div`
@@ -79,9 +79,9 @@ export const UserTopTpl: React.FC<Props> = ({
   currentPage,
   lastPage,
   shouldShowControlEvaluationButtons,
-  publishEvaluation,
-  unpublishEvaluation,
-  deleteEvaluation,
+  onClickPublish,
+  onClickUnpublish,
+  onClickDelete,
 }) => {
   const getChartData = (): string[] => {
     const values = Object.values(user.averageEvaluation) as number[]
@@ -107,9 +107,9 @@ export const UserTopTpl: React.FC<Props> = ({
               <EvaluationItem
                 evaluation={evaluation}
                 shouldShowButtons={shouldShowControlEvaluationButtons}
-                publishEvaluation={publishEvaluation}
-                unpublishEvaluation={unpublishEvaluation}
-                deleteEvaluation={deleteEvaluation}
+                onClickPublish={onClickPublish}
+                onClickUnpublish={onClickUnpublish}
+                onClickDelete={onClickDelete}
                 key={evaluation.id}
               />
             ))}

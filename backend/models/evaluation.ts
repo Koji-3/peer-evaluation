@@ -16,10 +16,10 @@ export const createEvaluation = async (evaluation: EvaluationInput, evaluateeId:
   return result
 }
 
-// export const getEvaluation = async(): Promise<any> => {
-//   const testEvaluation = await evaluations.get("test_evaluation1")
-//   console.log('get', testEvaluation)
-// }
+export const getEvaluation = async (id: string): Promise<Evaluation> => {
+  const evaluation: DBEvaluation = await evaluations.get(id)
+  return { ...evaluation.props, id: evaluation.key }
+}
 
 const sortByCreatedAt = (results: DBEvaluation[]): DBEvaluation[] => {
   const sortedResults = results.sort((a, b) => {

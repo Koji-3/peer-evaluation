@@ -32,14 +32,15 @@ const getUserByAuth0Id = (auth0Id) => __awaiter(void 0, void 0, void 0, function
     const userbyAuth0Id = yield users.filter({ auth0_id: auth0Id });
     if (!userbyAuth0Id.results.length)
         return undefined;
-    // TODO: is_deletedがtrueのときの処理
+    if (userbyAuth0Id.results[0].props.is_deleted)
+        return undefined;
     return userbyAuth0Id.results[0];
 });
 exports.getUserByAuth0Id = getUserByAuth0Id;
 const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users.get(id);
-    // TODO: そのidのユーザーがいないときの処理
-    // TODO: is_deletedがtrueのときの処理
+    if (!user || user.props.is_deleted)
+        return undefined;
     return Object.assign(Object.assign({}, user.props), { id: user.key });
 });
 exports.getUserById = getUserById;

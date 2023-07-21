@@ -1,5 +1,5 @@
 import express from 'express'
-import { createEvaluation, getAllEvaluations, getPublishedEvaluations, updateEvaluation } from '../models/evaluation'
+import { createEvaluation, getEvaluation, getAllEvaluations, getPublishedEvaluations, updateEvaluation } from '../models/evaluation'
 import { auth } from 'express-oauth2-jwt-bearer'
 
 /* auth0 jwt config */
@@ -23,12 +23,42 @@ router.post('/:evaluateeId', async (req, res) => {
 })
 
 // 評価一覧を取得する(未ログイン or 他のユーザー)
-router.get('/:evaluateeId', async (req, res) => {
+router.get('/list/:evaluateeId', async (req, res) => {
   const evaluations = await getPublishedEvaluations(req.params.evaluateeId)
   if (evaluations) {
     res.json({ evaluations })
   } else {
     res.json({ evaluations: null })
+  }
+})
+
+// 評価一覧を取得する(ユーザー自身)
+router.get('/list/self/:evaluateeId', checkJwt, async (req, res) => {
+  const evaluations = await getAllEvaluations(req.params.evaluateeId)
+  if (evaluations) {
+    res.json({ evaluations })
+  } else {
+    res.json({ evaluations: null })
+  }
+})
+
+// 評価を取得する(未ログイン or 他のユーザー)
+router.get('/:evaluationId', async (req, res) => {
+  const evaluation = await getEvaluation(req.params.evaluationId)
+  if (evaluation && evaluation.is_published && !evaluation.is_deleted) {
+    res.json({ evaluation })
+  } else {
+    res.json({ evaluation: null })
+  }
+})
+
+// 評価を取得する(ユーザー自身)
+router.get('/self/:evaluationId', checkJwt, async (req, res) => {
+  const evaluation = await getEvaluation(req.params.evaluationId)
+  if (evaluation && !evaluation.is_deleted) {
+    res.json({ evaluation })
+  } else {
+    res.json({ evaluation: null })
   }
 })
 
@@ -48,16 +78,6 @@ router.put('/unpublish/:evaluationId', checkJwt, async (req, res) => {
 router.delete('/:evaluationId', checkJwt, async (req, res) => {
   const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isDeleted: true })
   res.json(result)
-})
-
-// 評価一覧を取得する(ユーザー自身)
-router.get('/self/:evaluateeId', checkJwt, async (req, res) => {
-  const evaluations = await getAllEvaluations(req.params.evaluateeId)
-  if (evaluations) {
-    res.json({ evaluations })
-  } else {
-    res.json({ evaluations: null })
-  }
 })
 
 export default router

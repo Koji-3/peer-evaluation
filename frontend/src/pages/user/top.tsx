@@ -5,9 +5,10 @@ import { useAuth0 } from '@auth0/auth0-react'
 /* components */
 import { UserTopTpl, Layout } from 'components/templates'
 
-/* lib, types */
-import { get, put, deleteData } from 'lib/axios'
+/* lib, types, apis */
 import { User, Evaluation } from 'types/types'
+import { fetchUser, fetchIconUrl } from 'apis/user'
+import { fetchSelfEvaluations, fetchOthersEvaluations, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
 
 export const UserTop: React.FC = () => {
   const [user, setUser] = useState<User>()
@@ -19,115 +20,62 @@ export const UserTop: React.FC = () => {
   const params = useParams()
   const [searchParams] = useSearchParams()
 
-  const fetchUser = async (): Promise<User | undefined> => {
-    let user: User
+  const fetchEvaluations = async (): Promise<Evaluation[]> => {
     try {
-      const res = await get<{ user: User | null }>(`/user/${params.id}`)
-      if (!res.user) {
-        // TODO: データ取得失敗のアラート出す
-        console.log('user is null')
-        return
-      }
-      console.log('get user', res)
-      user = res.user
-      setUser(res.user)
-
-      console.log(isAuthenticated)
-      console.log(res.user.allEvaluationNum)
-
-      const evaluationNum = isAuthenticated ? res.user.allEvaluationNum : res.user.publishedEvaluationNum
-      const lastPage = evaluationNum % 4 === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / 4) + 1
-      console.log(lastPage)
-      setLastPage(lastPage)
-    } catch (e) {
-      // TODO: データ取得失敗のアラート出す
-      console.log(`/user/${params.id} error`, e)
-      return
-    }
-    return user
-  }
-
-  const fetchIconUrl = async (iconKey: string): Promise<void> => {
-    try {
-      const { imageSrc } = await get<{ imageSrc: string }, { key: string }>('/s3/get-icon', undefined, { key: iconKey })
-      if (!imageSrc) {
-        // TODO: データ取得失敗のアラート出す
-        console.log('imageSrc undefined')
-        return
-      }
-      setUserIconUrl(imageSrc)
-    } catch (e) {
-      // TODO: データ取得失敗のアラート出す
-      console.log(`get icon error`, e)
-      return
-    }
-  }
-
-  const fetchEvaluations = async (): Promise<void> => {
-    if (isAuthenticated) {
-      try {
+      if (isAuthenticated) {
         const token = await getAccessTokenSilently()
-        const { evaluations } = await get<{ evaluations: Evaluation[] | null }>(`/evaluation/self/${params.id}`, token)
-        if (!evaluations) {
-          // TODO: データ取得失敗のアラート出す
-          console.log('evaluations null')
-          return
-        }
-        setEvaluations(evaluations)
-      } catch (e) {
-        // TODO: データ取得失敗のアラート出す
-        console.log('evaluations error', e)
-        return
+        const evaluations = await fetchSelfEvaluations(token, params.id)
+        return evaluations
+      } else {
+        const evaluations = await fetchOthersEvaluations(params.id)
+        return evaluations
       }
-    } else {
-      try {
-        const { evaluations } = await get<{ evaluations: Evaluation[] | null }>(`/evaluation/${params.id}`)
-        if (!evaluations) {
-          // TODO: データ取得失敗のアラート出す
-          console.log('evaluations null')
-          return
-        }
-        setEvaluations(evaluations)
-      } catch (e) {
-        // TODO: データ取得失敗のアラート出す
-        console.log('evaluations error', e)
-        return
-      }
+    } catch (e) {
+      throw new Error('データの取得に失敗しました')
     }
   }
 
-  const publishEvaluation = async (id: string): Promise<void> => {
+  const refetchAfterUpdateEvaluation = async (): Promise<void> => {
+    try {
+      const user = await fetchUser(params.id)
+      const evaluations = await fetchEvaluations()
+      setUser(user)
+      setEvaluations(evaluations)
+    } catch (e) {
+      // TODO: データ取得失敗のアラート出す
+      console.log('update fail')
+    }
+  }
+
+  const onClickPublish = async (id: string): Promise<void> => {
     const token = await getAccessTokenSilently()
-    const { update } = await put<{ update: boolean }>(`/evaluation/publish/${id}`, undefined, token)
+    const update = await publishEvaluation(token, id)
     if (update) {
-      await fetchUser()
-      await fetchEvaluations()
+      await refetchAfterUpdateEvaluation()
     } else {
       // TODO: データ取得失敗のアラート出す
       console.log('update fail')
     }
   }
 
-  const unpublishEvaluation = async (id: string): Promise<void> => {
+  const onClickUnpublish = async (id: string): Promise<void> => {
     const token = await getAccessTokenSilently()
-    const { update } = await put<{ update: boolean }>(`/evaluation/unpublish/${id}`, undefined, token)
+    const update = await unpublishEvaluation(token, id)
     if (update) {
-      await fetchUser()
-      await fetchEvaluations()
+      refetchAfterUpdateEvaluation()
     } else {
       // TODO: データ取得失敗のアラート出す
       console.log('update fail')
     }
   }
 
-  const deleteEvaluation = async (id: string): Promise<void> => {
+  const onClickDelete = async (id: string): Promise<void> => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
     const token = await getAccessTokenSilently()
-    const { update } = await deleteData<{ update: boolean }>(`/evaluation/${id}`, token)
+    const update = await deleteEvaluation(token, id)
     if (update) {
-      await fetchUser()
-      await fetchEvaluations()
+      refetchAfterUpdateEvaluation()
     } else {
       // TODO: データ取得失敗のアラート出す
       console.log('update fail')
@@ -137,9 +85,20 @@ export const UserTop: React.FC = () => {
   useEffect(() => {
     if (isLoading) return
     ;(async () => {
-      const user = (await fetchUser()) as User
-      await fetchIconUrl(user.icon_key)
-      await fetchEvaluations()
+      try {
+        const user = await fetchUser(params.id)
+        const iconUrl = await fetchIconUrl(user.icon_key)
+        const evaluations = await fetchEvaluations()
+        setUser(user)
+        setUserIconUrl(iconUrl)
+        setEvaluations(evaluations)
+        const evaluationNum = isAuthenticated ? user.allEvaluationNum : user.publishedEvaluationNum
+        const lastPage = evaluationNum % 4 === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / 4) + 1
+        setLastPage(lastPage)
+      } catch (e) {
+        // TODO: データ取得失敗のアラート出す
+        console.log(e)
+      }
     })()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,9 +119,9 @@ export const UserTop: React.FC = () => {
           currentPage={currentPage}
           lastPage={lastPage}
           shouldShowControlEvaluationButtons={isAuthenticated}
-          publishEvaluation={publishEvaluation}
-          unpublishEvaluation={unpublishEvaluation}
-          deleteEvaluation={deleteEvaluation}
+          onClickPublish={onClickPublish}
+          onClickUnpublish={onClickUnpublish}
+          onClickDelete={onClickDelete}
         />
       )}
     </Layout>
