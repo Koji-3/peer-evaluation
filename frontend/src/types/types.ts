@@ -6,6 +6,11 @@ export type RadioButton = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+export type FlashMessage = {
+  type: 'success' | 'error'
+  message: string
+}
+
 type DBProperties = {
   collection: string
   key: string
@@ -42,7 +47,6 @@ export type UserInput = {
   icon_key: string
 }
 
-// TODO: google以外のログインも受け付けるなら要変更
 export type Auth0AuthenticatedBy = 'google' | 'auth0'
 
 export type EvaluationLabelKeys = 'e1' | 'e2' | 'e3' | 'e4' | 'e5' | 'e6'
@@ -98,7 +102,6 @@ export type DBEvaluation = DBProperties & {
   }
 }
 
-// TODO: pointは小数点以下一桁で返す
 export type Evaluation = DBEvaluation['props'] & {
   id: string
   evaluatorIconUrl?: string

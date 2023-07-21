@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 /* components */
 import { Button, Icon } from 'components/atoms'
@@ -52,6 +53,10 @@ const StyledWrapper = styled.div`
     }
 
     .register {
+      margin: 0 auto 2.5rem;
+    }
+
+    .cancel {
       margin: 0 auto;
     }
   }
@@ -69,8 +74,13 @@ export const SignupTpl: React.FC<Props> = ({
   onChangeIconInput,
   register,
 }) => {
+  const navigate = useNavigate()
   const { name, profile } = userInput
   const isDisableRegister = !iconObjectUrl || !name || !profile
+
+  const goToTop = (): void => {
+    navigate('/')
+  }
 
   return (
     <StyledWrapper className={className}>
@@ -93,6 +103,7 @@ export const SignupTpl: React.FC<Props> = ({
         />
 
         <Button buttonText="新規登録する" buttonType="primary" disabled={isDisableRegister} onClick={register} className="register" />
+        <Button buttonText="キャンセル" buttonType="white" onClick={goToTop} className="cancel" />
       </div>
     </StyledWrapper>
   )

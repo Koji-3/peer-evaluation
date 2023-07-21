@@ -15,6 +15,7 @@ export const theme = {
   background: '#fcfaf8',
   blue: '#00bbe4',
   errorText: '#ee0e00',
+  errorBg: '#bd5353',
 } as const
 
 type Theme = typeof theme
