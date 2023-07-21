@@ -1,5 +1,5 @@
-import { get, put, deleteData } from 'lib/axios'
-import { Evaluation } from 'types/types'
+import { get, post, put, deleteData } from 'lib/axios'
+import { Evaluation, DBEvaluation, EvaluationInput } from 'types/types'
 
 export const fetchSelfEvaluations = async (token: string, id?: string): Promise<Evaluation[]> => {
   if (!id) throw new Error('データの取得に失敗しました')
@@ -50,6 +50,20 @@ export const fetchOthersEvaluation = async (id?: string): Promise<Evaluation> =>
     return evaluation
   } catch (e) {
     throw new Error('データの取得に失敗しました')
+  }
+}
+
+export const submitEvaluation = async (evaluation: EvaluationInput, evaluateeId?: string): Promise<void> => {
+  if (!evaluateeId) throw new Error('評価の送信に失敗しました')
+  try {
+    const res = await post<{ evaluation: DBEvaluation | null }, { evaluation: EvaluationInput }>(`/evaluation/${evaluateeId}`, {
+      evaluation,
+    })
+    if (!res.evaluation) {
+      throw new Error('評価の送信に失敗しました')
+    }
+  } catch (e) {
+    throw new Error('評価の送信に失敗しました')
   }
 }
 

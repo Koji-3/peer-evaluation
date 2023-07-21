@@ -1,5 +1,5 @@
-import { get, put, deleteData } from 'lib/axios'
-import { User, Evaluation } from 'types/types'
+import { get, post } from 'lib/axios'
+import { User, DBUser, UserInput } from 'types/types'
 
 export const fetchUser = async (id?: string): Promise<User> => {
   if (!id) throw new Error('データの取得に失敗しました')
@@ -14,14 +14,21 @@ export const fetchUser = async (id?: string): Promise<User> => {
   }
 }
 
-export const fetchIconUrl = async (iconKey: string): Promise<string> => {
+export const fetchUserByAuth0Id = async (token: string, auth0Id?: string): Promise<DBUser | null> => {
+  if (!auth0Id) throw new Error('データの取得に失敗しました')
   try {
-    const { imageSrc } = await get<{ imageSrc: string }, { key: string }>('/s3/get-icon', undefined, { key: iconKey })
-    if (!imageSrc) {
-      throw new Error('データの取得に失敗しました')
-    }
-    return imageSrc
+    const { user } = await get<{ user: DBUser | null }>(`/user/auth/${auth0Id}`, token)
+    return user
   } catch (e) {
     throw new Error('データの取得に失敗しました')
+  }
+}
+
+export const createUser = async (auth0UserId: string, user: UserInput, token: string): Promise<DBUser> => {
+  try {
+    const { user: resUser } = await post<{ user: DBUser }, { user: UserInput }>(`/user/signup/${auth0UserId}`, { user }, token)
+    return resUser
+  } catch (e) {
+    throw new Error('登録に失敗しました')
   }
 }

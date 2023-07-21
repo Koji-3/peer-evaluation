@@ -7,7 +7,8 @@ import { UserTopTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
 import { User, Evaluation } from 'types/types'
-import { fetchUser, fetchIconUrl } from 'apis/user'
+import { fetchUser } from 'apis/user'
+import { fetchIconUrl } from 'apis/icon'
 import { fetchSelfEvaluations, fetchOthersEvaluations, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
 
 export const UserTop: React.FC = () => {

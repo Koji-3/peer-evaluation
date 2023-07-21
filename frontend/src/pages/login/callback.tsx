@@ -6,34 +6,36 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
-/* lib, types */
-import { get } from 'lib/axios'
-import { DBUser } from 'types/types'
+/* lib, types, apis */
+import { fetchUserByAuth0Id } from 'apis/user'
 
 export const LoginCallback: React.FC = () => {
-  const { user, getAccessTokenSilently, isLoading } = useAuth0()
+  const { user: auth0User, getAccessTokenSilently, isLoading } = useAuth0()
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false)
   const navigate = useNavigate()
 
-  const getUserId = async (): Promise<string | null> => {
-    const token = await getAccessTokenSilently()
-    // Auth0のidからuserIdを取得する
-    const res = await get<{ user: DBUser | null }>(`/user/auth/${user?.sub}`, token)
-
-    return res.user?.key || null
+  const getUserId = async (): Promise<string | undefined> => {
+    try {
+      const token = await getAccessTokenSilently()
+      // Auth0のidからuserIdを取得する
+      const user = await fetchUserByAuth0Id(token, auth0User?.sub)
+      return user?.key
+    } catch (e) {
+      // TODO: エラー処理
+    }
   }
 
   useEffect(() => {
-    setIsEmailVerified(user?.email_verified || false)
-  }, [user])
+    setIsEmailVerified(auth0User?.email_verified || false)
+  }, [auth0User])
 
   useEffect(() => {
     if (isLoading) return
     // TODO: Auth0のメール認証を行ってから使えるようにする
-    if (!user || !user?.email_verified) return
+    if (!auth0User || !auth0User?.email_verified) return
     ;(async () => {
       const userId = await getUserId()
-      if (!!user && !!userId) {
+      if (!!auth0User && !!userId) {
         navigate(`/user/${userId}`)
       } else {
         navigate('/signup')
@@ -41,7 +43,7 @@ export const LoginCallback: React.FC = () => {
     })()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, user])
+  }, [isLoading, auth0User])
 
   return (
     // TODO: ローディング表示

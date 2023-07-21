@@ -6,11 +6,11 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { EvaluationFormTpl, Layout } from 'components/templates'
 
 /* lib, types */
-import { get, post } from 'lib/axios'
 import { validateIcon } from 'lib/validate'
-import { evaluatorUploadIconToS3 } from 'lib/icon'
-import { User, DBUser, DBEvaluation, EvaluationInput, EvaluationLabelKeys } from 'types/types'
-import { fixtureUser } from '__fixtures__/user'
+import { evaluatorUploadIconToS3, fetchIconUrl } from 'apis/icon'
+import { fetchUser } from 'apis/user'
+import { submitEvaluation } from 'apis/evaluation'
+import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 
 export const EvaluationForm: React.FC = () => {
   const initialEvaluationInput: EvaluationInput = {
@@ -79,11 +79,10 @@ export const EvaluationForm: React.FC = () => {
   }
 
   const submit = async (): Promise<void> => {
-    let iconKey: string | undefined
+    let iconKey = ''
     if (iconFile) {
       try {
         iconKey = await evaluatorUploadIconToS3({ file: iconFile, evaluatorName: evaluationInput.evaluatorName })
-        if (!iconKey) return
       } catch (e) {
         // TODO: エラー処理
         console.log(e)
@@ -92,17 +91,7 @@ export const EvaluationForm: React.FC = () => {
     }
 
     try {
-      const res = await post<{ evaluation: DBEvaluation | null }, { evaluation: EvaluationInput }>(`/evaluation/${params.id}`, {
-        evaluation: { ...evaluationInput, evaluatorIconKey: iconKey },
-      })
-
-      console.log(res.evaluation)
-
-      if (!res.evaluation) {
-        // TODO: エラー処理
-        console.log('res.evaluation null')
-        return
-      }
+      await submitEvaluation({ ...evaluationInput, evaluatorIconKey: iconKey }, params.id)
       navigate(`/user/${params.id}`)
     } catch (e) {
       // TODO: エラー処理
@@ -112,40 +101,16 @@ export const EvaluationForm: React.FC = () => {
   useEffect(() => {
     if (isLoading) return
     ;(async () => {
-      let evaluatee: User
       try {
-        const res = await get<{ user: User | null }>(`/user/${params.id}`)
-        if (!res.user) {
-          // TODO: データ取得失敗のアラート出す
-          console.log('user is null')
-          return
-        }
-        console.log('get user', res)
-        evaluatee = res.user
+        const evaluatee = await fetchUser(params.id)
+        const evaluateeIconUrl = await fetchIconUrl(evaluatee.icon_key)
+        setEvaluatee(evaluatee)
+        setEvaluateeIconUrl(evaluateeIconUrl)
       } catch (e) {
         // TODO: データ取得失敗のアラート出す
         console.log(`/user/${params.id} error`, e)
         return
       }
-
-      let evaluateeIconUrl: string
-      try {
-        const { imageSrc } = await get<{ imageSrc: string }, { key: string }>('/s3/get-icon', undefined, {
-          key: evaluatee.icon_key,
-        })
-        if (!imageSrc) {
-          // TODO: データ取得失敗のアラート出す
-          console.log('imageSrc undefined')
-          return
-        }
-        evaluateeIconUrl = imageSrc
-      } catch (e) {
-        // TODO: データ取得失敗のアラート出す
-        console.log(`get icon error`, e)
-        return
-      }
-      setEvaluatee(evaluatee)
-      setEvaluateeIconUrl(evaluateeIconUrl)
     })()
 
     // TODO: ログイン済みならアイコン取得

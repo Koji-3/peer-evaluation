@@ -5,11 +5,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 /* components */
 import { SignupTpl, Layout } from 'components/templates'
 
-/* lib, types */
-import { post } from 'lib/axios'
-import { userUploadIconToS3 } from 'lib/icon'
+/* lib, types, apis */
 import { validateIcon } from 'lib/validate'
-import { UserInput, DBUser } from 'types/types'
+import { UserInput } from 'types/types'
+import { userUploadIconToS3 } from 'apis/icon'
+import { createUser } from 'apis/user'
 
 export const Signup: React.FC = () => {
   const { user: auth0User, getAccessTokenSilently } = useAuth0()
@@ -43,29 +43,13 @@ export const Signup: React.FC = () => {
   const register = async (): Promise<void> => {
     if (!iconFile || !auth0User || !auth0User.sub) return
     const token = await getAccessTokenSilently()
-    let iconKey: string | undefined
     try {
-      iconKey = await userUploadIconToS3({ file: iconFile, token, auth0Id: auth0User.sub })
+      const iconKey = await userUploadIconToS3({ file: iconFile, token, auth0Id: auth0User.sub })
+      const user = await createUser(auth0User.sub, { ...userInput, icon_key: iconKey }, token)
+      navigate(`/user/${user.key}`)
     } catch (e) {
       // TODO: エラー処理
       console.log('iconkey error', e)
-    }
-    if (!iconKey) {
-      // TODO: エラー処理
-      console.log('iconkey is undefined')
-      return
-    }
-
-    try {
-      const res = await post<{ user: DBUser }, { user: UserInput }>(
-        `/user/signup/${auth0User?.sub}`,
-        { user: { ...userInput, icon_key: iconKey } },
-        token,
-      )
-      navigate(`/user/${res.user.key}`)
-    } catch (e) {
-      // TODO: エラー処理
-      console.log('create user error', e)
     }
   }
 
