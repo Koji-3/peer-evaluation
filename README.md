@@ -3,7 +3,7 @@
 
 # フロントエンド
 ## ローカル
-http://localhost:3000
+http://localhost:3000  
 .envファイルを作成
 
 ```
@@ -11,8 +11,12 @@ $ yarn
 $ yarn start
 ```
 ## デプロイ
-Vercelを使用。
+Vercelを使用。  
 https://peer-evaluation.vercel.app/
+```
+$ yarn pre-push
+```
+→mainブランチにpushで自動デプロイ
 
 # バックエンド
 ## ローカル
@@ -21,8 +25,13 @@ https://peer-evaluation.vercel.app/
 3. 
 ```
 $ yarn
-$ yarn start
+$ yarn start.ts
 ```
 
 ## デプロイ
 cyclic.shを使用。
+```
+$ yarn pre-push
+$ yarn tsc
+```
+→mainブランチにpushで自動デプロイ
