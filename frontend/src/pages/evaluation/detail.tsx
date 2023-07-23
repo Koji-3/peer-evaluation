@@ -20,13 +20,14 @@ export const EvaluationDetail: React.FC = () => {
     try {
       if (isAuthenticated) {
         const token = await getAccessTokenSilently()
-        const evaluation = await fetchSelfEvaluation(token, params.id)
+        const evaluation = await fetchSelfEvaluation(token, params.evaluationId)
         return evaluation
       } else {
-        const evaluation = await fetchOthersEvaluation(params.id)
+        const evaluation = await fetchOthersEvaluation(params.evaluationId)
         return evaluation
       }
     } catch (e) {
+      console.log(e)
       throw new Error('データの取得に失敗しました')
     }
   }
@@ -43,7 +44,7 @@ export const EvaluationDetail: React.FC = () => {
 
   const onClickPublish = async (): Promise<void> => {
     const token = await getAccessTokenSilently()
-    const update = await publishEvaluation(token, params.id)
+    const update = await publishEvaluation(token, params.evaluationId)
     if (update) {
       await refetchAfterUpdateEvaluation()
     } else {
@@ -54,7 +55,7 @@ export const EvaluationDetail: React.FC = () => {
 
   const onClickUnpublish = async (): Promise<void> => {
     const token = await getAccessTokenSilently()
-    const update = await unpublishEvaluation(token, params.id)
+    const update = await unpublishEvaluation(token, params.evaluationId)
     if (update) {
       refetchAfterUpdateEvaluation()
     } else {
@@ -67,7 +68,7 @@ export const EvaluationDetail: React.FC = () => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
     const token = await getAccessTokenSilently()
-    const update = await deleteEvaluation(token, params.id)
+    const update = await deleteEvaluation(token, params.evaluationId)
     if (update) {
       refetchAfterUpdateEvaluation()
     } else {

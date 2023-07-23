@@ -18,7 +18,7 @@ export const LoginCallback: React.FC = () => {
     try {
       const token = await getAccessTokenSilently()
       // Auth0のidからuserIdを取得する
-      const user = await fetchUserByAuth0Id(token, auth0User?.sub)
+      const user = await fetchUserByAuth0Id(token)
       return user?.key
     } catch (e) {
       // TODO: エラー処理

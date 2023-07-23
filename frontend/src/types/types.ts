@@ -105,6 +105,7 @@ export type DBEvaluation = DBProperties & {
 export type Evaluation = DBEvaluation['props'] & {
   id: string
   evaluatorIconUrl?: string
+  shouldShowOperateButtons: boolean
 }
 
 export type AverageEvaluation = Record<EvaluationLabelKeys, number>

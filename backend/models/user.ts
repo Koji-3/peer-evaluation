@@ -2,13 +2,13 @@ import CyclicDb from '@cyclic.sh/dynamodb'
 import shortUuid from 'short-uuid'
 import crypto from 'crypto'
 import { UserInput, DBUser, User, AverageEvaluation, DBEvaluation } from '../types/types'
+import { errorMessages } from '../const/errorMessages'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
 const users = db.collection('users')
 
-export const createUser = async (user: UserInput, auth0id: string): Promise<DBUser | undefined> => {
+export const createUser = async (user: UserInput, auth0id: string): Promise<DBUser> => {
   const uuid = shortUuid.generate()
-  if (!user) return undefined
   const defaultAverageEvaluation: AverageEvaluation = { e1: 0, e2: 0, e3: 0, e4: 0, e5: 0, e6: 0 }
   const newUser: Omit<DBUser['props'], 'created'> = {
     ...user,
@@ -18,79 +18,121 @@ export const createUser = async (user: UserInput, auth0id: string): Promise<DBUs
     publishedEvaluationNum: 0,
     allEvaluationNum: 0,
   }
-  const result = await users.set(uuid, newUser)
-  return result
+  try {
+    const result = await users.set(uuid, newUser)
+    return result
+  } catch (e) {
+    console.error('createUser error: ', e)
+    throw new Error(errorMessages.user.create)
+  }
 }
 
-export const getUserByAuth0Id = async (auth0Id: string): Promise<DBUser | undefined> => {
-  const userbyAuth0Id: { results: DBUser[] } = await users.filter({ auth0_id: auth0Id })
-  if (!userbyAuth0Id.results.length) return undefined
-  if (userbyAuth0Id.results[0].props.is_deleted) return undefined
-  return userbyAuth0Id.results[0]
+export const getUserByAuth0Id = async (auth0Id: string): Promise<DBUser | null> => {
+  try {
+    const userbyAuth0Id: { results: DBUser[] } = await users.filter({ auth0_id: auth0Id })
+    if (!userbyAuth0Id.results.length || userbyAuth0Id.results[0].props.is_deleted) {
+      // FEで出し分けたいのでnullを返す
+      return null
+    }
+    return userbyAuth0Id.results[0]
+  } catch (e) {
+    console.error('getUserByAuth0Id error: ', e)
+    throw new Error(errorMessages.user.get)
+  }
 }
 
-export const getUserById = async (id: string): Promise<User | undefined> => {
-  const user: DBUser = await users.get(id)
-  if (!user || user.props.is_deleted) return undefined
-  return { ...user.props, id: user.key }
+export const getUserById = async (id: string): Promise<User> => {
+  try {
+    const user: DBUser = await users.get(id)
+    if (!user || user.props.is_deleted) {
+      console.error('!user || user.props.is_deleted in getUserById')
+      throw new Error(errorMessages.user.get)
+    }
+    return { ...user.props, id: user.key }
+  } catch (e) {
+    console.error('getUserById error: ', e)
+    throw new Error(errorMessages.user.get)
+  }
 }
 
-export const updateUser = async (auth0Id: string, newUser: UserInput): Promise<DBUser | undefined> => {
-  const user = (await getUserByAuth0Id(auth0Id)) as DBUser
-  const updatedUser = await users.set(user.key, newUser)
-  return updatedUser
+export const updateUser = async (auth0Id: string, newUser: UserInput): Promise<DBUser> => {
+  try {
+    const user = (await getUserByAuth0Id(auth0Id)) as DBUser
+    const updatedUser = await users.set(user.key, newUser)
+    return updatedUser
+  } catch (e) {
+    console.error('updateUser error: ', e)
+    throw new Error(errorMessages.user.update)
+  }
 }
 
 export const increaseUserAllEvaluationNum = async (userId: string): Promise<void> => {
-  const user: DBUser = await users.get(userId)
-  const { allEvaluationNum } = user.props
-  const newAllEvaluationNum = allEvaluationNum + 1
-  await users.set(user.key, { ...user, allEvaluationNum: newAllEvaluationNum })
+  try {
+    const user: DBUser = await users.get(userId)
+    const { allEvaluationNum } = user.props
+    const newAllEvaluationNum = allEvaluationNum + 1
+    await users.set(user.key, { ...user, allEvaluationNum: newAllEvaluationNum })
+  } catch (e) {
+    console.error('increaseUserAllEvaluationNum error: ', e)
+  }
 }
 
 export const increaseUserAvarageEvaluation = async (userId: string, evaluation: DBEvaluation['props']): Promise<void> => {
-  const user: DBUser = await users.get(userId)
-  const { averageEvaluation, publishedEvaluationNum } = user.props
-  const newAverageEvaluation = {
-    e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum + evaluation.e1.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-    e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum + evaluation.e2.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-    e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum + evaluation.e3.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-    e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum + evaluation.e4.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-    e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum + evaluation.e5.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-    e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum + evaluation.e6.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+  try {
+    const user: DBUser = await users.get(userId)
+    const { averageEvaluation, publishedEvaluationNum } = user.props
+    const newAverageEvaluation = {
+      e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum + evaluation.e1.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+      e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum + evaluation.e2.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+      e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum + evaluation.e3.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+      e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum + evaluation.e4.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+      e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum + evaluation.e5.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+      e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum + evaluation.e6.point) / (publishedEvaluationNum + 1)) * 10) / 10,
+    }
+    const newPublishedEvaluationNum = publishedEvaluationNum + 1
+    await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
+  } catch (e) {
+    console.error('increaseUserAvarageEvaluation error: ', e)
   }
-  const newPublishedEvaluationNum = publishedEvaluationNum + 1
-  await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
 }
 
 export const decreaseUserAvarageEvaluation = async (userId: string, evaluation: DBEvaluation['props']): Promise<void> => {
-  const user: DBUser = await users.get(userId)
-  const { averageEvaluation, publishedEvaluationNum } = user.props
-  const newAverageEvaluation = {
-    e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum - evaluation.e1.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-    e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum - evaluation.e2.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-    e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum - evaluation.e3.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-    e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum - evaluation.e4.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-    e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum - evaluation.e5.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-    e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum - evaluation.e6.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+  try {
+    const user: DBUser = await users.get(userId)
+    const { averageEvaluation, publishedEvaluationNum } = user.props
+    const newAverageEvaluation = {
+      e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum - evaluation.e1.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+      e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum - evaluation.e2.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+      e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum - evaluation.e3.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+      e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum - evaluation.e4.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+      e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum - evaluation.e5.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+      e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum - evaluation.e6.point) / (publishedEvaluationNum - 1)) * 10) / 10,
+    }
+    const newPublishedEvaluationNum = publishedEvaluationNum - 1
+    await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
+  } catch (e) {
+    console.error('decreaseUserAvarageEvaluation error: ', e)
   }
-  const newPublishedEvaluationNum = publishedEvaluationNum - 1
-  await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
 }
 
-export const deleteUser = async (auth0Id: string): Promise<DBUser | undefined> => {
-  const user = (await getUserByAuth0Id(auth0Id)) as DBUser
-  const uuid = crypto.randomUUID()
+export const deleteUser = async (auth0Id: string): Promise<DBUser> => {
+  try {
+    const user = (await getUserByAuth0Id(auth0Id)) as DBUser
+    const uuid = crypto.randomUUID()
 
-  // 退会処理でdynamoDB上のデータは論理削除する
-  const deletedUser = await users.set(user.key, {
-    auth0_id: uuid, // auth0_idは一意のidを生成
-    name: '退会済みユーザー',
-    profile: '',
-    icon_key: '',
-    is_deleted: true,
-  })
-  return deletedUser
+    // 退会処理でdynamoDB上のデータは論理削除する
+    const deletedUser = await users.set(user.key, {
+      auth0_id: uuid, // auth0_idは一意のidを生成
+      name: '退会済みユーザー',
+      profile: '',
+      icon_key: '',
+      is_deleted: true,
+    })
+    return deletedUser
+  } catch (e) {
+    console.error('deleteUser error: ', e)
+    throw new Error(errorMessages.user.delete)
+  }
 }
 
 // FIXME: データ確認用なので最後に消す

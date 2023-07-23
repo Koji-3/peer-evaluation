@@ -91,8 +91,8 @@ export const EvaluationForm: React.FC = () => {
     }
 
     try {
-      await submitEvaluation({ ...evaluationInput, evaluatorIconKey: iconKey }, params.id)
-      navigate(`/user/${params.id}`)
+      await submitEvaluation({ ...evaluationInput, evaluatorIconKey: iconKey }, params.evaluateeId)
+      navigate(`/user/${params.evaluateeId}`)
     } catch (e) {
       // TODO: エラー処理
     }
@@ -102,13 +102,13 @@ export const EvaluationForm: React.FC = () => {
     if (isLoading) return
     ;(async () => {
       try {
-        const evaluatee = await fetchUser(params.id)
+        const evaluatee = await fetchUser(params.evaluateeId)
         const evaluateeIconUrl = await fetchIconUrl(evaluatee.icon_key)
         setEvaluatee(evaluatee)
         setEvaluateeIconUrl(evaluateeIconUrl)
       } catch (e) {
         // TODO: データ取得失敗のアラート出す
-        console.log(`/user/${params.id} error`, e)
+        console.log(`/user/${params.evaluateeId} error`, e)
         return
       }
     })()

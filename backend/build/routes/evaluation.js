@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const evaluation_1 = require("../models/evaluation");
 const express_oauth2_jwt_bearer_1 = require("express-oauth2-jwt-bearer");
+const errorMessages_1 = require("../const/errorMessages");
 /* auth0 jwt config */
 const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
     audience: process.env.AUTH0_API_AUDIENCE,
@@ -25,67 +26,102 @@ const router = express_1.default.Router();
 /* router */
 // 評価を投稿する
 router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluation = yield (0, evaluation_1.createEvaluation)(req.body.evaluation, req.params.evaluateeId);
-    if (evaluation) {
+    try {
+        const evaluation = yield (0, evaluation_1.createEvaluation)(req.body.evaluation, req.params.evaluateeId);
         res.json({ evaluation });
     }
-    else {
-        res.json({ evaluation: null });
+    catch (e) {
+        res.json({ evaluation: null, error: e.message });
+        console.error('error in route /evaluation/:evaluateeId:', e);
     }
 }));
 // 評価一覧を取得する(未ログイン or 他のユーザー)
 router.get('/list/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluations = yield (0, evaluation_1.getPublishedEvaluations)(req.params.evaluateeId);
-    if (evaluations) {
+    try {
+        const evaluations = yield (0, evaluation_1.getEvaluations)(req.params.evaluateeId);
         res.json({ evaluations });
     }
-    else {
-        res.json({ evaluations: null });
+    catch (e) {
+        res.json({ evaluations: null, error: e.message });
+        console.error('error in route /evaluation/list/:evaluateeId:', e);
     }
 }));
 // 評価一覧を取得する(ユーザー自身)
 router.get('/list/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluations = yield (0, evaluation_1.getAllEvaluations)(req.params.evaluateeId);
-    if (evaluations) {
+    var _a;
+    const auth0Id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.payload.sub;
+    if (!auth0Id) {
+        res.json({ evaluations: null, error: errorMessages_1.errorMessages.evaluation.get });
+        return;
+    }
+    try {
+        const evaluations = yield (0, evaluation_1.getEvaluations)(req.params.evaluateeId, auth0Id);
         res.json({ evaluations });
     }
-    else {
-        res.json({ evaluations: null });
+    catch (e) {
+        res.json({ evaluations: null, error: e.message });
+        console.error('error in route /evaluation/list/self/:evaluateeId:', e);
     }
 }));
 // 評価を取得する(未ログイン or 他のユーザー)
 router.get('/:evaluationId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId);
-    if (evaluation && evaluation.is_published && !evaluation.is_deleted) {
+    try {
+        const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId);
         res.json({ evaluation });
     }
-    else {
-        res.json({ evaluation: null });
+    catch (e) {
+        res.json({ evaluation: null, error: e.message });
+        console.error('error in route /evaluation/:evaluationId:', e);
     }
 }));
 // 評価を取得する(ユーザー自身)
 router.get('/self/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId);
-    if (evaluation && !evaluation.is_deleted) {
+    var _b;
+    const auth0Id = (_b = req.auth) === null || _b === void 0 ? void 0 : _b.payload.sub;
+    if (!auth0Id) {
+        res.json({ evaluation: null, error: errorMessages_1.errorMessages.evaluation.get });
+        return;
+    }
+    try {
+        const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId, auth0Id);
         res.json({ evaluation });
     }
-    else {
-        res.json({ evaluation: null });
+    catch (e) {
+        res.json({ evaluation: null, error: e.message });
+        console.error('error in route /evaluation/self/:evaluationId:', e);
     }
 }));
 // 評価を公開する
 router.put('/publish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: true });
-    res.json(result);
+    try {
+        const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: true });
+        res.json(result);
+    }
+    catch (e) {
+        res.json({ update: false, error: e.message });
+        console.error('error in route /evaluation/publish/:evaluationId:', e);
+    }
 }));
 // 評価を非公開にする
 router.put('/unpublish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: false });
-    res.json(result);
+    try {
+        const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: false });
+        res.json(result);
+    }
+    catch (e) {
+        res.json({ update: false, error: e.message });
+        console.error('error in route /evaluation/unpublish/:evaluationId:', e);
+    }
 }));
 // 評価を削除する
 router.delete('/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isDeleted: true });
-    res.json(result);
+    try {
+        const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isDeleted: true });
+        res.json(result);
+    }
+    catch (e) {
+        res.json({ update: false, error: e.message });
+        console.error('error in route /evaluation/:evaluationId:', e);
+    }
 }));
 exports.default = router;

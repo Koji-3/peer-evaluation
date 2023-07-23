@@ -10,6 +10,7 @@ import { User, Evaluation } from 'types/types'
 import { fetchUser } from 'apis/user'
 import { fetchIconUrl } from 'apis/icon'
 import { fetchSelfEvaluations, fetchOthersEvaluations, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
+import { errorMessages } from 'const/errorMessages'
 
 export const UserTop: React.FC = () => {
   const [user, setUser] = useState<User>()
@@ -32,7 +33,7 @@ export const UserTop: React.FC = () => {
         return evaluations
       }
     } catch (e) {
-      throw new Error('データの取得に失敗しました')
+      throw new Error(errorMessages.evaluation.get)
     }
   }
 
@@ -119,7 +120,6 @@ export const UserTop: React.FC = () => {
           evaluations={evaluations}
           currentPage={currentPage}
           lastPage={lastPage}
-          shouldShowControlEvaluationButtons={isAuthenticated}
           onClickPublish={onClickPublish}
           onClickUnpublish={onClickUnpublish}
           onClickDelete={onClickDelete}

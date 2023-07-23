@@ -27,8 +27,14 @@
     ],
     "max-lines": "error",
     "no-console": [
-      "warn"
+      "warn",
+      {
+        "allow": ["error"]
+      }
     ],
+    "@typescript-eslint/no-explicit-any": [
+      "warn"
+    ]
   },
   "parserOptions": {
     "sourceType": "module",

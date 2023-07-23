@@ -3,6 +3,7 @@ import multer from 'multer'
 import { auth } from 'express-oauth2-jwt-bearer'
 
 import { uploadIcon, getIcon } from '../models/s3'
+import { errorMessages } from '../const/errorMessages'
 
 const router = express.Router()
 const upload = multer()
@@ -19,46 +20,52 @@ const checkJwt = auth({
 router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'), async (req, res) => {
   try {
     if (!req.file) {
-      res.json({ key: null })
+      res.json({ key: null, error: errorMessages.icon.create })
       return
     }
     const key = await uploadIcon(req.file, null, req.params.evaluatorName)
-    if (!!key) {
-      res.json({ key })
-    }
-  } catch (e) {
-    // TODO: エラー処理
-    res.json({ key: null })
+    res.json({ key })
+  } catch (e: any) {
+    res.json({ key: null, error: e.message })
+    console.error('error in route /icon/upload-icon/evaluator/:evaluatorName:', e)
   }
 })
 
 // s3にユーザーアイコンをアップロードする
-router.post('/upload-icon/user/:auth0id', checkJwt, upload.single('icon_file'), async (req, res) => {
+router.post('/upload-icon/user', checkJwt, upload.single('icon_file'), async (req, res) => {
+  const auth0Id = req.auth?.payload.sub
+  if (!auth0Id) {
+    res.json({ key: null, error: errorMessages.icon.create })
+    return
+  }
   try {
     if (!req.file) {
-      res.json({ key: null })
+      res.json({ key: null, error: errorMessages.icon.create })
       return
     }
-    const key = await uploadIcon(req.file, req.params.auth0id, null)
-    if (!!key) {
-      res.json({ key })
-    }
-  } catch (e) {
-    // TODO: エラー処理
-    res.json({ key: null })
+    const key = await uploadIcon(req.file, auth0Id, null)
+    res.json({ key })
+  } catch (e: any) {
+    res.json({ key: null, error: e.message })
+    console.error('error in route /icon/upload-icon/user:', e)
   }
 })
 
 // s3からアイコンを取得する
 router.get('/get-icon', async (req, res) => {
   if (!req.query.key) {
-    res.json({ imageSrc: false })
+    res.json({ imageSrc: null })
     return
   }
-  const icon = await getIcon(req.query.key as string)
-  const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
-  const imageSrc = `data:image/jpeg;base64,${base64Image}`
-  res.send({ imageSrc })
+  try {
+    const icon = await getIcon(req.query.key as string)
+    const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
+    const imageSrc = `data:image/jpeg;base64,${base64Image}`
+    res.send({ imageSrc })
+  } catch (e: any) {
+    res.json({ imageSrc: null, error: e.message })
+    console.error('error in route /icon/get-icon:', e)
+  }
 })
 
 export default router

@@ -17,7 +17,6 @@ type Props = {
   evaluations: Evaluation[]
   currentPage: number
   lastPage: number
-  shouldShowControlEvaluationButtons: boolean
   onClickPublish: (id: string) => void
   onClickUnpublish: (id: string) => void
   onClickDelete: (id: string) => void
@@ -78,7 +77,6 @@ export const UserTopTpl: React.FC<Props> = ({
   evaluations,
   currentPage,
   lastPage,
-  shouldShowControlEvaluationButtons,
   onClickPublish,
   onClickUnpublish,
   onClickDelete,
@@ -106,7 +104,6 @@ export const UserTopTpl: React.FC<Props> = ({
             {evaluations.map((evaluation) => (
               <EvaluationItem
                 evaluation={evaluation}
-                shouldShowButtons={shouldShowControlEvaluationButtons}
                 onClickPublish={onClickPublish}
                 onClickUnpublish={onClickUnpublish}
                 onClickDelete={onClickDelete}

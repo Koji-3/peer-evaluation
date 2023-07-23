@@ -110,7 +110,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
   onClickUnpublish,
   onClickDelete,
 }) => {
-  const { is_published, evaluatorIconUrl, evaluatorName, relationship, evaluateeId, comment } = evaluation
+  const { is_published, evaluatorIconUrl, evaluatorName, relationship, evaluateeId, comment, shouldShowOperateButtons } = evaluation
 
   return (
     <StyledWrapper className={className}>
@@ -121,14 +121,16 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
             <span>評価一覧ページへ</span>
           </a>
 
-          <div className="buttons">
-            {is_published ? (
-              <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
-            ) : (
-              <ButtonSmall buttonText="公開する" buttonType="primary" onClick={onClickPublish} />
-            )}
-            <ButtonSmall buttonText="削除" buttonType="dark" onClick={onClickDelete} />
-          </div>
+          {shouldShowOperateButtons && (
+            <div className="buttons">
+              {is_published ? (
+                <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
+              ) : (
+                <ButtonSmall buttonText="公開する" buttonType="primary" onClick={onClickPublish} />
+              )}
+              <ButtonSmall buttonText="削除" buttonType="dark" onClick={onClickDelete} />
+            </div>
+          )}
         </header>
 
         <div className="content">
@@ -153,15 +155,16 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
             )
           })}
         </div>
-
-        <div className="footer-buttons">
-          {is_published ? (
-            <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
-          ) : (
-            <ButtonSmall buttonText="公開する" buttonType="primary" onClick={onClickPublish} />
-          )}
-          <ButtonSmall buttonText="削除" buttonType="dark" onClick={onClickDelete} />
-        </div>
+        {shouldShowOperateButtons && (
+          <div className="footer-buttons">
+            {is_published ? (
+              <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
+            ) : (
+              <ButtonSmall buttonText="公開する" buttonType="primary" onClick={onClickPublish} />
+            )}
+            <ButtonSmall buttonText="削除" buttonType="dark" onClick={onClickDelete} />
+          </div>
+        )}
       </div>
     </StyledWrapper>
   )

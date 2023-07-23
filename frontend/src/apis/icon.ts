@@ -1,4 +1,6 @@
 import { get, post } from 'lib/axios'
+import { errorMessages } from 'const/errorMessages'
+
 type UserUploadIconToS3Arg = {
   file: File
   token: string
@@ -9,45 +11,60 @@ type EvaluatorUploadIconToS3Arg = {
   evaluatorName: string
 }
 
-export const userUploadIconToS3 = async ({ file, token, auth0Id }: UserUploadIconToS3Arg): Promise<string> => {
-  if (!file) throw new Error('登録に失敗しました')
+export const userUploadIconToS3 = async ({ file, token }: UserUploadIconToS3Arg): Promise<string> => {
+  if (!file) {
+    throw new Error(errorMessages.icon.create)
+  }
   try {
     const formData = new FormData()
     formData.append('icon_file', file)
-    const { key } = await post<{ key: string | null }, FormData>(`/s3/upload-icon/user/${auth0Id}`, formData, token, 'multipart/form-data')
-    if (!key) throw new Error('登録に失敗しました')
+    const { key, error } = await post<{ key: string | null; error?: string }, FormData>(
+      '/s3/upload-icon/user',
+      formData,
+      token,
+      'multipart/form-data',
+    )
+    if (!key) {
+      throw new Error(error)
+    }
     return key
   } catch (e) {
-    throw new Error('登録に失敗しました')
+    throw new Error(errorMessages.icon.create)
   }
 }
 
 export const evaluatorUploadIconToS3 = async ({ file, evaluatorName }: EvaluatorUploadIconToS3Arg): Promise<string> => {
-  if (!file) throw new Error('アイコンの登録に失敗しました')
+  if (!file) {
+    throw new Error(errorMessages.icon.create)
+  }
   try {
     const formData = new FormData()
     formData.append('icon_file', file)
-    const { key } = await post<{ key: string | null }, FormData>(
+    const { key, error } = await post<{ key: string | null; error?: string }, FormData>(
       `/s3/upload-icon/evaluator/${evaluatorName}`,
       formData,
       undefined,
       'multipart/form-data',
     )
-    if (!key) throw new Error('アイコンの登録に失敗しました')
+    if (!key) {
+      throw new Error(error)
+    }
     return key
   } catch (e) {
-    throw new Error('アイコンの登録に失敗しました')
+    throw new Error(errorMessages.icon.create)
   }
 }
 
 export const fetchIconUrl = async (iconKey: string): Promise<string> => {
   try {
-    const { imageSrc } = await get<{ imageSrc: string }, { key: string }>('/s3/get-icon', undefined, { key: iconKey })
+    const { imageSrc, error } = await get<{ imageSrc: string | null; error?: string }, { key: string }>('/s3/get-icon', undefined, {
+      key: iconKey,
+    })
     if (!imageSrc) {
-      throw new Error('データの取得に失敗しました')
+      throw new Error(error)
     }
     return imageSrc
   } catch (e) {
-    throw new Error('データの取得に失敗しました')
+    throw new Error(errorMessages.icon.get)
   }
 }

@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const multer_1 = __importDefault(require("multer"));
 const express_oauth2_jwt_bearer_1 = require("express-oauth2-jwt-bearer");
 const s3_1 = require("../models/s3");
+const errorMessages_1 = require("../const/errorMessages");
 const router = express_1.default.Router();
 const upload = (0, multer_1.default)();
 /* auth0 jwt config */
@@ -29,45 +30,53 @@ const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
 router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
-            res.json({ key: null });
+            res.json({ key: null, error: errorMessages_1.errorMessages.icon.create });
             return;
         }
         const key = yield (0, s3_1.uploadIcon)(req.file, null, req.params.evaluatorName);
-        if (!!key) {
-            res.json({ key });
-        }
+        res.json({ key });
     }
     catch (e) {
-        // TODO: エラー処理
-        res.json({ key: null });
+        res.json({ key: null, error: e.message });
+        console.error('error in route /icon/upload-icon/evaluator/:evaluatorName:', e);
     }
 }));
 // s3にユーザーアイコンをアップロードする
-router.post('/upload-icon/user/:auth0id', checkJwt, upload.single('icon_file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/upload-icon/user', checkJwt, upload.single('icon_file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const auth0Id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.payload.sub;
+    if (!auth0Id) {
+        res.json({ key: null, error: errorMessages_1.errorMessages.icon.create });
+        return;
+    }
     try {
         if (!req.file) {
-            res.json({ key: null });
+            res.json({ key: null, error: errorMessages_1.errorMessages.icon.create });
             return;
         }
-        const key = yield (0, s3_1.uploadIcon)(req.file, req.params.auth0id, null);
-        if (!!key) {
-            res.json({ key });
-        }
+        const key = yield (0, s3_1.uploadIcon)(req.file, auth0Id, null);
+        res.json({ key });
     }
     catch (e) {
-        // TODO: エラー処理
-        res.json({ key: null });
+        res.json({ key: null, error: e.message });
+        console.error('error in route /icon/upload-icon/user:', e);
     }
 }));
 // s3からアイコンを取得する
 router.get('/get-icon', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.query.key) {
-        res.json({ imageSrc: false });
+        res.json({ imageSrc: null });
         return;
     }
-    const icon = yield (0, s3_1.getIcon)(req.query.key);
-    const base64Image = Buffer.from(icon.Body).toString('base64');
-    const imageSrc = `data:image/jpeg;base64,${base64Image}`;
-    res.send({ imageSrc });
+    try {
+        const icon = yield (0, s3_1.getIcon)(req.query.key);
+        const base64Image = Buffer.from(icon.Body).toString('base64');
+        const imageSrc = `data:image/jpeg;base64,${base64Image}`;
+        res.send({ imageSrc });
+    }
+    catch (e) {
+        res.json({ imageSrc: null, error: e.message });
+        console.error('error in route /icon/get-icon:', e);
+    }
 }));
 exports.default = router;

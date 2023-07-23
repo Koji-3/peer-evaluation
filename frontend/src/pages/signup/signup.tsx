@@ -45,7 +45,7 @@ export const Signup: React.FC = () => {
     const token = await getAccessTokenSilently()
     try {
       const iconKey = await userUploadIconToS3({ file: iconFile, token, auth0Id: auth0User.sub })
-      const user = await createUser(auth0User.sub, { ...userInput, icon_key: iconKey }, token)
+      const user = await createUser({ ...userInput, icon_key: iconKey }, token)
       navigate(`/user/${user.key}`)
     } catch (e) {
       // TODO: エラー処理

@@ -14,28 +14,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIcon = exports.uploadIcon = void 0;
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const errorMessages_1 = require("../const/errorMessages");
 const s3 = new aws_sdk_1.default.S3();
 const uploadIcon = (file, auth0id, evaluatorName) => __awaiter(void 0, void 0, void 0, function* () {
     const iconBuffer = Buffer.from(file.buffer);
     const fileName = `${new Date().getTime()}.${file.mimetype.split('/')[1]}`;
     const key = auth0id ? `user/${auth0id}/${fileName}` : `evaluator/${evaluatorName}/${fileName}`;
-    yield s3
-        .putObject({
-        Body: iconBuffer,
-        Bucket: process.env.CYCLIC_BUCKET_NAME || '',
-        Key: key,
-    })
-        .promise();
-    return key;
+    try {
+        yield s3
+            .putObject({
+            Body: iconBuffer,
+            Bucket: process.env.CYCLIC_BUCKET_NAME || '',
+            Key: key,
+        })
+            .promise();
+        return key;
+    }
+    catch (e) {
+        console.error('uploadIcon error: ', e);
+        throw new Error(errorMessages_1.errorMessages.icon.create);
+    }
 });
 exports.uploadIcon = uploadIcon;
 const getIcon = (key) => __awaiter(void 0, void 0, void 0, function* () {
-    const icon = yield s3
-        .getObject({
-        Bucket: process.env.CYCLIC_BUCKET_NAME || '',
-        Key: key,
-    })
-        .promise();
-    return icon;
+    try {
+        const icon = yield s3
+            .getObject({
+            Bucket: process.env.CYCLIC_BUCKET_NAME || '',
+            Key: key,
+        })
+            .promise();
+        return icon;
+    }
+    catch (e) {
+        console.error('getIcon error: ', e);
+        throw new Error(errorMessages_1.errorMessages.icon.get);
+    }
 });
 exports.getIcon = getIcon;

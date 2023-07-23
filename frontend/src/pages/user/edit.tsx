@@ -55,10 +55,8 @@ export const UserEdit: React.FC = () => {
   }
 
   const updateEmail = async (): Promise<void> => {
-    if (!auth0User || !auth0User.sub) return
-
     const token = await getAccessTokenSilently()
-    const res = await put<{ user: DBUser }, { email: string }>(`/user/update-email/${auth0User.sub}`, { email }, token)
+    const res = await put<{ user: DBUser }, { email: string }>(`/user/update-email`, { email }, token)
     if (res) {
       // TODO: メールアドレスを変更するとAuth0側で自動でログアウトされるのでホームに遷移して新しいメールアドレスでログインしてください的なアラート出す
       navigate('/')
@@ -74,10 +72,10 @@ export const UserEdit: React.FC = () => {
   const updateUser = async (): Promise<void> => {
     // TODO: s3
     console.log(iconFile)
-    if (!auth0User || !auth0User.sub || !userInput) return
+    if (!auth0User || !userInput) return
 
     const token = await getAccessTokenSilently()
-    const res = await put<{ updateEmail: boolean }, { user: User }>(`/user/update/${auth0User.sub}`, { user: userInput }, token)
+    const res = await put<{ updateEmail: boolean }, { user: User }>(`/user/update`, { user: userInput }, token)
 
     if (!!email && email !== auth0User?.email) {
       await updateEmail()
@@ -94,7 +92,7 @@ export const UserEdit: React.FC = () => {
     if (!auth0User || !auth0User.sub) return
 
     const token = await getAccessTokenSilently()
-    const res = await deleteData<{ deleteUser: boolean }>(`/user/${auth0User.sub}`, token)
+    const res = await deleteData<{ deleteUser: boolean }>(`/user/delete`, token)
 
     if (res) {
       // TODO: ホームに遷移して「退会しました」のアラート出す

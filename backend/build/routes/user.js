@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const express_oauth2_jwt_bearer_1 = require("express-oauth2-jwt-bearer");
 const user_1 = require("../models/user");
 const auth0_1 = require("../models/auth0");
+const errorMessages_1 = require("../const/errorMessages");
 /* auth0 jwt config */
 const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
     audience: process.env.AUTH0_API_AUDIENCE,
@@ -25,60 +26,121 @@ const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
 /* router */
 const router = express_1.default.Router();
 // Auth0からのコールバック時にAuth0のidからuserIdを取得する
-router.get('/auth/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield (0, user_1.getUserByAuth0Id)(req.params.auth0id);
-    if (user) {
+router.get('/auth0', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const auth0Id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.payload.sub;
+    if (!auth0Id) {
+        res.json({ user: null, error: errorMessages_1.errorMessages.user.create });
+        return;
+    }
+    try {
+        const user = yield (0, user_1.getUserByAuth0Id)(auth0Id);
         res.json({ user });
     }
-    else {
-        res.json({ user: null });
+    catch (e) {
+        res.json({ user: null, error: e.message });
+        console.error('error in route /user/auth0: ', e);
     }
 }));
 // 新規登録
-router.post('/signup/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // auth0の名前も変更する
-    const [user] = yield Promise.all([(0, user_1.createUser)(req.body.user, req.params.auth0id), (0, auth0_1.updateName)(req.params.auth0id, req.body.user.name)]);
-    res.json({ user });
+router.post('/signup', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    const auth0Id = (_b = req.auth) === null || _b === void 0 ? void 0 : _b.payload.sub;
+    if (!auth0Id) {
+        res.json({ user: null, error: errorMessages_1.errorMessages.user.create });
+        return;
+    }
+    const isGoogleIntegration = auth0Id.startsWith('google-oauth2');
+    try {
+        const user = yield (0, user_1.createUser)(req.body.user, auth0Id);
+        res.json({ user });
+    }
+    catch (e) {
+        res.json({ user: null, error: e.message });
+        console.error('create user error in route /user/signup:', e);
+    }
+    if (!isGoogleIntegration) {
+        try {
+            // auth0の名前も変更する
+            (0, auth0_1.updateName)(auth0Id, req.body.user.name);
+        }
+        catch (e) {
+            res.json({ user: null, error: e.message });
+            console.error('updateAuth0Name user error in route /user/signup:', e);
+        }
+    }
 }));
 // ユーザーTOPでユーザー情報を取得する
 router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield (0, user_1.getUserById)(req.params.id);
-    if (user) {
+    try {
+        const user = yield (0, user_1.getUserById)(req.params.id);
         res.json({ user });
     }
-    else {
-        res.json({ user: null });
+    catch (e) {
+        res.json({ user: null, error: e.message });
+        console.error('error in route /user/:id:', e);
     }
 }));
 // ユーザー情報変更
-router.put('/update/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // auth0の名前も変更する
-    const [user] = yield Promise.all([(0, user_1.updateUser)(req.params.auth0id, req.body.user), (0, auth0_1.updateName)(req.params.auth0id, req.body.user.name)]);
-    if (user) {
+router.put('/update', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    const auth0Id = (_c = req.auth) === null || _c === void 0 ? void 0 : _c.payload.sub;
+    if (!auth0Id) {
+        res.json({ user: null, error: errorMessages_1.errorMessages.user.update });
+        return;
+    }
+    const isGoogleIntegration = auth0Id.startsWith('google-oauth2');
+    try {
+        const user = yield (0, user_1.updateUser)(auth0Id, req.body.user);
         res.json({ user });
     }
-    else {
-        res.json({ user: null });
+    catch (e) {
+        res.json({ user: null, error: e.message });
+        console.error('updateUser error in route /user/update:', e);
+    }
+    if (!isGoogleIntegration) {
+        try {
+            // auth0の名前も変更する
+            (0, auth0_1.updateName)(auth0Id, req.body.user.name);
+        }
+        catch (e) {
+            res.json({ user: null, error: e.message });
+            console.error('updateAuth0Name error in route /user/update:', e);
+        }
     }
 }));
 // メールアドレス変更
-router.put('/update-email/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/update-email', checkJwt, (req, res) => {
+    var _a;
+    const auth0Id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.payload.sub;
+    if (!auth0Id) {
+        res.json({ updateEmail: false, message: errorMessages_1.errorMessages.user.updateEmail });
+        return;
+    }
     try {
-        yield (0, auth0_1.updateEmail)(req.params.auth0id, req.body.email);
+        (0, auth0_1.updateEmail)(auth0Id, req.body.email);
+        res.json({ updateEmail: true });
     }
     catch (e) {
-        res.json({ updateEmail: false });
+        res.json({ updateEmail: false, error: e.message });
     }
-    res.json({ updateEmail: true });
-}));
+});
 // 退会
-router.delete('/:auth0id', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    Promise.all([(0, user_1.deleteUser)(req.params.auth0id), (0, auth0_1.deleteUser)(req.params.auth0id)])
-        .then(() => {
+router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
+    const auth0Id = (_d = req.auth) === null || _d === void 0 ? void 0 : _d.payload.sub;
+    if (!auth0Id) {
+        res.json({ deleteUser: false, message: errorMessages_1.errorMessages.user.delete });
+        return;
+    }
+    try {
+        yield (0, user_1.deleteUser)(auth0Id);
+        (0, auth0_1.deleteUser)(auth0Id);
         res.json({ deleteUser: true });
-    })
-        .catch(() => {
-        res.json({ deleteUser: false });
-    });
+    }
+    catch (e) {
+        res.json({ deleteUser: false, error: e.message });
+        console.error('error in route /user/delete:', e);
+    }
 }));
 exports.default = router;
