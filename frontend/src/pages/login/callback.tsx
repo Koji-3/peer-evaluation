@@ -47,6 +47,6 @@ export const LoginCallback: React.FC = () => {
 
   return (
     // TODO: ローディング表示
-    <>{!isLoading && !isEmailVerified ? <p>メール認証を行なってください</p> : <p>loading...</p>}</>
+    <>{isLoading ? <p>loading...</p> : !isEmailVerified ? <p>メール認証を行なってください</p> : <p>OK!</p>}</>
   )
 }

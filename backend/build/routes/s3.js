@@ -37,8 +37,10 @@ router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'),
         res.json({ key });
     }
     catch (e) {
-        res.json({ key: null, error: e.message });
-        console.error('error in route /icon/upload-icon/evaluator/:evaluatorName:', e);
+        if (e instanceof Error) {
+            res.json({ key: null, error: e.message });
+            console.error('error in route /icon/upload-icon/evaluator/:evaluatorName:', e);
+        }
     }
 }));
 // s3にユーザーアイコンをアップロードする
@@ -58,8 +60,10 @@ router.post('/upload-icon/user', checkJwt, upload.single('icon_file'), (req, res
         res.json({ key });
     }
     catch (e) {
-        res.json({ key: null, error: e.message });
-        console.error('error in route /icon/upload-icon/user:', e);
+        if (e instanceof Error) {
+            res.json({ key: null, error: e.message });
+            console.error('error in route /icon/upload-icon/user:', e);
+        }
     }
 }));
 // s3からアイコンを取得する
@@ -75,8 +79,10 @@ router.get('/get-icon', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.send({ imageSrc });
     }
     catch (e) {
-        res.json({ imageSrc: null, error: e.message });
-        console.error('error in route /icon/get-icon:', e);
+        if (e instanceof Error) {
+            res.json({ imageSrc: null, error: e.message });
+            console.error('error in route /icon/get-icon:', e);
+        }
     }
 }));
 exports.default = router;

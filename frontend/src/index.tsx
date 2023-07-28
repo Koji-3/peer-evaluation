@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Auth0Provider } from '@auth0/auth0-react'
@@ -10,7 +9,7 @@ const auth0RedirectUri = `${window.location.origin}/login/callback`
 root.render(
   <Auth0Provider
     domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ''}
-    clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ''}
+    clientId={'70vqeUX0AluoCUrRdSymICo8sbc6gUTQ'}
     authorizationParams={{
       redirect_uri: auth0RedirectUri,
       audience: process.env.REACT_APP_AUTH0_API_AUDIENCE,

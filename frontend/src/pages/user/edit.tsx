@@ -3,15 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
-import { UserEditTpl, AuthWrapper, Layout } from 'components/templates'
+import { UserEditTpl, Layout } from 'components/templates'
 
-/* lib, types */
-import { get, put, deleteData } from 'lib/axios'
+/* lib, types, apis */
 import { validateIcon, validateEmail } from 'lib/validate'
-import { DBUser, User, Auth0AuthenticatedBy } from 'types/types'
-
-// FIXME: 仮
-import { fixtureUser } from '__fixtures__/user'
+import { User, Auth0AuthenticatedBy } from 'types/types'
+import { fetchUser, updateEmail, updateUser as updateUserApi, deleteUser as deleteUserApi } from 'apis/user'
+import { fetchIconUrl, userUploadIconToS3 } from 'apis/icon'
 
 export const UserEdit: React.FC = () => {
   const [userInput, setUserInput] = useState<User>()
@@ -20,7 +18,8 @@ export const UserEdit: React.FC = () => {
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
-  const { isLoading, user: auth0User, loginWithRedirect, getAccessTokenSilently } = useAuth0()
+  const [isIconChanged, setIsIconChanged] = useState<boolean>(false)
+  const { isLoading, user: auth0User, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
 
@@ -31,7 +30,7 @@ export const UserEdit: React.FC = () => {
 
   const shouldShowEmailInput = (auth0User?.sub && authenticatedBy(auth0User.sub) === 'auth0') || false
 
-  const onChangeUserInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onChangeUserInput = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
     const { name, value } = e.target
     if (!userInput) return
     setUserInput({ ...userInput, [name]: value })
@@ -44,6 +43,7 @@ export const UserEdit: React.FC = () => {
       setIconObjectUrl(URL.createObjectURL(file))
       // 後でs3にアップするためにセット
       setIconFile(file)
+      setIsIconChanged(true)
     }
   }
 
@@ -54,91 +54,74 @@ export const UserEdit: React.FC = () => {
     setEmailError(error)
   }
 
-  const updateEmail = async (): Promise<void> => {
-    const token = await getAccessTokenSilently()
-    const res = await put<{ user: DBUser }, { email: string }>(`/user/update-email`, { email }, token)
-    if (res) {
-      // TODO: メールアドレスを変更するとAuth0側で自動でログアウトされるのでホームに遷移して新しいメールアドレスでログインしてください的なアラート出す
-      navigate('/')
-    } else {
-      // TODO: メールアドレス変更に失敗したときの処理
-    }
-  }
-
   const login = (): void => {
     loginWithRedirect()
   }
 
   const updateUser = async (): Promise<void> => {
-    // TODO: s3
-    console.log(iconFile)
     if (!auth0User || !userInput) return
 
-    const token = await getAccessTokenSilently()
-    const res = await put<{ updateEmail: boolean }, { user: User }>(`/user/update`, { user: userInput }, token)
-
-    if (!!email && email !== auth0User?.email) {
-      await updateEmail()
-      return
-    } else {
-      if (res) {
-        console.log(res)
-        // TODO: 変更しました的なアラート
+    try {
+      const { name, profile } = userInput
+      const token = await getAccessTokenSilently()
+      if (isIconChanged && iconFile) {
+        const iconKey = await userUploadIconToS3({ file: iconFile, token })
+        await updateUserApi({ name, profile, icon_key: iconKey }, token)
+      } else {
+        await updateUserApi({ name, profile }, token)
       }
+      console.log(!!email && email !== auth0User?.email)
+      if (!!email && email !== auth0User?.email) {
+        await updateEmail(email, token)
+        navigate('/')
+      } else {
+        // TODO: プロフィールの編集が完了しました表示
+        navigate(`/user/${params.id}`)
+      }
+    } catch (e) {
+      // TODO: エラー処理
+      console.log('iconkey error', e)
     }
   }
 
   const deleteUser = async (): Promise<void> => {
-    if (!auth0User || !auth0User.sub) return
-
-    const token = await getAccessTokenSilently()
-    const res = await deleteData<{ deleteUser: boolean }>(`/user/delete`, token)
-
-    if (res) {
+    try {
+      const token = await getAccessTokenSilently()
+      await deleteUserApi(token)
       // TODO: ホームに遷移して「退会しました」のアラート出す
       navigate('/')
-    } else {
-      // TODO: メールアドレス変更に失敗したときの処理
+    } catch (e) {
+      // TODO: エラー処理
+      console.log('iconkey error', e)
     }
   }
 
   useEffect(() => {
     if (isLoading) return
-    if (!auth0User || !auth0User.email || !auth0User.sub) {
-      // TODO: データ取得失敗のアラート出す
-      // return
+    if (!isAuthenticated) {
+      // TODO: ホームに遷移して「ログインしてください」のアラート出す
+      navigate('/')
     }
     ;(async () => {
-      // const res = await get<{ user: DBUser | null }>(`/user/${params.id}`)
-      // if (!res.user) {
-      //   // TODO: データ取得失敗のアラートだす
-      //   // return
-      // }
-      // setUserInput(res.user.props)
-      setUserInput(fixtureUser)
-      // setEmail(auth0User?.email || '')
-      setEmail('bayakau.tka@gmail.com')
+      if (!auth0User || !auth0User.email || !auth0User.sub) {
+        // TODO: データ取得失敗のアラート出す
+        return
+      }
+      try {
+        const user = await fetchUser(params.id)
+        const iconUrl = await fetchIconUrl(user.icon_key)
+        setUserInput(user)
+        setIconObjectUrl(iconUrl)
+        setEmail(auth0User.email)
+      } catch (e) {
+        // TODO: データ取得失敗のアラート出す
+        console.log(e)
+      }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+  }, [auth0User, isAuthenticated, isLoading, navigate, params.id])
 
-  useEffect(() => {
-    // アイコン取得コード参考
-    // ;(async () => {
-    //   const token = await getAccessTokenSilently()
-    //   const res = await get<{ file: {type: 'Buffer', data: Buffer} }, {key: string}>(`/s3/get-icon`,token, {key: 'auth0|64aa3c5f1e94a96b00c0eb8f/201_01.png'})
-    //   console.log(res)
-    //   const byteArray = new Uint8Array(res.file.data);
-    //   const blob = new Blob([byteArray], { type: 'image/png' });
-    //   const dataUrl = URL.createObjectURL(blob);
-    //   console.log(dataUrl)
-    // })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
   return (
     <Layout>
-      {/* TODO: auth */}
-      {/* <AuthWrapper> */}
       {userInput && (
         <UserEditTpl
           userInput={userInput}
@@ -155,7 +138,6 @@ export const UserEdit: React.FC = () => {
           deleteUser={deleteUser}
         />
       )}
-      {/* </AuthWrapper> */}
     </Layout>
   )
 }

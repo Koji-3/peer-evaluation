@@ -4,7 +4,6 @@ import { errorMessages } from 'const/errorMessages'
 type UserUploadIconToS3Arg = {
   file: File
   token: string
-  auth0Id: string
 }
 type EvaluatorUploadIconToS3Arg = {
   file: File

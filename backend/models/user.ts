@@ -7,6 +7,12 @@ import { errorMessages } from '../const/errorMessages'
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
 const users = db.collection('users')
 
+type UpdateUserArg = {
+  name: string
+  profile: string
+  icon_key?: string
+}
+
 export const createUser = async (user: UserInput, auth0id: string): Promise<DBUser> => {
   const uuid = shortUuid.generate()
   const defaultAverageEvaluation: AverageEvaluation = { e1: 0, e2: 0, e3: 0, e4: 0, e5: 0, e6: 0 }
@@ -55,7 +61,7 @@ export const getUserById = async (id: string): Promise<User> => {
   }
 }
 
-export const updateUser = async (auth0Id: string, newUser: UserInput): Promise<DBUser> => {
+export const updateUser = async (auth0Id: string, newUser: UpdateUserArg): Promise<DBUser> => {
   try {
     const user = (await getUserByAuth0Id(auth0Id)) as DBUser
     const updatedUser = await users.set(user.key, newUser)

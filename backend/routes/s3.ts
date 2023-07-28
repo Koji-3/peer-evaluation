@@ -25,9 +25,11 @@ router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'),
     }
     const key = await uploadIcon(req.file, null, req.params.evaluatorName)
     res.json({ key })
-  } catch (e: any) {
-    res.json({ key: null, error: e.message })
-    console.error('error in route /icon/upload-icon/evaluator/:evaluatorName:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ key: null, error: e.message })
+      console.error('error in route /icon/upload-icon/evaluator/:evaluatorName:', e)
+    }
   }
 })
 
@@ -45,9 +47,11 @@ router.post('/upload-icon/user', checkJwt, upload.single('icon_file'), async (re
     }
     const key = await uploadIcon(req.file, auth0Id, null)
     res.json({ key })
-  } catch (e: any) {
-    res.json({ key: null, error: e.message })
-    console.error('error in route /icon/upload-icon/user:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ key: null, error: e.message })
+      console.error('error in route /icon/upload-icon/user:', e)
+    }
   }
 })
 
@@ -62,9 +66,11 @@ router.get('/get-icon', async (req, res) => {
     const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
     const imageSrc = `data:image/jpeg;base64,${base64Image}`
     res.send({ imageSrc })
-  } catch (e: any) {
-    res.json({ imageSrc: null, error: e.message })
-    console.error('error in route /icon/get-icon:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ imageSrc: null, error: e.message })
+      console.error('error in route /icon/get-icon:', e)
+    }
   }
 })
 

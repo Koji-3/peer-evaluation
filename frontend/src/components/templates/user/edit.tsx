@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 /* components */
 import { Icon, Button, ButtonSmall } from 'components/atoms'
-import { IconInput, TextInputWithLabel } from 'components/molecules'
+import { IconInput, TextInputWithLabel, TextareaWithLabel } from 'components/molecules'
 
 /* lib, types */
 import { mediaSp } from 'lib/media-query'
@@ -17,7 +17,7 @@ type Props = {
   shouldShowEmailInput: boolean
   iconObjectUrl: string
   iconInputError: string | null
-  onChangeUserInput: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangeUserInput: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
   onChangeIconInput: (file: File) => void
   onChangeEmail: (e: React.ChangeEvent<HTMLInputElement>) => void
   login: () => void
@@ -51,6 +51,10 @@ const StyledWrapper = styled.div`
       margin: 0 0 4.5rem;
 
       > .email {
+        margin: 3rem 0 0;
+      }
+
+      .profile {
         margin: 3rem 0 0;
       }
     }
@@ -121,12 +125,18 @@ export const UserEditTpl: React.FC<Props> = ({
     navigate(-1)
   }
 
+  const isDisabledUpdate = (): boolean => {
+    if (!iconObjectUrl || !userInput.name || (shouldShowEmailInput && !email)) return true
+    if (emailError || iconInputError) return true
+    return false
+  }
+
   return (
     <StyledWrapper>
       <div className="inner">
         <h1>プロフィールの編集</h1>
         <div className="icon">
-          <Icon src={iconObjectUrl || userInput.icon_key} alt={userInput.name} size={14.6} className="icon" />
+          <Icon src={iconObjectUrl} alt={userInput.name} size={14.6} className="icon" />
           <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
         </div>
 
@@ -143,9 +153,18 @@ export const UserEditTpl: React.FC<Props> = ({
               className="email"
             />
           )}
+          <TextareaWithLabel
+            labelText="ひとことコメント"
+            name="profile"
+            value={userInput.profile}
+            placeholder="よろしくお願いします！"
+            maxLength={200}
+            onChange={onChangeUserInput}
+            className="profile"
+          />
         </div>
 
-        <Button buttonText="変更する" buttonType="primary" onClick={updateUser} className="update" />
+        <Button buttonText="変更する" buttonType="primary" disabled={isDisabledUpdate()} onClick={updateUser} className="update" />
         <Button buttonText="戻る" buttonType="white" onClick={goBack} className="go-back" />
 
         <p className="change-password">

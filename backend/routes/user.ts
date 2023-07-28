@@ -24,9 +24,11 @@ router.get('/auth0', checkJwt, async (req, res) => {
   try {
     const user = await getUserByAuth0Id(auth0Id)
     res.json({ user })
-  } catch (e: any) {
-    res.json({ user: null, error: e.message })
-    console.error('error in route /user/auth0: ', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ user: null, error: e.message })
+      console.error('error in route /user/auth0: ', e)
+    }
   }
 })
 
@@ -41,17 +43,21 @@ router.post('/signup', checkJwt, async (req, res) => {
   try {
     const user = await createUser(req.body.user, auth0Id)
     res.json({ user })
-  } catch (e: any) {
-    res.json({ user: null, error: e.message })
-    console.error('create user error in route /user/signup:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ user: null, error: e.message })
+      console.error('create user error in route /user/signup:', e)
+    }
   }
   if (!isGoogleIntegration) {
     try {
       // auth0の名前も変更する
       updateAuth0Name(auth0Id, req.body.user.name)
-    } catch (e: any) {
-      res.json({ user: null, error: e.message })
-      console.error('updateAuth0Name user error in route /user/signup:', e)
+    } catch (e) {
+      if (e instanceof Error) {
+        res.json({ user: null, error: e.message })
+        console.error('updateAuth0Name user error in route /user/signup:', e)
+      }
     }
   }
 })
@@ -61,9 +67,11 @@ router.get('/:id', async (req, res) => {
   try {
     const user = await getUserById(req.params.id)
     res.json({ user })
-  } catch (e: any) {
-    res.json({ user: null, error: e.message })
-    console.error('error in route /user/:id:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ user: null, error: e.message })
+      console.error('error in route /user/:id:', e)
+    }
   }
 })
 
@@ -75,20 +83,27 @@ router.put('/update', checkJwt, async (req, res) => {
     return
   }
   const isGoogleIntegration = auth0Id.startsWith('google-oauth2')
-  try {
-    const user = await updateUser(auth0Id, req.body.user)
-    res.json({ user })
-  } catch (e: any) {
-    res.json({ user: null, error: e.message })
-    console.error('updateUser error in route /user/update:', e)
-  }
-  if (!isGoogleIntegration) {
+  if (isGoogleIntegration) {
     try {
+      const user = await updateUser(auth0Id, req.body.newUser)
+      res.json({ user })
+    } catch (e) {
+      if (e instanceof Error) {
+        res.json({ user: null, error: e.message })
+        console.error('updateUser error in route /user/update:', e)
+      }
+    }
+  } else {
+    try {
+      const user = await updateUser(auth0Id, req.body.newUser)
       // auth0の名前も変更する
-      updateAuth0Name(auth0Id, req.body.user.name)
-    } catch (e: any) {
-      res.json({ user: null, error: e.message })
-      console.error('updateAuth0Name error in route /user/update:', e)
+      updateAuth0Name(auth0Id, req.body.newUser.name)
+      res.json({ user })
+    } catch (e) {
+      if (e instanceof Error) {
+        res.json({ user: null, error: e.message })
+        console.error('updateAuth0Name error in route /user/update:', e)
+      }
     }
   }
 })
@@ -103,8 +118,10 @@ router.put('/update-email', checkJwt, (req, res) => {
   try {
     updateAuth0Email(auth0Id, req.body.email)
     res.json({ updateEmail: true })
-  } catch (e: any) {
-    res.json({ updateEmail: false, error: e.message })
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ updateEmail: false, error: e.message })
+    }
   }
 })
 
@@ -119,9 +136,11 @@ router.delete('/delete', checkJwt, async (req, res) => {
     await deleteUser(auth0Id)
     deleteAuth0User(auth0Id)
     res.json({ deleteUser: true })
-  } catch (e: any) {
-    res.json({ deleteUser: false, error: e.message })
-    console.error('error in route /user/delete:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ deleteUser: false, error: e.message })
+      console.error('error in route /user/delete:', e)
+    }
   }
 })
 

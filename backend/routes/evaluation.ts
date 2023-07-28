@@ -18,9 +18,11 @@ router.post('/:evaluateeId', async (req, res) => {
   try {
     const evaluation = await createEvaluation(req.body.evaluation, req.params.evaluateeId)
     res.json({ evaluation })
-  } catch (e: any) {
-    res.json({ evaluation: null, error: e.message })
-    console.error('error in route /evaluation/:evaluateeId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ evaluation: null, error: e.message })
+      console.error('error in route /evaluation/:evaluateeId:', e)
+    }
   }
 })
 
@@ -29,9 +31,11 @@ router.get('/list/:evaluateeId', async (req, res) => {
   try {
     const evaluations = await getEvaluations(req.params.evaluateeId)
     res.json({ evaluations })
-  } catch (e: any) {
-    res.json({ evaluations: null, error: e.message })
-    console.error('error in route /evaluation/list/:evaluateeId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ evaluations: null, error: e.message })
+      console.error('error in route /evaluation/list/:evaluateeId:', e)
+    }
   }
 })
 
@@ -45,9 +49,11 @@ router.get('/list/self/:evaluateeId', checkJwt, async (req, res) => {
   try {
     const evaluations = await getEvaluations(req.params.evaluateeId, auth0Id)
     res.json({ evaluations })
-  } catch (e: any) {
-    res.json({ evaluations: null, error: e.message })
-    console.error('error in route /evaluation/list/self/:evaluateeId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ evaluations: null, error: e.message })
+      console.error('error in route /evaluation/list/self/:evaluateeId:', e)
+    }
   }
 })
 
@@ -56,9 +62,11 @@ router.get('/:evaluationId', async (req, res) => {
   try {
     const evaluation = await getEvaluation(req.params.evaluationId)
     res.json({ evaluation })
-  } catch (e: any) {
-    res.json({ evaluation: null, error: e.message })
-    console.error('error in route /evaluation/:evaluationId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ evaluation: null, error: e.message })
+      console.error('error in route /evaluation/:evaluationId:', e)
+    }
   }
 })
 
@@ -73,9 +81,11 @@ router.get('/self/:evaluationId', checkJwt, async (req, res) => {
   try {
     const evaluation = await getEvaluation(req.params.evaluationId, auth0Id)
     res.json({ evaluation })
-  } catch (e: any) {
-    res.json({ evaluation: null, error: e.message })
-    console.error('error in route /evaluation/self/:evaluationId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ evaluation: null, error: e.message })
+      console.error('error in route /evaluation/self/:evaluationId:', e)
+    }
   }
 })
 
@@ -84,9 +94,11 @@ router.put('/publish/:evaluationId', checkJwt, async (req, res) => {
   try {
     const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isPublished: true })
     res.json(result)
-  } catch (e: any) {
-    res.json({ update: false, error: e.message })
-    console.error('error in route /evaluation/publish/:evaluationId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ update: false, error: e.message })
+      console.error('error in route /evaluation/publish/:evaluationId:', e)
+    }
   }
 })
 
@@ -95,9 +107,11 @@ router.put('/unpublish/:evaluationId', checkJwt, async (req, res) => {
   try {
     const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isPublished: false })
     res.json(result)
-  } catch (e: any) {
-    res.json({ update: false, error: e.message })
-    console.error('error in route /evaluation/unpublish/:evaluationId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ update: false, error: e.message })
+      console.error('error in route /evaluation/unpublish/:evaluationId:', e)
+    }
   }
 })
 
@@ -106,9 +120,11 @@ router.delete('/:evaluationId', checkJwt, async (req, res) => {
   try {
     const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isDeleted: true })
     res.json(result)
-  } catch (e: any) {
-    res.json({ update: false, error: e.message })
-    console.error('error in route /evaluation/:evaluationId:', e)
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ update: false, error: e.message })
+      console.error('error in route /evaluation/:evaluationId:', e)
+    }
   }
 })
 

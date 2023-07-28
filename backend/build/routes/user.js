@@ -38,8 +38,10 @@ router.get('/auth0', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, f
         res.json({ user });
     }
     catch (e) {
-        res.json({ user: null, error: e.message });
-        console.error('error in route /user/auth0: ', e);
+        if (e instanceof Error) {
+            res.json({ user: null, error: e.message });
+            console.error('error in route /user/auth0: ', e);
+        }
     }
 }));
 // 新規登録
@@ -56,8 +58,10 @@ router.post('/signup', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0,
         res.json({ user });
     }
     catch (e) {
-        res.json({ user: null, error: e.message });
-        console.error('create user error in route /user/signup:', e);
+        if (e instanceof Error) {
+            res.json({ user: null, error: e.message });
+            console.error('create user error in route /user/signup:', e);
+        }
     }
     if (!isGoogleIntegration) {
         try {
@@ -65,8 +69,10 @@ router.post('/signup', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0,
             (0, auth0_1.updateName)(auth0Id, req.body.user.name);
         }
         catch (e) {
-            res.json({ user: null, error: e.message });
-            console.error('updateAuth0Name user error in route /user/signup:', e);
+            if (e instanceof Error) {
+                res.json({ user: null, error: e.message });
+                console.error('updateAuth0Name user error in route /user/signup:', e);
+            }
         }
     }
 }));
@@ -77,8 +83,10 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.json({ user });
     }
     catch (e) {
-        res.json({ user: null, error: e.message });
-        console.error('error in route /user/:id:', e);
+        if (e instanceof Error) {
+            res.json({ user: null, error: e.message });
+            console.error('error in route /user/:id:', e);
+        }
     }
 }));
 // ユーザー情報変更
@@ -90,22 +98,30 @@ router.put('/update', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, 
         return;
     }
     const isGoogleIntegration = auth0Id.startsWith('google-oauth2');
-    try {
-        const user = yield (0, user_1.updateUser)(auth0Id, req.body.user);
-        res.json({ user });
-    }
-    catch (e) {
-        res.json({ user: null, error: e.message });
-        console.error('updateUser error in route /user/update:', e);
-    }
-    if (!isGoogleIntegration) {
+    if (isGoogleIntegration) {
         try {
-            // auth0の名前も変更する
-            (0, auth0_1.updateName)(auth0Id, req.body.user.name);
+            const user = yield (0, user_1.updateUser)(auth0Id, req.body.newUser);
+            res.json({ user });
         }
         catch (e) {
-            res.json({ user: null, error: e.message });
-            console.error('updateAuth0Name error in route /user/update:', e);
+            if (e instanceof Error) {
+                res.json({ user: null, error: e.message });
+                console.error('updateUser error in route /user/update:', e);
+            }
+        }
+    }
+    else {
+        try {
+            const user = yield (0, user_1.updateUser)(auth0Id, req.body.newUser);
+            // auth0の名前も変更する
+            (0, auth0_1.updateName)(auth0Id, req.body.newUser.name);
+            res.json({ user });
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                res.json({ user: null, error: e.message });
+                console.error('updateAuth0Name error in route /user/update:', e);
+            }
         }
     }
 }));
@@ -122,7 +138,9 @@ router.put('/update-email', checkJwt, (req, res) => {
         res.json({ updateEmail: true });
     }
     catch (e) {
-        res.json({ updateEmail: false, error: e.message });
+        if (e instanceof Error) {
+            res.json({ updateEmail: false, error: e.message });
+        }
     }
 });
 // 退会
@@ -139,8 +157,10 @@ router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 
         res.json({ deleteUser: true });
     }
     catch (e) {
-        res.json({ deleteUser: false, error: e.message });
-        console.error('error in route /user/delete:', e);
+        if (e instanceof Error) {
+            res.json({ deleteUser: false, error: e.message });
+            console.error('error in route /user/delete:', e);
+        }
     }
 }));
 exports.default = router;

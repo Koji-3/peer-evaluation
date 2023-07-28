@@ -44,7 +44,7 @@ export const Signup: React.FC = () => {
     if (!iconFile || !auth0User || !auth0User.sub) return
     const token = await getAccessTokenSilently()
     try {
-      const iconKey = await userUploadIconToS3({ file: iconFile, token, auth0Id: auth0User.sub })
+      const iconKey = await userUploadIconToS3({ file: iconFile, token })
       const user = await createUser({ ...userInput, icon_key: iconKey }, token)
       navigate(`/user/${user.key}`)
     } catch (e) {

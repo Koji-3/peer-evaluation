@@ -76,7 +76,11 @@ export const SignupTpl: React.FC<Props> = ({
 }) => {
   const navigate = useNavigate()
   const { name, profile } = userInput
-  const isDisableRegister = !iconObjectUrl || !name || !profile
+  const isDisableRegister = (): boolean => {
+    if (!iconObjectUrl || !name || !profile) return true
+    if (iconInputError) return true
+    return false
+  }
 
   const goToTop = (): void => {
     navigate('/')
@@ -102,7 +106,7 @@ export const SignupTpl: React.FC<Props> = ({
           className="profile"
         />
 
-        <Button buttonText="新規登録する" buttonType="primary" disabled={isDisableRegister} onClick={register} className="register" />
+        <Button buttonText="新規登録する" buttonType="primary" disabled={isDisableRegister()} onClick={register} className="register" />
         <Button buttonText="キャンセル" buttonType="white" onClick={goToTop} className="cancel" />
       </div>
     </StyledWrapper>

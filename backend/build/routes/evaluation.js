@@ -31,8 +31,10 @@ router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.json({ evaluation });
     }
     catch (e) {
-        res.json({ evaluation: null, error: e.message });
-        console.error('error in route /evaluation/:evaluateeId:', e);
+        if (e instanceof Error) {
+            res.json({ evaluation: null, error: e.message });
+            console.error('error in route /evaluation/:evaluateeId:', e);
+        }
     }
 }));
 // 評価一覧を取得する(未ログイン or 他のユーザー)
@@ -42,8 +44,10 @@ router.get('/list/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0,
         res.json({ evaluations });
     }
     catch (e) {
-        res.json({ evaluations: null, error: e.message });
-        console.error('error in route /evaluation/list/:evaluateeId:', e);
+        if (e instanceof Error) {
+            res.json({ evaluations: null, error: e.message });
+            console.error('error in route /evaluation/list/:evaluateeId:', e);
+        }
     }
 }));
 // 評価一覧を取得する(ユーザー自身)
@@ -59,8 +63,10 @@ router.get('/list/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, 
         res.json({ evaluations });
     }
     catch (e) {
-        res.json({ evaluations: null, error: e.message });
-        console.error('error in route /evaluation/list/self/:evaluateeId:', e);
+        if (e instanceof Error) {
+            res.json({ evaluations: null, error: e.message });
+            console.error('error in route /evaluation/list/self/:evaluateeId:', e);
+        }
     }
 }));
 // 評価を取得する(未ログイン or 他のユーザー)
@@ -70,8 +76,10 @@ router.get('/:evaluationId', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.json({ evaluation });
     }
     catch (e) {
-        res.json({ evaluation: null, error: e.message });
-        console.error('error in route /evaluation/:evaluationId:', e);
+        if (e instanceof Error) {
+            res.json({ evaluation: null, error: e.message });
+            console.error('error in route /evaluation/:evaluationId:', e);
+        }
     }
 }));
 // 評価を取得する(ユーザー自身)
@@ -87,8 +95,10 @@ router.get('/self/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void
         res.json({ evaluation });
     }
     catch (e) {
-        res.json({ evaluation: null, error: e.message });
-        console.error('error in route /evaluation/self/:evaluationId:', e);
+        if (e instanceof Error) {
+            res.json({ evaluation: null, error: e.message });
+            console.error('error in route /evaluation/self/:evaluationId:', e);
+        }
     }
 }));
 // 評価を公開する
@@ -98,8 +108,10 @@ router.put('/publish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, v
         res.json(result);
     }
     catch (e) {
-        res.json({ update: false, error: e.message });
-        console.error('error in route /evaluation/publish/:evaluationId:', e);
+        if (e instanceof Error) {
+            res.json({ update: false, error: e.message });
+            console.error('error in route /evaluation/publish/:evaluationId:', e);
+        }
     }
 }));
 // 評価を非公開にする
@@ -109,8 +121,10 @@ router.put('/unpublish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0,
         res.json(result);
     }
     catch (e) {
-        res.json({ update: false, error: e.message });
-        console.error('error in route /evaluation/unpublish/:evaluationId:', e);
+        if (e instanceof Error) {
+            res.json({ update: false, error: e.message });
+            console.error('error in route /evaluation/unpublish/:evaluationId:', e);
+        }
     }
 }));
 // 評価を削除する
@@ -120,8 +134,10 @@ router.delete('/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0
         res.json(result);
     }
     catch (e) {
-        res.json({ update: false, error: e.message });
-        console.error('error in route /evaluation/:evaluationId:', e);
+        if (e instanceof Error) {
+            res.json({ update: false, error: e.message });
+            console.error('error in route /evaluation/:evaluationId:', e);
+        }
     }
 }));
 exports.default = router;
