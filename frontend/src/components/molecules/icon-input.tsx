@@ -1,8 +1,5 @@
 import styled from 'styled-components'
 
-/* lib, types*/
-import { mediaSp } from 'lib/media-query'
-
 type Props = {
   className?: string
   name?: string
@@ -32,9 +29,6 @@ const StyledInputWrapper = styled.div`
     letter-spacing: 0.1em;
     text-align: center;
   }
-
-  ${mediaSp`
-  `}
 `
 
 const StyledInput = styled.input`

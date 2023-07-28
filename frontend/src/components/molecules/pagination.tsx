@@ -1,9 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
-/* lib, types*/
-import { mediaSp } from 'lib/media-query'
-
 /* images */
 import pagePrevIcon from 'assets/images/icon/page-prev.svg'
 import pageNextIcon from 'assets/images/icon/page-next.svg'
@@ -38,9 +35,6 @@ const Wrapper = styled.div`
     align-items: center;
     gap: 1.5rem;
   }
-
-  ${mediaSp`
-  `}
 `
 
 const StyledPaginationItem = styled.div`
@@ -65,9 +59,6 @@ const StyledPaginationItem = styled.div`
   &.dots {
     cursor: initial;
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const Pagination: React.FC<Props> = ({ className = '', currentPage, lastPage }) => {

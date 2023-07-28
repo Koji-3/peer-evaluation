@@ -6,7 +6,6 @@ import { TextInputWithLabel, IconInput, TextareaWithLabel } from 'components/mol
 import { EvaluationFormItem } from 'components/organisms'
 
 /* lib, types, options */
-import { mediaSp } from 'lib/media-query'
 import { getE1Options, getE2Options, getE3Options, getE4Options, getE5Options, getE6Options } from 'lib/options'
 import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 
@@ -100,8 +99,6 @@ const StyledWrapper = styled.div`
   .submit-btn {
     margin: 0 auto;
   }
-  ${mediaSp`
-  `}
 `
 
 export const EvaluationFormTpl: React.FC<Props> = ({

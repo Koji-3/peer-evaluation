@@ -1,8 +1,5 @@
 import styled from 'styled-components'
 
-/* lib, types */
-import { mediaSp } from 'lib/media-query'
-
 type Props = {
   className?: string
   type?: string
@@ -17,7 +14,7 @@ const StyledInput = styled.input`
   height: 4.2rem;
   padding: 0 1.5rem;
   color: ${(props): string => props.theme.black};
-  font-size: 14px;
+  font-size: 1.4rem;
   line-height: 4.2rem;
   letter-spacing: 0.1em;
   border: 0.1rem solid ${(props): string => props.theme.borderGray};
@@ -31,9 +28,6 @@ const StyledInput = styled.input`
   &::placeholder {
     color: rgba(${(props): string => props.theme.placeholderRgba});
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const TextInput: React.FC<Props> = ({ className = '', type = 'text', name = '', placeholder = '', value = '', onChange }) => {

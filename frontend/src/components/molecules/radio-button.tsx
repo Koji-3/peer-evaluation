@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 /* lib, types */
-import { mediaSp } from 'lib/media-query'
 import { RadioButton as RadioButtonType } from 'types/types'
 
 type Props = {
@@ -63,23 +62,6 @@ const StyledRadioLabel = styled.label`
       transition: all 0.2s cubic-bezier(0.45, 0, 0.55, 1);
     }
   }
-  /* ${mediaSp`
-    ${StyledRadioButton} + & {
-      padding-left: 3.1rem;
-      font-size: 1.4rem;
-      line-height: 2.3rem;
-      &::before {
-        width: 2.3rem;
-        height: 2.3rem;
-      }
-      &::after {
-        width: 1.3rem;
-        height: 1.3rem;
-        top: 0.5rem;
-        left: 0.5rem;
-      }
-    }
-  `} */
 `
 
 export const RadioButton: React.FC<Props> = ({ className = '', buttons, checkedValue }) => {

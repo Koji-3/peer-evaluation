@@ -2,9 +2,14 @@ import { useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import styled from 'styled-components'
 
+/* components */
+import { Header } from 'components/organisms'
+
 /* lib, types */
-import { mediaSp } from 'lib/media-query'
 import { fetchUserByAuth0Id } from 'apis/user'
+
+/* images */
+import background from 'assets/images/background.svg'
 
 type Props = {
   children?: React.ReactNode
@@ -13,53 +18,41 @@ type Props = {
 const StyledWrapper = styled.div`
   min-width: 100vw;
   min-height: 100vh;
-  background: ${(props): string => props.theme.background};
+  background: url(${background});
+  display: flex;
+  justify-content: center;
 
-  ${mediaSp`
-  `}
+  .inner {
+    width: 100%;
+    max-width: 600px;
+    background: ${(props): string => props.theme.background};
+  }
 `
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const { isLoading, isAuthenticated, logout, getAccessTokenSilently } = useAuth0()
-  const [loginedUserId, setLoginedUserId] = useState<string>('')
-  const [loginedUserName, setLoginedUserName] = useState<string>('')
+  const { isLoading, isAuthenticated, logout, loginWithRedirect, getAccessTokenSilently } = useAuth0()
+  const [userId, setUserId] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (isLoading) return
     ;(async () => {
-      if (isAuthenticated) {
-        try {
-          const token = await getAccessTokenSilently()
-          const user = await fetchUserByAuth0Id(token)
-          setLoginedUserId(user?.key || '')
-          setLoginedUserName(user?.props.name || '')
-        } catch (e) {
-          // TODO: データ取得失敗のアラート出す
-          console.log(e)
-        }
+      try {
+        const token = await getAccessTokenSilently()
+        // Auth0のidからuserIdを取得する
+        const user = await fetchUserByAuth0Id(token)
+        setUserId(user?.key)
+      } catch (e) {
+        // TODO: エラー処理
       }
     })()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, isAuthenticated])
+  })
 
   return (
     <StyledWrapper>
-      {/* TODO: ヘッダー */}
-      {isAuthenticated && (
-        <>
-          <p>ログイン中ユーザーID: {loginedUserId}</p>
-          <p>ログイン中ユーザー名: {loginedUserName}</p>
-          <button
-            onClick={() => {
-              logout({ logoutParams: { returnTo: window.location.origin } })
-            }}
-          >
-            ログアウト
-          </button>
-        </>
-      )}
-      {children}
+      <div className="inner">
+        <Header isLoggedIn={isAuthenticated} loginUserId={userId} onClickLogin={loginWithRedirect} onClickLogout={logout} />
+        {children}
+      </div>
     </StyledWrapper>
   )
 }

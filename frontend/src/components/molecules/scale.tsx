@@ -1,9 +1,6 @@
 import { ReactElement } from 'react'
 import styled from 'styled-components'
 
-/* lib, types */
-import { mediaSp } from 'lib/media-query'
-
 type Props = {
   className?: string
   point: number
@@ -11,9 +8,6 @@ type Props = {
 
 const StyledWrapper = styled.div`
   position: relative;
-
-  ${mediaSp`
-  `}
 `
 
 const StyledScaleBackgroundWrapper = styled.div`

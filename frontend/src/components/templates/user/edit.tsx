@@ -6,7 +6,6 @@ import { Icon, Button, ButtonSmall } from 'components/atoms'
 import { IconInput, TextInputWithLabel, TextareaWithLabel } from 'components/molecules'
 
 /* lib, types */
-import { mediaSp } from 'lib/media-query'
 import { User } from 'types/types'
 
 type Props = {
@@ -100,9 +99,6 @@ const StyledWrapper = styled.div`
       margin: 0 auto;
     }
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const UserEditTpl: React.FC<Props> = ({

@@ -6,7 +6,6 @@ import { Button, Icon } from 'components/atoms'
 import { TextInputWithLabel, TextareaWithLabel, IconInput } from 'components/molecules'
 
 /* lib, types, options */
-import { mediaSp } from 'lib/media-query'
 import { UserInput } from 'types/types'
 
 /* images */
@@ -60,9 +59,6 @@ const StyledWrapper = styled.div`
       margin: 0 auto;
     }
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const SignupTpl: React.FC<Props> = ({

@@ -198,7 +198,6 @@ select {
 html,
 body {
   width: 100%;
-  min-width: 320px;
   min-height: 100vh;
   /* 標準サイズで10px 以降はremで */
   font-size: 62.5%;
@@ -224,7 +223,7 @@ a {
   text-decoration: none;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 600px) {
   html,
   body {
     /* 標準サイズでデザイン上の10px 以降はremで */

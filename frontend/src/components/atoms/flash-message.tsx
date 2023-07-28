@@ -2,7 +2,6 @@ import { useRef } from 'react'
 import styled, { ThemedStyledProps, DefaultTheme } from 'styled-components'
 
 /* lib, types*/
-import { mediaSp } from 'lib/media-query'
 import { FlashMessage as FlashMessageType } from 'types/types'
 
 /* images */
@@ -87,9 +86,6 @@ const StyledFlashMessage = styled.div<StyleProps>`
       right: 0;
     }
   } */
-
-  ${mediaSp`
-  `}
 `
 
 export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) => {

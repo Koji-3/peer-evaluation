@@ -5,7 +5,6 @@ import { ButtonSmall, Icon } from 'components/atoms'
 import { EvaluationDetailItem } from 'components/organisms'
 
 /* lib, types */
-import { mediaSp } from 'lib/media-query'
 import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
 
 /* images */
@@ -97,9 +96,6 @@ const StyledWrapper = styled.div`
       gap: 2rem;
     }
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const EvaluationDetailTpl: React.FC<Props> = ({

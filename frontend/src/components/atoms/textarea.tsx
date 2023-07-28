@@ -1,8 +1,5 @@
 import styled from 'styled-components'
 
-/* lib, types */
-import { mediaSp } from 'lib/media-query'
-
 type Props = {
   className?: string
   name?: string
@@ -27,9 +24,6 @@ const StyledTextarea = styled.textarea`
     outline: 0;
     border: 0.15rem solid ${(props): string => props.theme.primary};
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const Textarea: React.FC<Props> = ({ className = '', name, value, placeholder, maxLength, onChange }) => {

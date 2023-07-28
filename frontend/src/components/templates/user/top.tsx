@@ -6,7 +6,6 @@ import { Pagination } from 'components/molecules'
 import { EvaluationItem, RadarChart } from 'components/organisms'
 
 /* lib, types */
-import { mediaSp } from 'lib/media-query'
 import { parseNumberToOneDecimalText } from 'lib/function'
 import { User, Evaluation } from 'types/types'
 
@@ -66,9 +65,6 @@ const StyledWrapper = styled.div`
       gap: 2rem;
     }
   }
-
-  ${mediaSp`
-  `}
 `
 
 export const UserTopTpl: React.FC<Props> = ({
