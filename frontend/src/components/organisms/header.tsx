@@ -20,12 +20,16 @@ type Props = {
 
 const StyledWrapper = styled.div`
   width: 100%;
+  max-width: 500px;
   height: 6.5rem;
   padding: 0 1rem;
   background: ${(props): string => props.theme.primary};
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 100;
 
   .header-button-wrapper {
     display: flex;
@@ -41,7 +45,7 @@ export const Header: React.FC<Props> = ({ className, isLoggedIn, loginUserId, on
   const navigate = useNavigate()
 
   const onClickProfile = (): void => {
-    navigate(`/user/${loginUserId}/edit`)
+    navigate(`/user/edit/${loginUserId}`)
   }
 
   const Button = (): React.ReactNode => {

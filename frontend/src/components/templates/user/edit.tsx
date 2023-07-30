@@ -170,7 +170,7 @@ export const UserEditTpl: React.FC<Props> = ({
         </p>
       </div>
       <div className="leave">
-        <p>※退会をご希望の方は、以下の「退会する」よりご退会ください。ご利用ありがとうございました。</p>
+        <p>※退会をご希望の方は、下のボタンよりご退会ください。ご利用ありがとうございました。</p>
         <ButtonSmall buttonText="退会する" buttonType="dark" onClick={deleteUser} className="leave-btn" />
       </div>
     </StyledWrapper>

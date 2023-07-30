@@ -1,15 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
-import { Button, FlashMessage } from 'components/atoms'
+import { Button } from 'components/atoms'
+import { Layout } from 'components/templates'
 
 export const Top: React.FC = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
 
   return (
-    <>
-      <FlashMessage flashMessage={{ message: 'テストメッセージ', type: 'success' }} />
-      <FlashMessage flashMessage={{ message: 'テストメッセージテストメッセージテストメッセージテストメッセージ', type: 'error' }} />
+    <Layout flashMessage={{ message: 'テストメッセージテストメッセージテストメッセージテストメッセージ', type: 'error' }}>
       <Button
         buttonText="ログイン"
         buttonType="primary"
@@ -33,6 +32,6 @@ export const Top: React.FC = () => {
           ログアウト
         </button>
       )}
-    </>
+    </Layout>
   )
 }

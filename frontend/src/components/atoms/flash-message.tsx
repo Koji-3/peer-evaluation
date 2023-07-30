@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import styled, { ThemedStyledProps, DefaultTheme } from 'styled-components'
 
 /* lib, types*/
@@ -34,16 +34,17 @@ const getBackgroundColor = (props: ThemedStyledProps<StyleProps, DefaultTheme>):
 const StyledFlashMessage = styled.div<StyleProps>`
   width: 35.4rem;
   height: 6rem;
-  position: fixed;
-  top: 0;
-  right: 0;
+  top: 8rem;
+  right: -35.4rem;
   z-index: 100;
-  /* animation: slideLeft 6s forwards; */
-  position: relative;
+  animation: slideToLeft 6s forwards;
+  position: absolute;
+  background: ${(props): string => props.theme.white};
   box-shadow: 0.2rem 0.2rem 1rem 0px rgba(0, 0, 0, 0.05);
 
   &.close {
     display: none;
+    animation: none;
   }
 
   .message {
@@ -53,7 +54,6 @@ const StyledFlashMessage = styled.div<StyleProps>`
     line-height: 1.67;
     display: grid;
     place-items: center start;
-    position: relative;
 
     &::before {
       width: 0.5rem;
@@ -72,20 +72,21 @@ const StyledFlashMessage = styled.div<StyleProps>`
     top: calc(50% - 0.44rem);
     right: 1.5rem;
   }
-  /* @keyframes slideLeft {
+
+  @keyframes slideToLeft {
     0% {
+      right: -35.4rem;
+    }
+    10% {
       right: 0;
     }
-    5% {
-      right: 35.4rem;
-    }
-    95% {
-      right: 35.4rem;
+    90% {
+      right: 0;
     }
     100% {
-      right: 0;
+      right: -35.4rem;
     }
-  } */
+  }
 `
 
 export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) => {
@@ -93,10 +94,13 @@ export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) 
 
   const close = (): void => {
     flashMessageRef.current?.classList.add('close')
-    setTimeout(() => {
-      flashMessageRef.current?.classList.remove('close')
-    }, 300)
   }
+
+  useEffect(() => {
+    if (flashMessage && flashMessageRef.current?.classList.contains('close')) {
+      flashMessageRef.current.classList.remove('close')
+    }
+  }, [flashMessage])
 
   return (
     <StyledFlashMessage className={className} type={flashMessage.type} ref={flashMessageRef}>
