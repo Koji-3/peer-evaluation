@@ -8,9 +8,9 @@ import { EvaluationFormTpl, Layout } from 'components/templates'
 /* lib, types */
 import { validateIcon } from 'lib/validate'
 import { evaluatorUploadIconToS3, fetchIconUrl } from 'apis/icon'
-import { fetchUser } from 'apis/user'
+import { fetchUser, fetchUserByAuth0Id } from 'apis/user'
 import { submitEvaluation } from 'apis/evaluation'
-import { User, EvaluationInput, EvaluationLabelKeys } from 'types/types'
+import { User, DBUser, EvaluationInput, EvaluationLabelKeys } from 'types/types'
 
 export const EvaluationForm: React.FC = () => {
   const initialEvaluationInput: EvaluationInput = {
@@ -49,7 +49,7 @@ export const EvaluationForm: React.FC = () => {
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
-  const { isLoading, isAuthenticated } = useAuth0()
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
 
@@ -88,6 +88,16 @@ export const EvaluationForm: React.FC = () => {
         console.log(e)
         return
       }
+    } else if (isAuthenticated) {
+      try {
+        const token = await getAccessTokenSilently()
+        const user = (await fetchUserByAuth0Id(token)) as DBUser
+        iconKey = user?.props.icon_key
+      } catch (e) {
+        // TODO: エラー処理
+        console.log(e)
+        return
+      }
     }
 
     try {
@@ -112,9 +122,6 @@ export const EvaluationForm: React.FC = () => {
         return
       }
     })()
-
-    // TODO: ログイン済みならアイコン取得
-    console.log(isAuthenticated)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
 
@@ -127,6 +134,7 @@ export const EvaluationForm: React.FC = () => {
           evaluationInput={evaluationInput}
           iconObjectUrl={iconObjectUrl}
           iconInputError={iconInputError}
+          shouldShowIconInput={!isAuthenticated}
           onChangeIconInput={onChangeIconInput}
           onChangeEvaluationInput={onChangeEvaluationInput}
           onChangeEvaluationPoint={onChangeEvaluationPoint}

@@ -19,6 +19,7 @@ type Props = {
   evaluationInput: EvaluationInput
   iconObjectUrl: string
   iconInputError: string | null
+  shouldShowIconInput: boolean
   onChangeIconInput: (file: File) => void
   onChangeEvaluationInput: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
   onChangeEvaluationPoint: (label: EvaluationLabelKeys, e: React.ChangeEvent<HTMLInputElement>) => void
@@ -108,6 +109,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
   evaluationInput,
   iconObjectUrl,
   iconInputError,
+  shouldShowIconInput,
   onChangeIconInput,
   onChangeEvaluationInput,
   onChangeEvaluationPoint,
@@ -170,13 +172,15 @@ export const EvaluationFormTpl: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className="form-item icon">
-          <div className="inner">
-            <p className="title">アイコン画像の登録（任意）</p>
-            <Icon src={iconObjectUrl || defaultIcon} alt={evaluatorName} size={14.6} className="icon" />
-            <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
+        {shouldShowIconInput && (
+          <div className="form-item icon">
+            <div className="inner">
+              <p className="title">アイコン画像の登録（任意）</p>
+              <Icon src={iconObjectUrl || defaultIcon} alt={evaluatorName} size={14.6} className="icon" />
+              <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="form-item comment">
           <div className="inner">

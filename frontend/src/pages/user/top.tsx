@@ -89,7 +89,6 @@ export const UserTop: React.FC = () => {
     ;(async () => {
       try {
         const user = await fetchUser(params.id)
-        console.log(user)
         const iconUrl = await fetchIconUrl(user.icon_key)
         const evaluations = await fetchEvaluations()
         setUser(user)
