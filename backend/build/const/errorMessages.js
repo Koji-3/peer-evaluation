@@ -8,6 +8,7 @@ exports.errorMessages = {
         update: 'ユーザー情報の更新に失敗しました。',
         updateEmail: 'メールアドレスの更新に失敗しました。',
         delete: '退会処理に失敗しました。',
+        resendEmailVerification: '認証メールの再送に失敗しました。',
     },
     icon: {
         create: 'アイコンの登録に失敗しました。',

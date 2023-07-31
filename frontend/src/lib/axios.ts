@@ -12,7 +12,7 @@ export const get = async <T, V = undefined>(path: string, token?: string, params
   }
 }
 
-export const post = async <T, V>(path: string, data: V, token?: string, contentType?: string): Promise<T> => {
+export const post = async <T, V = undefined>(path: string, data?: V, token?: string, contentType?: string): Promise<T> => {
   const headers = {
     'Content-Type': contentType || 'application/json',
     Authorization: `Bearer ${token}`,

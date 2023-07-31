@@ -143,6 +143,24 @@ router.put('/update-email', checkJwt, (req, res) => {
         }
     }
 });
+// 認証メール再送
+router.post('/resend-email-verification', checkJwt, (req, res) => {
+    var _a;
+    const auth0Id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.payload.sub;
+    if (!auth0Id) {
+        res.json({ resendEmailVerification: false, message: errorMessages_1.errorMessages.user.resendEmailVerification });
+        return;
+    }
+    try {
+        (0, auth0_1.sendEmailVerification)(auth0Id, 'resend');
+        res.json({ resendEmailVerification: true });
+    }
+    catch (e) {
+        if (e instanceof Error) {
+            res.json({ resendEmailVerification: false, error: e.message });
+        }
+    }
+});
 // 退会
 router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;

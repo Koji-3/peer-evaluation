@@ -17,6 +17,15 @@ export const updateName = (auth0id: string, newName: string): void => {
   })
 }
 
+export const sendEmailVerification = (auth0id: string, type: 'updateEmail' | 'resend'): void => {
+  auth0ManagementClient.sendEmailVerification({ user_id: auth0id }, (e) => {
+    if (e) {
+      console.error('sendEmailVerification error', e)
+      throw new Error(type === 'updateEmail' ? errorMessages.user.updateEmail : errorMessages.user.resendEmailVerification)
+    }
+  })
+}
+
 export const updateEmail = (auth0id: string, newEmail: string): void => {
   auth0ManagementClient.updateUser({ id: auth0id }, { email: newEmail }, (e) => {
     if (e) {
@@ -24,12 +33,7 @@ export const updateEmail = (auth0id: string, newEmail: string): void => {
       throw new Error(errorMessages.user.updateEmail)
     }
     // メールアドレス変更後に新しいメールアドレスにverificationメールを送る
-    auth0ManagementClient.sendEmailVerification({ user_id: auth0id }, (e) => {
-      if (e) {
-        console.error('sendEmailVerification error', e)
-        throw new Error(errorMessages.user.updateEmail)
-      }
-    })
+    sendEmailVerification(auth0id, 'updateEmail')
   })
 }
 

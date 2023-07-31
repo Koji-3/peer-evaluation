@@ -61,6 +61,22 @@ export const updateEmail = async (email: string, token: string): Promise<boolean
   }
 }
 
+export const resendEmailVerification = async (token: string): Promise<boolean> => {
+  try {
+    const { resendEmailVerification, error } = await post<{ resendEmailVerification: boolean; error?: string }>(
+      `/user/resend-email-verification`,
+      undefined,
+      token,
+    )
+    if (!resendEmailVerification) {
+      throw new Error(error)
+    }
+    return resendEmailVerification
+  } catch (e) {
+    throw new Error(errorMessages.user.resendEmailVerification)
+  }
+}
+
 export const updateUser = async (newUser: UpdateUserArg, token: string): Promise<DBUser> => {
   try {
     const { user: resUser, error } = await put<{ user: DBUser | null; error?: string }, { newUser: UpdateUserArg }>(

@@ -1,7 +1,12 @@
 import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer'
 import { createUser, getUserByAuth0Id, getUserById, updateUser, deleteUser } from '../models/user'
-import { updateName as updateAuth0Name, updateEmail as updateAuth0Email, deleteUser as deleteAuth0User } from '../models/auth0'
+import {
+  updateName as updateAuth0Name,
+  updateEmail as updateAuth0Email,
+  deleteUser as deleteAuth0User,
+  sendEmailVerification,
+} from '../models/auth0'
 import { errorMessages } from '../const/errorMessages'
 
 /* auth0 jwt config */
@@ -121,6 +126,23 @@ router.put('/update-email', checkJwt, (req, res) => {
   } catch (e) {
     if (e instanceof Error) {
       res.json({ updateEmail: false, error: e.message })
+    }
+  }
+})
+
+// 認証メール再送
+router.post('/resend-email-verification', checkJwt, (req, res) => {
+  const auth0Id = req.auth?.payload.sub
+  if (!auth0Id) {
+    res.json({ resendEmailVerification: false, message: errorMessages.user.resendEmailVerification })
+    return
+  }
+  try {
+    sendEmailVerification(auth0Id, 'resend')
+    res.json({ resendEmailVerification: true })
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ resendEmailVerification: false, error: e.message })
     }
   }
 })

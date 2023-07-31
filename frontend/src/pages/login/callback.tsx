@@ -6,8 +6,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
+/* components */
+import { Layout, LoginCallbackTpl } from 'components/templates'
+
 /* lib, types, apis */
-import { fetchUserByAuth0Id } from 'apis/user'
+import { fetchUserByAuth0Id, resendEmailVerification } from 'apis/user'
 
 export const LoginCallback: React.FC = () => {
   const { user: auth0User, getAccessTokenSilently, isLoading } = useAuth0()
@@ -25,13 +28,22 @@ export const LoginCallback: React.FC = () => {
     }
   }
 
+  const onClickResend = async (): Promise<void> => {
+    const token = await getAccessTokenSilently()
+    try {
+      await resendEmailVerification(token)
+    } catch (e) {
+      // TODO: エラー処理
+    }
+  }
+
   useEffect(() => {
     setIsEmailVerified(auth0User?.email_verified || false)
   }, [auth0User])
 
   useEffect(() => {
     if (isLoading) return
-    // TODO: Auth0のメール認証を行ってから使えるようにする
+    // Auth0のメール認証を行ってから使えるようにする
     if (!auth0User || !auth0User?.email_verified) return
     ;(async () => {
       const userId = await getUserId()
@@ -47,6 +59,9 @@ export const LoginCallback: React.FC = () => {
 
   return (
     // TODO: ローディング表示
-    <>{isLoading ? <p>loading...</p> : !isEmailVerified ? <p>メール認証を行なってください</p> : <p>OK!</p>}</>
+    <Layout>
+      {isLoading && <p>loading...</p>}
+      {!isEmailVerified && <LoginCallbackTpl onClickResend={onClickResend} />}
+    </Layout>
   )
 }

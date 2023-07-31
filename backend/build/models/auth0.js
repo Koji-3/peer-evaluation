@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateEmail = exports.updateName = void 0;
+exports.deleteUser = exports.updateEmail = exports.sendEmailVerification = exports.updateName = void 0;
 const auth0_1 = require("auth0");
 const errorMessages_1 = require("../const/errorMessages");
 const auth0ManagementClient = new auth0_1.ManagementClient({
@@ -18,6 +18,15 @@ const updateName = (auth0id, newName) => {
     });
 };
 exports.updateName = updateName;
+const sendEmailVerification = (auth0id, type) => {
+    auth0ManagementClient.sendEmailVerification({ user_id: auth0id }, (e) => {
+        if (e) {
+            console.error('sendEmailVerification error', e);
+            throw new Error(type === 'updateEmail' ? errorMessages_1.errorMessages.user.updateEmail : errorMessages_1.errorMessages.user.resendEmailVerification);
+        }
+    });
+};
+exports.sendEmailVerification = sendEmailVerification;
 const updateEmail = (auth0id, newEmail) => {
     auth0ManagementClient.updateUser({ id: auth0id }, { email: newEmail }, (e) => {
         if (e) {
@@ -25,12 +34,7 @@ const updateEmail = (auth0id, newEmail) => {
             throw new Error(errorMessages_1.errorMessages.user.updateEmail);
         }
         // メールアドレス変更後に新しいメールアドレスにverificationメールを送る
-        auth0ManagementClient.sendEmailVerification({ user_id: auth0id }, (e) => {
-            if (e) {
-                console.error('sendEmailVerification error', e);
-                throw new Error(errorMessages_1.errorMessages.user.updateEmail);
-            }
-        });
+        (0, exports.sendEmailVerification)(auth0id, 'updateEmail');
     });
 };
 exports.updateEmail = updateEmail;
