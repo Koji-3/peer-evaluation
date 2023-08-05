@@ -34,11 +34,7 @@ const getBackgroundColor = (props: ThemedStyledProps<StyleProps, DefaultTheme>):
 const StyledFlashMessage = styled.div<StyleProps>`
   width: 35.4rem;
   height: 6rem;
-  top: 8rem;
-  right: -35.4rem;
-  z-index: 100;
-  animation: slideToLeft 6s forwards;
-  position: absolute;
+  position: relative;
   background: ${(props): string => props.theme.white};
   box-shadow: 0.2rem 0.2rem 1rem 0px rgba(0, 0, 0, 0.05);
 
@@ -71,21 +67,6 @@ const StyledFlashMessage = styled.div<StyleProps>`
     position: absolute;
     top: calc(50% - 0.44rem);
     right: 1.5rem;
-  }
-
-  @keyframes slideToLeft {
-    0% {
-      right: -35.4rem;
-    }
-    10% {
-      right: 0;
-    }
-    90% {
-      right: 0;
-    }
-    100% {
-      right: -35.4rem;
-    }
   }
 `
 

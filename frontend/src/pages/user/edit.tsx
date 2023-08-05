@@ -7,9 +7,10 @@ import { UserEditTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
 import { validateIcon, validateEmail } from 'lib/validate'
-import { User, Auth0AuthenticatedBy } from 'types/types'
+import { User, Auth0AuthenticatedBy, FlashMessage } from 'types/types'
 import { fetchUser, updateEmail, updateUser as updateUserApi, deleteUser as deleteUserApi } from 'apis/user'
 import { fetchIconUrl, userUploadIconToS3 } from 'apis/icon'
+import { errorMessages } from 'const/errorMessages'
 
 export const UserEdit: React.FC = () => {
   const [userInput, setUserInput] = useState<User>()
@@ -19,6 +20,7 @@ export const UserEdit: React.FC = () => {
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const [isIconChanged, setIsIconChanged] = useState<boolean>(false)
+  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const { isLoading, user: auth0User, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
@@ -70,17 +72,16 @@ export const UserEdit: React.FC = () => {
       } else {
         await updateUserApi({ name, profile }, token)
       }
-      console.log(!!email && email !== auth0User?.email)
       if (!!email && email !== auth0User?.email) {
         await updateEmail(email, token)
         navigate('/')
       } else {
-        // TODO: プロフィールの編集が完了しました表示
-        navigate(`/user/${params.id}`)
+        setFlashMessage({ type: 'success', message: 'プロフィールを更新しました。' })
       }
     } catch (e) {
-      // TODO: エラー処理
-      console.log('iconkey error', e)
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
@@ -88,23 +89,22 @@ export const UserEdit: React.FC = () => {
     try {
       const token = await getAccessTokenSilently()
       await deleteUserApi(token)
-      // TODO: ホームに遷移して「退会しました」のアラート出す
-      navigate('/')
+      navigate('/', { state: { flashMessage: { type: 'success', message: '退会が完了しました。' } } })
     } catch (e) {
-      // TODO: エラー処理
-      console.log('iconkey error', e)
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
   useEffect(() => {
     if (isLoading) return
     if (!isAuthenticated) {
-      // TODO: ホームに遷移して「ログインしてください」のアラート出す
-      navigate('/')
+      navigate('/', { state: { flashMessage: { type: 'error', message: 'ログインしてください。' } } })
     }
     ;(async () => {
       if (!auth0User || !auth0User.email || !auth0User.sub) {
-        // TODO: データ取得失敗のアラート出す
+        setFlashMessage({ type: 'error', message: errorMessages.user.get })
         return
       }
       try {
@@ -114,14 +114,15 @@ export const UserEdit: React.FC = () => {
         setIconObjectUrl(iconUrl)
         setEmail(auth0User.email)
       } catch (e) {
-        // TODO: データ取得失敗のアラート出す
-        console.log(e)
+        if (e instanceof Error) {
+          setFlashMessage({ type: 'error', message: e.message })
+        }
       }
     })()
   }, [auth0User, isAuthenticated, isLoading, navigate, params.id])
 
   return (
-    <Layout>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
       {userInput && (
         <UserEditTpl
           userInput={userInput}

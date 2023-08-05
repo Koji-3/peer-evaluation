@@ -11,20 +11,24 @@ import { Layout, LoginCallbackTpl } from 'components/templates'
 
 /* lib, types, apis */
 import { fetchUserByAuth0Id, resendEmailVerification } from 'apis/user'
+import { FlashMessage } from 'types/types'
 
 export const LoginCallback: React.FC = () => {
   const { user: auth0User, getAccessTokenSilently, isLoading } = useAuth0()
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false)
+  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const navigate = useNavigate()
 
-  const getUserId = useCallback(async(): Promise<string | undefined> => {
+  const getUserId = useCallback(async (): Promise<string | undefined> => {
     try {
       const token = await getAccessTokenSilently()
       // Auth0のidからuserIdを取得する
       const user = await fetchUserByAuth0Id(token)
       return user?.key
     } catch (e) {
-      // TODO: エラー処理
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }, [getAccessTokenSilently])
 
@@ -32,9 +36,11 @@ export const LoginCallback: React.FC = () => {
     const token = await getAccessTokenSilently()
     try {
       await resendEmailVerification(token)
-      // TODO: メールを再送しましたのメッセージを表示
+      setFlashMessage({ type: 'success', message: 'メールを再送しました。' })
     } catch (e) {
-      // TODO: エラー処理
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
@@ -54,12 +60,10 @@ export const LoginCallback: React.FC = () => {
         navigate('/signup')
       }
     })()
-
   }, [isLoading, auth0User, navigate, getAccessTokenSilently, getUserId])
 
   return (
-    // TODO: ローディング表示
-    <Layout>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
       {isLoading && <p>loading...</p>}
       {!isEmailVerified && <LoginCallbackTpl onClickResend={onClickResend} />}
     </Layout>

@@ -6,17 +6,19 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { EvaluationDetailTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
-import { Evaluation } from 'types/types'
+import { Evaluation, FlashMessage } from 'types/types'
 import { fetchUser } from 'apis/user'
 import { fetchSelfEvaluation, fetchOthersEvaluation, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
+import { errorMessages } from 'const/errorMessages'
 
 export const EvaluationDetail: React.FC = () => {
   const [evaluation, setEvaluation] = useState<Evaluation>()
   const [evaluateeName, setEvaluateeName] = useState<string>('')
+  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
 
-  const fetchEvaluation = useCallback(async(): Promise<Evaluation> => {
+  const fetchEvaluation = useCallback(async (): Promise<Evaluation> => {
     try {
       if (isAuthenticated) {
         const token = await getAccessTokenSilently()
@@ -27,8 +29,7 @@ export const EvaluationDetail: React.FC = () => {
         return evaluation
       }
     } catch (e) {
-      console.log(e)
-      throw new Error('データの取得に失敗しました')
+      throw new Error(errorMessages.evaluation.get)
     }
   }, [isAuthenticated, getAccessTokenSilently, params.evaluationId])
 
@@ -37,43 +38,47 @@ export const EvaluationDetail: React.FC = () => {
       const evaluation = await fetchEvaluation()
       setEvaluation(evaluation)
     } catch (e) {
-      // TODO: データ取得失敗のアラート出す
-      console.log('update fail')
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
   const onClickPublish = async (): Promise<void> => {
-    const token = await getAccessTokenSilently()
-    const update = await publishEvaluation(token, params.evaluationId)
-    if (update) {
+    try {
+      const token = await getAccessTokenSilently()
+      await publishEvaluation(token, params.evaluationId)
       await refetchAfterUpdateEvaluation()
-    } else {
-      // TODO: データ取得失敗のアラート出す
-      console.log('update fail')
+    } catch (e) {
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
   const onClickUnpublish = async (): Promise<void> => {
-    const token = await getAccessTokenSilently()
-    const update = await unpublishEvaluation(token, params.evaluationId)
-    if (update) {
-      refetchAfterUpdateEvaluation()
-    } else {
-      // TODO: データ取得失敗のアラート出す
-      console.log('update fail')
+    try {
+      const token = await getAccessTokenSilently()
+      await unpublishEvaluation(token, params.evaluationId)
+      await refetchAfterUpdateEvaluation()
+    } catch (e) {
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
   const onClickDelete = async (): Promise<void> => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
-    const token = await getAccessTokenSilently()
-    const update = await deleteEvaluation(token, params.evaluationId)
-    if (update) {
-      refetchAfterUpdateEvaluation()
-    } else {
-      // TODO: データ取得失敗のアラート出す
-      console.log('update fail')
+    try {
+      const token = await getAccessTokenSilently()
+      await deleteEvaluation(token, params.evaluationId)
+      await refetchAfterUpdateEvaluation()
+    } catch (e) {
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
@@ -86,14 +91,15 @@ export const EvaluationDetail: React.FC = () => {
         setEvaluation(evaluation)
         setEvaluateeName(user.name)
       } catch (e) {
-        // TODO: データ取得失敗のアラート出す
-        console.log(e)
+        if (e instanceof Error) {
+          setFlashMessage({ type: 'error', message: e.message })
+        }
       }
     })()
   }, [isLoading, fetchEvaluation])
 
   return (
-    <Layout>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
       {evaluation && (
         <EvaluationDetailTpl
           evaluation={evaluation}

@@ -29,7 +29,7 @@ export const fetchOthersEvaluations = async (id?: string): Promise<Evaluation[]>
 }
 
 export const fetchSelfEvaluation = async (token: string, id?: string): Promise<Evaluation> => {
-  if (!id) throw new Error('データの取得に失敗しました')
+  if (!id) throw new Error(errorMessages.evaluation.get)
   try {
     const { evaluation, error } = await get<{ evaluation: Evaluation | null; error?: string }>(`/evaluation/self/${id}`, token)
     if (!evaluation) {
@@ -42,7 +42,7 @@ export const fetchSelfEvaluation = async (token: string, id?: string): Promise<E
 }
 
 export const fetchOthersEvaluation = async (id?: string): Promise<Evaluation> => {
-  if (!id) throw new Error('データの取得に失敗しました')
+  if (!id) throw new Error(errorMessages.evaluation.get)
   try {
     const { evaluation, error } = await get<{ evaluation: Evaluation | null; error?: string }>(`/evaluation/${id}`)
     if (!evaluation) {
@@ -55,7 +55,7 @@ export const fetchOthersEvaluation = async (id?: string): Promise<Evaluation> =>
 }
 
 export const submitEvaluation = async (evaluation: EvaluationInput, evaluateeId?: string): Promise<void> => {
-  if (!evaluateeId) throw new Error('評価の送信に失敗しました')
+  if (!evaluateeId) throw new Error(errorMessages.evaluation.create)
   try {
     const { evaluation: resEvaluation, error } = await post<
       { evaluation: DBEvaluation | null; error?: string },
@@ -72,7 +72,7 @@ export const submitEvaluation = async (evaluation: EvaluationInput, evaluateeId?
 }
 
 export const publishEvaluation = async (token: string, id?: string): Promise<boolean> => {
-  if (!id) throw new Error('データの取得に失敗しました')
+  if (!id) throw new Error(errorMessages.evaluation.publish)
   try {
     const { update, error } = await put<{ update: boolean; error?: string }>(`/evaluation/publish/${id}`, undefined, token)
     if (!update) {
@@ -85,7 +85,7 @@ export const publishEvaluation = async (token: string, id?: string): Promise<boo
 }
 
 export const unpublishEvaluation = async (token: string, id?: string): Promise<boolean> => {
-  if (!id) throw new Error('データの取得に失敗しました')
+  if (!id) throw new Error(errorMessages.evaluation.unpublish)
   try {
     const { update, error } = await put<{ update: boolean; error?: string }>(`/evaluation/unpublish/${id}`, undefined, token)
     if (!update) {
@@ -98,7 +98,7 @@ export const unpublishEvaluation = async (token: string, id?: string): Promise<b
 }
 
 export const deleteEvaluation = async (token: string, id?: string): Promise<boolean> => {
-  if (!id) throw new Error('データの取得に失敗しました')
+  if (!id) throw new Error(errorMessages.evaluation.delete)
   try {
     const { update, error } = await deleteData<{ update: boolean; error?: string }>(`/evaluation/${id}`, token)
     if (!update) {

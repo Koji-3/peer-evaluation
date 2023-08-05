@@ -10,7 +10,7 @@ import { validateIcon } from 'lib/validate'
 import { evaluatorUploadIconToS3, fetchIconUrl } from 'apis/icon'
 import { fetchUser, fetchUserByAuth0Id } from 'apis/user'
 import { submitEvaluation } from 'apis/evaluation'
-import { User, DBUser, EvaluationInput, EvaluationLabelKeys } from 'types/types'
+import { User, DBUser, EvaluationInput, EvaluationLabelKeys, FlashMessage } from 'types/types'
 
 export const EvaluationForm: React.FC = () => {
   const initialEvaluationInput: EvaluationInput = {
@@ -49,6 +49,7 @@ export const EvaluationForm: React.FC = () => {
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
+  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
@@ -84,8 +85,9 @@ export const EvaluationForm: React.FC = () => {
       try {
         iconKey = await evaluatorUploadIconToS3({ file: iconFile, evaluatorName: evaluationInput.evaluatorName })
       } catch (e) {
-        // TODO: エラー処理
-        console.log(e)
+        if (e instanceof Error) {
+          setFlashMessage({ type: 'error', message: e.message })
+        }
         return
       }
     } else if (isAuthenticated) {
@@ -94,8 +96,9 @@ export const EvaluationForm: React.FC = () => {
         const user = (await fetchUserByAuth0Id(token)) as DBUser
         iconKey = user?.props.icon_key
       } catch (e) {
-        // TODO: エラー処理
-        console.log(e)
+        if (e instanceof Error) {
+          setFlashMessage({ type: 'error', message: e.message })
+        }
         return
       }
     }
@@ -104,7 +107,9 @@ export const EvaluationForm: React.FC = () => {
       await submitEvaluation({ ...evaluationInput, evaluatorIconKey: iconKey }, params.evaluateeId)
       navigate(`/user/${params.evaluateeId}`)
     } catch (e) {
-      // TODO: エラー処理
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
@@ -117,15 +122,16 @@ export const EvaluationForm: React.FC = () => {
         setEvaluatee(evaluatee)
         setEvaluateeIconUrl(evaluateeIconUrl)
       } catch (e) {
-        // TODO: データ取得失敗のアラート出す
-        console.log(`/user/${params.evaluateeId} error`, e)
+        if (e instanceof Error) {
+          setFlashMessage({ type: 'error', message: e.message })
+        }
         return
       }
     })()
   }, [isLoading, params.evaluateeId])
 
   return (
-    <Layout>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
       {evaluatee && (
         <EvaluationFormTpl
           evaluatee={evaluatee}

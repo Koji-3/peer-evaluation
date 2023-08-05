@@ -9,7 +9,7 @@ type UpdateUserArg = {
 }
 
 export const fetchUser = async (id?: string): Promise<User> => {
-  if (!id) throw new Error('データの取得に失敗しました')
+  if (!id) throw new Error(errorMessages.user.get)
   try {
     const { user, error } = await get<{ user: User | null; error?: string }>(`/user/${id}`)
     if (!user) {

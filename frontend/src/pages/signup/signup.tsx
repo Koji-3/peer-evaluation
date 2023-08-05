@@ -7,7 +7,7 @@ import { SignupTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
 import { validateIcon } from 'lib/validate'
-import { UserInput } from 'types/types'
+import { UserInput, FlashMessage } from 'types/types'
 import { userUploadIconToS3 } from 'apis/icon'
 import { createUser } from 'apis/user'
 
@@ -22,6 +22,7 @@ export const Signup: React.FC = () => {
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
+  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -48,8 +49,9 @@ export const Signup: React.FC = () => {
       const user = await createUser({ ...userInput, icon_key: iconKey }, token)
       navigate(`/user/${user.key}`)
     } catch (e) {
-      // TODO: エラー処理
-      console.log('iconkey error', e)
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: e.message })
+      }
     }
   }
 
@@ -62,7 +64,7 @@ export const Signup: React.FC = () => {
   }, [searchParams])
 
   return (
-    <Layout>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
       <SignupTpl
         userInput={userInput}
         iconObjectUrl={iconObjectUrl}

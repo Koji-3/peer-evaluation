@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
@@ -5,10 +6,12 @@ import { Button } from 'components/atoms'
 import { Layout } from 'components/templates'
 
 export const Top: React.FC = () => {
+  const location = useLocation()
+  const stateFlashMessage = location.state?.flashMessage
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
 
   return (
-    <Layout flashMessage={{ message: 'テストメッセージテストメッセージテストメッセージテストメッセージ', type: 'error' }}>
+    <Layout flashMessages={stateFlashMessage ? [stateFlashMessage] : undefined}>
       <Button
         buttonText="ログイン"
         buttonType="primary"
