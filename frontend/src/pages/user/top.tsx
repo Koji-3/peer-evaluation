@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -22,7 +22,7 @@ export const UserTop: React.FC = () => {
   const params = useParams()
   const [searchParams] = useSearchParams()
 
-  const fetchEvaluations = async (): Promise<Evaluation[]> => {
+  const fetchEvaluations = useCallback(async(): Promise<Evaluation[]> => {
     try {
       if (isAuthenticated) {
         const token = await getAccessTokenSilently()
@@ -35,7 +35,7 @@ export const UserTop: React.FC = () => {
     } catch (e) {
       throw new Error(errorMessages.evaluation.get)
     }
-  }
+  }, [getAccessTokenSilently, isAuthenticated, params.id])
 
   const refetchAfterUpdateEvaluation = async (): Promise<void> => {
     try {
@@ -102,9 +102,7 @@ export const UserTop: React.FC = () => {
         console.log(e)
       }
     })()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+  }, [isLoading, params.id, isAuthenticated, getAccessTokenSilently, fetchEvaluations])
 
   useEffect(() => {
     setCurrentPage(Number(searchParams.get('page')) || 1)

@@ -122,8 +122,7 @@ export const EvaluationForm: React.FC = () => {
         return
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+  }, [isLoading, params.evaluateeId])
 
   return (
     <Layout>

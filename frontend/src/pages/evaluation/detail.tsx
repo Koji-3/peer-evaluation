@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -16,7 +16,7 @@ export const EvaluationDetail: React.FC = () => {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
 
-  const fetchEvaluation = async (): Promise<Evaluation> => {
+  const fetchEvaluation = useCallback(async(): Promise<Evaluation> => {
     try {
       if (isAuthenticated) {
         const token = await getAccessTokenSilently()
@@ -30,7 +30,7 @@ export const EvaluationDetail: React.FC = () => {
       console.log(e)
       throw new Error('データの取得に失敗しました')
     }
-  }
+  }, [isAuthenticated, getAccessTokenSilently, params.evaluationId])
 
   const refetchAfterUpdateEvaluation = async (): Promise<void> => {
     try {
@@ -90,8 +90,7 @@ export const EvaluationDetail: React.FC = () => {
         console.log(e)
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+  }, [isLoading, fetchEvaluation])
 
   return (
     <Layout>

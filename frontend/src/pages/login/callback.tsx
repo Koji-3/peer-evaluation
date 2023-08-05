@@ -2,7 +2,7 @@
  * Auth0でログイン後にマイページへリダイレクトする用のファイル。
  * Auth0のコールバックに動的URLを設定できないため。
  */
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -17,7 +17,7 @@ export const LoginCallback: React.FC = () => {
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false)
   const navigate = useNavigate()
 
-  const getUserId = async (): Promise<string | undefined> => {
+  const getUserId = useCallback(async(): Promise<string | undefined> => {
     try {
       const token = await getAccessTokenSilently()
       // Auth0のidからuserIdを取得する
@@ -26,12 +26,13 @@ export const LoginCallback: React.FC = () => {
     } catch (e) {
       // TODO: エラー処理
     }
-  }
+  }, [getAccessTokenSilently])
 
   const onClickResend = async (): Promise<void> => {
     const token = await getAccessTokenSilently()
     try {
       await resendEmailVerification(token)
+      // TODO: メールを再送しましたのメッセージを表示
     } catch (e) {
       // TODO: エラー処理
     }
@@ -54,8 +55,7 @@ export const LoginCallback: React.FC = () => {
       }
     })()
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, auth0User])
+  }, [isLoading, auth0User, navigate, getAccessTokenSilently, getUserId])
 
   return (
     // TODO: ローディング表示
