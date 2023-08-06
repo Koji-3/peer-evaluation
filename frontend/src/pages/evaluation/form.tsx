@@ -50,7 +50,8 @@ export const EvaluationForm: React.FC = () => {
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { isLoading: isAuth0Loading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
 
@@ -80,11 +81,13 @@ export const EvaluationForm: React.FC = () => {
   }
 
   const submit = async (): Promise<void> => {
+    setIsLoading(true)
     let iconKey = ''
     if (iconFile) {
       try {
         iconKey = await evaluatorUploadIconToS3({ file: iconFile, evaluatorName: evaluationInput.evaluatorName })
       } catch (e) {
+        setIsLoading(false)
         if (e instanceof Error) {
           setFlashMessage({ type: 'error', message: e.message })
         }
@@ -96,6 +99,7 @@ export const EvaluationForm: React.FC = () => {
         const user = (await fetchUserByAuth0Id(token)) as DBUser
         iconKey = user?.props.icon_key
       } catch (e) {
+        setIsLoading(false)
         if (e instanceof Error) {
           setFlashMessage({ type: 'error', message: e.message })
         }
@@ -105,8 +109,10 @@ export const EvaluationForm: React.FC = () => {
 
     try {
       await submitEvaluation({ ...evaluationInput, evaluatorIconKey: iconKey }, params.evaluateeId)
+      setIsLoading(false)
       navigate(`/user/${params.evaluateeId}`)
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -114,24 +120,25 @@ export const EvaluationForm: React.FC = () => {
   }
 
   useEffect(() => {
-    if (isLoading) return
+    if (isAuth0Loading) return
     ;(async () => {
       try {
         const evaluatee = await fetchUser(params.evaluateeId)
         const evaluateeIconUrl = await fetchIconUrl(evaluatee.icon_key)
         setEvaluatee(evaluatee)
         setEvaluateeIconUrl(evaluateeIconUrl)
+        setIsLoading(false)
       } catch (e) {
+        setIsLoading(false)
         if (e instanceof Error) {
           setFlashMessage({ type: 'error', message: e.message })
         }
-        return
       }
     })()
-  }, [isLoading, params.evaluateeId])
+  }, [isAuth0Loading, params.evaluateeId])
 
   return (
-    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
       {evaluatee && (
         <EvaluationFormTpl
           evaluatee={evaluatee}

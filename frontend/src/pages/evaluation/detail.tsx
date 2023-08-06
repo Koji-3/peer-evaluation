@@ -15,7 +15,8 @@ export const EvaluationDetail: React.FC = () => {
   const [evaluation, setEvaluation] = useState<Evaluation>()
   const [evaluateeName, setEvaluateeName] = useState<string>('')
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { isLoading: isAuth0Loading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
 
   const fetchEvaluation = useCallback(async (): Promise<Evaluation> => {
@@ -29,6 +30,9 @@ export const EvaluationDetail: React.FC = () => {
         return evaluation
       }
     } catch (e) {
+      if (e instanceof Error) {
+        throw new Error(e.message)
+      }
       throw new Error(errorMessages.evaluation.get)
     }
   }, [isAuthenticated, getAccessTokenSilently, params.evaluationId])
@@ -39,7 +43,7 @@ export const EvaluationDetail: React.FC = () => {
       setEvaluation(evaluation)
     } catch (e) {
       if (e instanceof Error) {
-        setFlashMessage({ type: 'error', message: e.message })
+        throw new Error(e.message)
       }
     }
   }
@@ -49,7 +53,10 @@ export const EvaluationDetail: React.FC = () => {
       const token = await getAccessTokenSilently()
       await publishEvaluation(token, params.evaluationId)
       await refetchAfterUpdateEvaluation()
+      setIsLoading(false)
+      setFlashMessage({ type: 'success', message: '公開しました。' })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -61,7 +68,10 @@ export const EvaluationDetail: React.FC = () => {
       const token = await getAccessTokenSilently()
       await unpublishEvaluation(token, params.evaluationId)
       await refetchAfterUpdateEvaluation()
+      setIsLoading(false)
+      setFlashMessage({ type: 'success', message: '非公開にしました。' })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -75,7 +85,10 @@ export const EvaluationDetail: React.FC = () => {
       const token = await getAccessTokenSilently()
       await deleteEvaluation(token, params.evaluationId)
       await refetchAfterUpdateEvaluation()
+      setIsLoading(false)
+      setFlashMessage({ type: 'success', message: '削除しました。' })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -83,23 +96,25 @@ export const EvaluationDetail: React.FC = () => {
   }
 
   useEffect(() => {
-    if (isLoading) return
+    if (isAuth0Loading) return
     ;(async () => {
       try {
         const evaluation = await fetchEvaluation()
         const user = await fetchUser(evaluation.evaluateeId)
         setEvaluation(evaluation)
         setEvaluateeName(user.name)
+        setIsLoading(false)
       } catch (e) {
+        setIsLoading(false)
         if (e instanceof Error) {
           setFlashMessage({ type: 'error', message: e.message })
         }
       }
     })()
-  }, [isLoading, fetchEvaluation])
+  }, [isAuth0Loading, fetchEvaluation])
 
   return (
-    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
       {evaluation && (
         <EvaluationDetailTpl
           evaluation={evaluation}

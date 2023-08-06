@@ -10,9 +10,10 @@ import { validateIcon } from 'lib/validate'
 import { UserInput, FlashMessage } from 'types/types'
 import { userUploadIconToS3 } from 'apis/icon'
 import { createUser } from 'apis/user'
+import { errorMessages } from 'const/errorMessages'
 
 export const Signup: React.FC = () => {
-  const { user: auth0User, getAccessTokenSilently } = useAuth0()
+  const { user: auth0User, getAccessTokenSilently, isLoading: isAuth0Loading } = useAuth0()
   const initialUserInput: UserInput = {
     name: '',
     profile: '',
@@ -23,6 +24,7 @@ export const Signup: React.FC = () => {
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -42,13 +44,20 @@ export const Signup: React.FC = () => {
   }
 
   const register = async (): Promise<void> => {
-    if (!iconFile || !auth0User || !auth0User.sub) return
+    setIsLoading(true)
+    if (!iconFile || !auth0User || !auth0User.sub) {
+      setIsLoading(false)
+      setFlashMessage({ type: 'error', message: errorMessages.user.create })
+      return
+    }
     const token = await getAccessTokenSilently()
     try {
       const iconKey = await userUploadIconToS3({ file: iconFile, token })
       const user = await createUser({ ...userInput, icon_key: iconKey }, token)
+      setIsLoading(false)
       navigate(`/user/${user.key}`)
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -64,7 +73,7 @@ export const Signup: React.FC = () => {
   }, [searchParams])
 
   return (
-    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
       <SignupTpl
         userInput={userInput}
         iconObjectUrl={iconObjectUrl}

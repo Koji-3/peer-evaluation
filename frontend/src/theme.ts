@@ -2,6 +2,7 @@ import 'styled-components'
 
 export const theme = {
   white: '#fff',
+  whiteRgb: '255,255,255',
   black: '#000',
   borderGray: '#bababa',
   dividerGray: '#b9b9b9',

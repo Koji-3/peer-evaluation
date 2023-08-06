@@ -5,6 +5,7 @@ import styled from 'styled-components'
 /* components */
 import { FlashMessageList } from 'components/molecules'
 import { Header } from 'components/organisms'
+import { LoadingTpl } from 'components/templates'
 
 /* lib, types, apis */
 import { FlashMessage as FlashMessageType } from 'types/types'
@@ -17,6 +18,7 @@ import background from 'assets/images/background.svg'
 type Props = {
   children?: React.ReactNode
   flashMessages?: FlashMessageType[]
+  isLoading?: boolean
 }
 
 const StyledWrapper = styled.div`
@@ -35,16 +37,20 @@ const StyledWrapper = styled.div`
     background: ${(props): string => props.theme.background};
     position: relative;
     overflow: hidden;
+
+    .loading {
+      margin: -6.5rem 0 0;
+    }
   }
 `
 
-export const Layout: React.FC<Props> = ({ children, flashMessages }) => {
-  const { isLoading, isAuthenticated, logout, loginWithRedirect, getAccessTokenSilently } = useAuth0()
+export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) => {
+  const { isLoading: isAuth0Loading, isAuthenticated, logout, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const [userId, setUserId] = useState<string | undefined>(undefined)
   const [layoutFlashMessage, setLayoutFlashMessage] = useState<FlashMessageType | undefined>(undefined)
 
   useEffect(() => {
-    if (isLoading) return
+    if (isAuth0Loading) return
     if (!isAuthenticated) return
     ;(async () => {
       try {
@@ -56,11 +62,12 @@ export const Layout: React.FC<Props> = ({ children, flashMessages }) => {
         setLayoutFlashMessage({ type: 'error', message: errorMessages.user.get })
       }
     })()
-  }, [getAccessTokenSilently, isAuthenticated, isLoading])
+  }, [getAccessTokenSilently, isAuthenticated, isAuth0Loading])
 
   return (
     <StyledWrapper>
       <div className="inner">
+        {isAuth0Loading || (isLoading && <LoadingTpl className="loading" />)}
         <Header isLoggedIn={isAuthenticated} loginUserId={userId} onClickLogin={loginWithRedirect} onClickLogout={logout} />
         <FlashMessageList flashMessageList={flashMessages ? [layoutFlashMessage, ...flashMessages] : [layoutFlashMessage]} />
         {children}

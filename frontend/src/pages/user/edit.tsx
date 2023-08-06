@@ -21,7 +21,8 @@ export const UserEdit: React.FC = () => {
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const [isIconChanged, setIsIconChanged] = useState<boolean>(false)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const { isLoading, user: auth0User, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { isLoading: isAuth0Loading, user: auth0User, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
 
@@ -61,7 +62,12 @@ export const UserEdit: React.FC = () => {
   }
 
   const updateUser = async (): Promise<void> => {
-    if (!auth0User || !userInput) return
+    setIsLoading(true)
+    if (!auth0User || !userInput) {
+      setIsLoading(false)
+      setFlashMessage({ type: 'error', message: errorMessages.user.update })
+      return
+    }
 
     try {
       const { name, profile } = userInput
@@ -74,11 +80,14 @@ export const UserEdit: React.FC = () => {
       }
       if (!!email && email !== auth0User?.email) {
         await updateEmail(email, token)
+        setIsLoading(false)
         navigate('/')
       } else {
+        setIsLoading(false)
         setFlashMessage({ type: 'success', message: 'プロフィールを更新しました。' })
       }
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -89,8 +98,10 @@ export const UserEdit: React.FC = () => {
     try {
       const token = await getAccessTokenSilently()
       await deleteUserApi(token)
+      setIsLoading(false)
       navigate('/', { state: { flashMessage: { type: 'success', message: '退会が完了しました。' } } })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -98,12 +109,14 @@ export const UserEdit: React.FC = () => {
   }
 
   useEffect(() => {
-    if (isLoading) return
+    if (isAuth0Loading) return
     if (!isAuthenticated) {
+      setIsLoading(false)
       navigate('/', { state: { flashMessage: { type: 'error', message: 'ログインしてください。' } } })
     }
     ;(async () => {
       if (!auth0User || !auth0User.email || !auth0User.sub) {
+        setIsLoading(false)
         setFlashMessage({ type: 'error', message: errorMessages.user.get })
         return
       }
@@ -113,16 +126,18 @@ export const UserEdit: React.FC = () => {
         setUserInput(user)
         setIconObjectUrl(iconUrl)
         setEmail(auth0User.email)
+        setIsLoading(false)
       } catch (e) {
+        setIsLoading(false)
         if (e instanceof Error) {
           setFlashMessage({ type: 'error', message: e.message })
         }
       }
     })()
-  }, [auth0User, isAuthenticated, isLoading, navigate, params.id])
+  }, [auth0User, isAuthenticated, isAuth0Loading, navigate, params.id])
 
   return (
-    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
       {userInput && (
         <UserEditTpl
           userInput={userInput}

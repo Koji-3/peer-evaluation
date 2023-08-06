@@ -19,7 +19,8 @@ export const UserTop: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lastPage, setLastPage] = useState<number>(10)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { isLoading: isAuth0Loading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const [searchParams] = useSearchParams()
 
@@ -34,6 +35,9 @@ export const UserTop: React.FC = () => {
         return evaluations
       }
     } catch (e) {
+      if (e instanceof Error) {
+        throw new Error(e.message)
+      }
       throw new Error(errorMessages.evaluation.get)
     }
   }, [getAccessTokenSilently, isAuthenticated, params.id])
@@ -46,7 +50,7 @@ export const UserTop: React.FC = () => {
       setEvaluations(evaluations)
     } catch (e) {
       if (e instanceof Error) {
-        setFlashMessage({ type: 'error', message: e.message })
+        throw new Error(e.message)
       }
     }
   }
@@ -56,7 +60,10 @@ export const UserTop: React.FC = () => {
       const token = await getAccessTokenSilently()
       await publishEvaluation(token, id)
       await refetchAfterUpdateEvaluation()
+      setIsLoading(false)
+      setFlashMessage({ type: 'success', message: '公開しました。' })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -68,7 +75,10 @@ export const UserTop: React.FC = () => {
       const token = await getAccessTokenSilently()
       await unpublishEvaluation(token, id)
       await refetchAfterUpdateEvaluation()
+      setIsLoading(false)
+      setFlashMessage({ type: 'success', message: '非公開にしました。' })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -82,7 +92,10 @@ export const UserTop: React.FC = () => {
       const token = await getAccessTokenSilently()
       await deleteEvaluation(token, id)
       await refetchAfterUpdateEvaluation()
+      setIsLoading(false)
+      setFlashMessage({ type: 'success', message: '削除しました。' })
     } catch (e) {
+      setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
       }
@@ -90,7 +103,7 @@ export const UserTop: React.FC = () => {
   }
 
   useEffect(() => {
-    if (isLoading) return
+    if (isAuth0Loading) return
     ;(async () => {
       try {
         const user = await fetchUser(params.id)
@@ -102,32 +115,36 @@ export const UserTop: React.FC = () => {
         const evaluationNum = isAuthenticated ? user.allEvaluationNum : user.publishedEvaluationNum
         const lastPage = evaluationNum % 4 === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / 4) + 1
         setLastPage(lastPage)
+        setIsLoading(false)
       } catch (e) {
+        setIsLoading(false)
         if (e instanceof Error) {
           setFlashMessage({ type: 'error', message: e.message })
         }
       }
     })()
-  }, [isLoading, params.id, isAuthenticated, getAccessTokenSilently, fetchEvaluations])
+  }, [isAuth0Loading, params.id, isAuthenticated, getAccessTokenSilently, fetchEvaluations])
 
   useEffect(() => {
     setCurrentPage(Number(searchParams.get('page')) || 1)
   }, [searchParams])
 
   return (
-    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
-      {user && (
-        <UserTopTpl
-          user={user}
-          userIconUrl={userIconUrl}
-          evaluations={evaluations}
-          currentPage={currentPage}
-          lastPage={lastPage}
-          onClickPublish={onClickPublish}
-          onClickUnpublish={onClickUnpublish}
-          onClickDelete={onClickDelete}
-        />
-      )}
-    </Layout>
+    <>
+      <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isLoading}>
+        {user && (
+          <UserTopTpl
+            user={user}
+            userIconUrl={userIconUrl}
+            evaluations={evaluations}
+            currentPage={currentPage}
+            lastPage={lastPage}
+            onClickPublish={onClickPublish}
+            onClickUnpublish={onClickUnpublish}
+            onClickDelete={onClickDelete}
+          />
+        )}
+      </Layout>
+    </>
   )
 }
