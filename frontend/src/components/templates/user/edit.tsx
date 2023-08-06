@@ -10,6 +10,7 @@ import { User } from 'types/types'
 
 type Props = {
   className?: string
+  userId?: string
   userInput: User
   email: string
   emailError: string | null
@@ -62,7 +63,7 @@ const StyledWrapper = styled.div`
       margin: 0 auto 2.5rem;
     }
 
-    .go-back {
+    .to-mypage {
       margin: 0 auto 4rem;
     }
 
@@ -102,6 +103,7 @@ const StyledWrapper = styled.div`
 `
 
 export const UserEditTpl: React.FC<Props> = ({
+  userId,
   userInput,
   email,
   emailError,
@@ -117,8 +119,8 @@ export const UserEditTpl: React.FC<Props> = ({
 }) => {
   const navigate = useNavigate()
 
-  const goBack = (): void => {
-    navigate(-1)
+  const goToMypage = (): void => {
+    navigate(`/user/${userId}`)
   }
 
   const isDisabledUpdate = (): boolean => {
@@ -161,7 +163,7 @@ export const UserEditTpl: React.FC<Props> = ({
         </div>
 
         <Button buttonText="変更する" buttonType="primary" disabled={isDisabledUpdate()} onClick={updateUser} className="update" />
-        <Button buttonText="戻る" buttonType="white" onClick={goBack} className="go-back" />
+        <Button buttonText="マイページへ" buttonType="white" onClick={goToMypage} className="to-mypage" />
 
         <p className="change-password">
           <span>※パスワードを変更</span>する方は、
