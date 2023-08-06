@@ -82,6 +82,7 @@ export const EvaluationForm: React.FC = () => {
 
   const submit = async (): Promise<void> => {
     setIsLoading(true)
+    setFlashMessage(undefined)
     let iconKey = ''
     if (iconFile) {
       try {

@@ -15,8 +15,8 @@ const StyledFlashMessageList = styled.div`
   width: 35.4rem;
   top: 8rem;
   right: -35.4rem;
-  z-index: 100;
-  animation: slideToLeft 6s forwards;
+  z-index: 99;
+  animation: slideToLeft 26s forwards;
   position: absolute;
   display: flex;
   flex-direction: column;

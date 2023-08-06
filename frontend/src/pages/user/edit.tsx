@@ -63,6 +63,7 @@ export const UserEdit: React.FC = () => {
 
   const updateUser = async (): Promise<void> => {
     setIsLoading(true)
+    setFlashMessage(undefined)
     if (!auth0User || !userInput) {
       setIsLoading(false)
       setFlashMessage({ type: 'error', message: errorMessages.user.update })

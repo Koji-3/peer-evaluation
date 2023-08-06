@@ -49,6 +49,8 @@ export const EvaluationDetail: React.FC = () => {
   }
 
   const onClickPublish = async (): Promise<void> => {
+    setIsLoading(true)
+    setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await publishEvaluation(token, params.evaluationId)
@@ -64,6 +66,8 @@ export const EvaluationDetail: React.FC = () => {
   }
 
   const onClickUnpublish = async (): Promise<void> => {
+    setIsLoading(true)
+    setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await unpublishEvaluation(token, params.evaluationId)
@@ -81,6 +85,9 @@ export const EvaluationDetail: React.FC = () => {
   const onClickDelete = async (): Promise<void> => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
+
+    setIsLoading(true)
+    setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await deleteEvaluation(token, params.evaluationId)

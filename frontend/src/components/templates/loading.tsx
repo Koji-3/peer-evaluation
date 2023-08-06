@@ -9,7 +9,7 @@ type Props = {
 
 const StyledWrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: rgba(${(props): string => props.theme.whiteRgb}, 0.9);
   display: flex;
   justify-content: center;

@@ -45,6 +45,7 @@ export const Signup: React.FC = () => {
 
   const register = async (): Promise<void> => {
     setIsLoading(true)
+    setFlashMessage(undefined)
     if (!iconFile || !auth0User || !auth0User.sub) {
       setIsLoading(false)
       setFlashMessage({ type: 'error', message: errorMessages.user.create })

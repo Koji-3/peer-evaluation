@@ -35,6 +35,7 @@ export const LoginCallback: React.FC = () => {
 
   const onClickResend = async (): Promise<void> => {
     setIsLoading(true)
+    setFlashMessage(undefined)
     const token = await getAccessTokenSilently()
     try {
       await resendEmailVerification(token)

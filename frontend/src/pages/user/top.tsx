@@ -16,6 +16,7 @@ export const UserTop: React.FC = () => {
   const [user, setUser] = useState<User>()
   const [userIconUrl, setUserIconUrl] = useState<string>('')
   const [evaluations, setEvaluations] = useState<Evaluation[]>([])
+  const [evaluationsToShow, setEvaluationsToShow] = useState<Evaluation[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lastPage, setLastPage] = useState<number>(10)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
@@ -56,6 +57,8 @@ export const UserTop: React.FC = () => {
   }
 
   const onClickPublish = async (id: string): Promise<void> => {
+    setIsLoading(true)
+    setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await publishEvaluation(token, id)
@@ -71,6 +74,8 @@ export const UserTop: React.FC = () => {
   }
 
   const onClickUnpublish = async (id: string): Promise<void> => {
+    setIsLoading(true)
+    setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await unpublishEvaluation(token, id)
@@ -88,6 +93,9 @@ export const UserTop: React.FC = () => {
   const onClickDelete = async (id: string): Promise<void> => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
+
+    setIsLoading(true)
+    setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await deleteEvaluation(token, id)
@@ -126,8 +134,17 @@ export const UserTop: React.FC = () => {
   }, [isAuth0Loading, params.id, isAuthenticated, getAccessTokenSilently, fetchEvaluations])
 
   useEffect(() => {
-    setCurrentPage(Number(searchParams.get('page')) || 1)
-  }, [searchParams])
+    const currentPage = Number(searchParams.get('page') || 1)
+    setCurrentPage(currentPage)
+    // BEでの実装が厳しいのでFEでページネーションの表示だけ切り替え実装
+    if (currentPage === 1) {
+      setEvaluationsToShow(evaluations.slice(0, 4))
+    } else if (currentPage !== lastPage) {
+      setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4 + 1, (currentPage - 1) * 4 + 1 + 4))
+    } else {
+      setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4 + 1))
+    }
+  }, [searchParams, lastPage, evaluations])
 
   return (
     <>
@@ -136,7 +153,7 @@ export const UserTop: React.FC = () => {
           <UserTopTpl
             user={user}
             userIconUrl={userIconUrl}
-            evaluations={evaluations}
+            evaluations={evaluationsToShow}
             currentPage={currentPage}
             lastPage={lastPage}
             onClickPublish={onClickPublish}
