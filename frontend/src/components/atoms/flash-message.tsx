@@ -14,6 +14,8 @@ type Props = {
 
 type StyleProps = {
   type: 'success' | 'error'
+  defaultMarginLeft: string
+  showMarginLeft: string
 }
 
 const getBackgroundColor = (props: ThemedStyledProps<StyleProps, DefaultTheme>): string => {
@@ -34,9 +36,11 @@ const getBackgroundColor = (props: ThemedStyledProps<StyleProps, DefaultTheme>):
 const StyledFlashMessage = styled.div<StyleProps>`
   width: 35.4rem;
   height: 6rem;
+  margin-left: ${(props): string => props.defaultMarginLeft};
   position: relative;
   background: ${(props): string => props.theme.white};
   box-shadow: 0.2rem 0.2rem 1rem 0px rgba(0, 0, 0, 0.05);
+  animation: slideToLeft 6s forwards;
 
   &.close {
     display: none;
@@ -68,23 +72,41 @@ const StyledFlashMessage = styled.div<StyleProps>`
     top: calc(50% - 0.44rem);
     right: 1.5rem;
   }
+
+  @keyframes slideToLeft {
+    0% {
+      margin-left: ${(props): string => props.defaultMarginLeft};
+    }
+    10% {
+      margin-left: ${(props): string => props.showMarginLeft};
+    }
+    90% {
+      margin-left: ${(props): string => props.showMarginLeft};
+    }
+    100% {
+      margin-left: ${(props): string => props.defaultMarginLeft};
+    }
+  }
 `
 
 export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) => {
   const flashMessageRef = useRef<HTMLDivElement>(null)
+  const topInnerWidth: number = document.getElementById('top_inner')?.clientWidth || 0
+  const defaultMarginLeft = `${topInnerWidth/10}rem`
+  const showMarginLeft = `${topInnerWidth/10 - 35.4}rem`
 
   const close = (): void => {
     flashMessageRef.current?.classList.add('close')
   }
 
   useEffect(() => {
-    if (flashMessage && flashMessageRef.current?.classList.contains('close')) {
+    if (flashMessageRef.current?.classList.contains('close')) {
       flashMessageRef.current.classList.remove('close')
     }
   }, [flashMessage])
 
   return (
-    <StyledFlashMessage className={className} type={flashMessage.type} ref={flashMessageRef}>
+    <StyledFlashMessage className={className} type={flashMessage.type} ref={flashMessageRef} defaultMarginLeft={defaultMarginLeft} showMarginLeft={showMarginLeft}>
       <p className="message">{flashMessage.message}</p>
       <button type="button" className="close-btn" onClick={close}>
         <img src={closeIcon} alt="close" />

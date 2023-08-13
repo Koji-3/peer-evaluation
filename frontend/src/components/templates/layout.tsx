@@ -36,7 +36,8 @@ const StyledWrapper = styled.div`
     padding: 6.5rem 0 0;
     background: ${(props): string => props.theme.background};
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    transform: scale(1);
 
     .loading {
       margin: -6.5rem 0 0;
@@ -66,7 +67,7 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
 
   return (
     <StyledWrapper>
-      <div className="inner">
+      <div className="inner" id="top_inner">
         {isAuth0Loading || (isLoading && <LoadingTpl className="loading" />)}
         <Header isLoggedIn={isAuthenticated} loginUserId={userId} onClickLogin={loginWithRedirect} onClickLogout={logout} />
         <FlashMessageList flashMessageList={flashMessages ? [layoutFlashMessage, ...flashMessages] : [layoutFlashMessage]} />

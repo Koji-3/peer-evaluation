@@ -60,7 +60,6 @@ export const LoginCallback: React.FC = () => {
     ;(async () => {
       try {
         const userId = await getUserId()
-        setIsLoading(false)
         if (!!auth0User && !!userId) {
           navigate(`/user/${userId}`)
         } else {
