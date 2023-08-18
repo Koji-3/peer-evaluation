@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 /* components */
 import { SignupTpl, Layout } from 'components/templates'
@@ -24,9 +24,8 @@ export const Signup: React.FC = () => {
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
 
   const onChangeUserInput = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
     const { name, value } = e.target
@@ -64,14 +63,6 @@ export const Signup: React.FC = () => {
       }
     }
   }
-
-  // TODO: Auth0からのコールバックじゃなければエラー表示
-  useEffect(() => {
-    console.log(searchParams.get('supportSignUp'))
-    if (!searchParams.get('supportSignUp')) {
-      console.log('error')
-    }
-  }, [searchParams])
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>

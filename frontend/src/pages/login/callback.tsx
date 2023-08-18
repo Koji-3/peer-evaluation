@@ -56,7 +56,10 @@ export const LoginCallback: React.FC = () => {
   useEffect(() => {
     if (isAuth0Loading) return
     // Auth0のメール認証を行ってから使えるようにする
-    if (!auth0User || !auth0User?.email_verified) return
+    if (!auth0User || !auth0User?.email_verified) {
+      setIsLoading(false)
+      return
+    }
     ;(async () => {
       try {
         const userId = await getUserId()
