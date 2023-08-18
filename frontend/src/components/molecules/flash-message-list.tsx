@@ -14,7 +14,6 @@ type Props = {
 
 const StyledFlashMessageList = styled.div`
   width: 35.4rem;
-  top: 1.5rem;
   left: auto;
   z-index: 99;
   position: fixed;
@@ -30,7 +29,7 @@ export const FlashMessageList: React.FC<Props> = ({ className = '', flashMessage
 
   useEffect(() => {
     if (!flashMessageListRef.current) return
-    flashMessageListRef.current.style.top = `${screenY +15}px`
+    flashMessageListRef.current.style.top = screenY === 0 ? '8rem' : `${screenY + 15}px`
   }, [flashMessageList, screenY])
 
   return (

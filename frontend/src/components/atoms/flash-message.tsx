@@ -92,8 +92,8 @@ const StyledFlashMessage = styled.div<StyleProps>`
 export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) => {
   const flashMessageRef = useRef<HTMLDivElement>(null)
   const topInnerWidth: number = document.getElementById('top_inner')?.clientWidth || 0
-  const defaultMarginLeft = `${topInnerWidth/10}rem`
-  const showMarginLeft = `${topInnerWidth/10 - 35.4}rem`
+  const defaultMarginLeft = `${topInnerWidth / 10}rem`
+  const showMarginLeft = `${topInnerWidth / 10 - 35.4}rem`
 
   const close = (): void => {
     flashMessageRef.current?.classList.add('close')
@@ -106,7 +106,13 @@ export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) 
   }, [flashMessage])
 
   return (
-    <StyledFlashMessage className={className} type={flashMessage.type} ref={flashMessageRef} defaultMarginLeft={defaultMarginLeft} showMarginLeft={showMarginLeft}>
+    <StyledFlashMessage
+      className={className}
+      type={flashMessage.type}
+      ref={flashMessageRef}
+      defaultMarginLeft={defaultMarginLeft}
+      showMarginLeft={showMarginLeft}
+    >
       <p className="message">{flashMessage.message}</p>
       <button type="button" className="close-btn" onClick={close}>
         <img src={closeIcon} alt="close" />

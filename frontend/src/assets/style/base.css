@@ -223,7 +223,7 @@ a {
   text-decoration: none;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 500px) {
   html,
   body {
     /* 標準サイズでデザイン上の10px 以降はremで */
