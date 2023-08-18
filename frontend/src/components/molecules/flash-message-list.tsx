@@ -29,11 +29,12 @@ export const FlashMessageList: React.FC<Props> = ({ className = '', flashMessage
   const handleScroll = useCallback((): void => {
     if (!flashMessageListRef.current) return
     const scrollY = window.scrollY
-    flashMessageListRef.current.style.top = scrollY === 0 ? '8rem' : `${scrollY + 15}px`
+    flashMessageListRef.current.style.top = scrollY === 0 ? '8rem' : `${scrollY/10 + 1.5}rem`
   }, [])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
+    handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 
