@@ -16,7 +16,7 @@ export type User = {
   created: string
 }
 
-export type DBUser = DBProperties & { props: Omit<User, 'id'> }
+export type DBUser = DBProperties & { props: Omit<User, 'id' | 'averageEvaluation' | 'publishedEvaluationNum' | 'allEvaluationNum'> }
 
 export type UserInput = {
   name: string

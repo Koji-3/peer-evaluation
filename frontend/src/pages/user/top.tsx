@@ -142,7 +142,7 @@ export const UserTop: React.FC = () => {
     } else if (currentPage !== lastPage) {
       setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4 + 1, (currentPage - 1) * 4 + 1 + 4))
     } else {
-      setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4 + 1))
+      setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4))
     }
   }, [searchParams, lastPage, evaluations])
 

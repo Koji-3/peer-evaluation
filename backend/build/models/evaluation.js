@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEvaluation = exports.getEvaluations = exports.getEvaluation = exports.createEvaluation = void 0;
+exports.updateEvaluation = exports.getEvaluations = exports.getPublishedEvaluations = exports.getAllEvaluations = exports.getEvaluation = exports.createEvaluation = void 0;
 const dynamodb_1 = __importDefault(require("@cyclic.sh/dynamodb"));
 const crypto_1 = __importDefault(require("crypto"));
 const s3_1 = require("./s3");
@@ -25,7 +25,6 @@ const createEvaluation = (evaluation, evaluateeId) => __awaiter(void 0, void 0, 
     const newEvaluation = Object.assign(Object.assign({}, evaluation), { is_published: false, is_deleted: false, evaluateeId });
     try {
         const result = yield evaluations.set(uuid, newEvaluation);
-        yield (0, user_1.increaseUserAllEvaluationNum)(evaluateeId);
         return result;
     }
     catch (e) {
@@ -89,29 +88,41 @@ const addParamsForReturnValueToEvaluations = (results, isSelf) => __awaiter(void
     }
 });
 const getAllEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield evaluations.filter({ evaluateeId, is_deleted: false });
+    return res.results;
+});
+exports.getAllEvaluations = getAllEvaluations;
+const getSortedAllEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const res = yield evaluations.filter({ evaluateeId, is_deleted: false });
-        if (!res.results.length)
+        const allEvaluations = yield (0, exports.getAllEvaluations)(evaluateeId);
+        if (!allEvaluations.length)
             return [];
-        const sortedResults = sortByCreatedAt(res.results);
+        const sortedResults = sortByCreatedAt(allEvaluations);
         return addParamsForReturnValueToEvaluations(sortedResults, true);
     }
     catch (e) {
-        console.error('getAllEvaluations error: ', e);
-        throw new Error('getAllEvaluations error');
+        console.error('getSortedAllEvaluations error: ', e);
+        throw new Error('getSortedAllEvaluations error');
     }
 });
 const getPublishedEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield evaluations.filter({ evaluateeId, is_published: true, is_deleted: false });
+    if (!res.results.length)
+        return [];
+    return res.results;
+});
+exports.getPublishedEvaluations = getPublishedEvaluations;
+const getSortedPublishedEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const res = yield evaluations.filter({ evaluateeId, is_published: true, is_deleted: false });
-        if (!res.results.length)
+        const publishedEvaluations = yield (0, exports.getPublishedEvaluations)(evaluateeId);
+        if (!publishedEvaluations.length)
             return [];
-        const sortedResults = sortByCreatedAt(res.results);
+        const sortedResults = sortByCreatedAt(publishedEvaluations);
         return addParamsForReturnValueToEvaluations(sortedResults, false);
     }
     catch (e) {
-        console.error('getPublishedEvaluations error: ', e);
-        throw new Error('getPublishedEvaluations error');
+        console.error('getSortedPublishedEvaluations error: ', e);
+        throw new Error('getSortedPublishedEvaluations error');
     }
 });
 const getEvaluations = (evaluateeId, auth0Id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -123,9 +134,9 @@ const getEvaluations = (evaluateeId, auth0Id) => __awaiter(void 0, void 0, void 
                 throw new Error(errorMessages_1.errorMessages.evaluation.get);
             }
             if (evaluateeId === userId) {
-                return yield getAllEvaluations(evaluateeId);
+                return yield getSortedAllEvaluations(evaluateeId);
             }
-            return yield getPublishedEvaluations(evaluateeId);
+            return yield getSortedPublishedEvaluations(evaluateeId);
         }
         catch (e) {
             console.error('getEvaluations error: ', e);
@@ -134,7 +145,7 @@ const getEvaluations = (evaluateeId, auth0Id) => __awaiter(void 0, void 0, void 
     }
     else {
         try {
-            return yield getPublishedEvaluations(evaluateeId);
+            return yield getSortedPublishedEvaluations(evaluateeId);
         }
         catch (e) {
             console.error('getEvaluations error: ', e);
@@ -147,12 +158,6 @@ const updateEvaluation = ({ evaluationId, isPublished, isDeleted, }) => __awaite
     try {
         const evaluation = yield evaluations.get(evaluationId);
         const res = yield evaluations.set(evaluationId, Object.assign(Object.assign({}, evaluation), { is_published: isPublished !== null && isPublished !== void 0 ? isPublished : evaluation.props.is_published, is_deleted: isDeleted !== null && isDeleted !== void 0 ? isDeleted : evaluation.props.is_deleted }));
-        if (isPublished) {
-            yield (0, user_1.increaseUserAvarageEvaluation)(evaluation.props.evaluateeId, evaluation.props);
-        }
-        else {
-            yield (0, user_1.decreaseUserAvarageEvaluation)(evaluation.props.evaluateeId, evaluation.props);
-        }
         if (!!res)
             return { update: true };
         return { update: false };
@@ -166,8 +171,8 @@ exports.updateEvaluation = updateEvaluation;
 // FIXME: データ確認用なので最後に消す
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllEvaluations = () => __awaiter(void 0, void 0, void 0, function* () {
-    const usersList = yield evaluations.list();
-    const targetKeys = usersList.results.map((result) => result.key);
+    const evaluationsList = yield evaluations.list();
+    const targetKeys = evaluationsList.results.map((result) => result.key);
     targetKeys.forEach((key) => __awaiter(void 0, void 0, void 0, function* () {
         yield evaluations.delete(key);
     }));

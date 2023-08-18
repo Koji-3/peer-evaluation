@@ -1,8 +1,10 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import shortUuid from 'short-uuid'
 import crypto from 'crypto'
-import { UserInput, DBUser, User, AverageEvaluation, DBEvaluation } from '../types/types'
+import { UserInput, DBUser, User, DBEvaluation, AverageEvaluation } from '../types/types'
+import { getAllEvaluations, getPublishedEvaluations } from './evaluation'
 import { errorMessages } from '../const/errorMessages'
+import { roundToFirstDecimal } from '../lib/lib'
 
 const db = CyclicDb('motionless-crab-hoseCyclicDB')
 const users = db.collection('users')
@@ -15,14 +17,10 @@ type UpdateUserArg = {
 
 export const createUser = async (user: UserInput, auth0id: string): Promise<DBUser> => {
   const uuid = shortUuid.generate()
-  const defaultAverageEvaluation: AverageEvaluation = { e1: 0, e2: 0, e3: 0, e4: 0, e5: 0, e6: 0 }
   const newUser: Omit<DBUser['props'], 'created'> = {
     ...user,
     is_deleted: false,
     auth0_id: auth0id,
-    averageEvaluation: defaultAverageEvaluation,
-    publishedEvaluationNum: 0,
-    allEvaluationNum: 0,
   }
   try {
     const result = await users.set(uuid, newUser)
@@ -54,7 +52,56 @@ export const getUserById = async (id: string): Promise<User> => {
       console.error('!user || user.props.is_deleted in getUserById')
       throw new Error(errorMessages.user.get)
     }
-    return { ...user.props, id: user.key }
+    const initialAverageEvaluation: AverageEvaluation = {
+      e1: 0,
+      e2: 0,
+      e3: 0,
+      e4: 0,
+      e5: 0,
+      e6: 0,
+    }
+    const allEvaluations = await getAllEvaluations(id)
+    if (!allEvaluations.length) {
+      return {
+        ...user.props,
+        id: user.key,
+        allEvaluationNum: allEvaluations.length,
+        publishedEvaluationNum: 0,
+        averageEvaluation: initialAverageEvaluation,
+      }
+    }
+    const publishedEvaluations = await getPublishedEvaluations(id)
+    if (!publishedEvaluations.length) {
+      return {
+        ...user.props,
+        id: user.key,
+        allEvaluationNum: allEvaluations.length,
+        publishedEvaluationNum: publishedEvaluations.length,
+        averageEvaluation: initialAverageEvaluation,
+      }
+    }
+    const e1values = publishedEvaluations.map((evaluation: DBEvaluation) => evaluation.props.e1.point)
+    const e2values = publishedEvaluations.map((evaluation: DBEvaluation) => evaluation.props.e2.point)
+    const e3values = publishedEvaluations.map((evaluation: DBEvaluation) => evaluation.props.e3.point)
+    const e4values = publishedEvaluations.map((evaluation: DBEvaluation) => evaluation.props.e4.point)
+    const e5values = publishedEvaluations.map((evaluation: DBEvaluation) => evaluation.props.e5.point)
+    const e6values = publishedEvaluations.map((evaluation: DBEvaluation) => evaluation.props.e6.point)
+    const sumReducer = (sum: number, currentValue: number): number => sum + currentValue
+    const averageEvaluation: AverageEvaluation = {
+      e1: roundToFirstDecimal(e1values.reduce(sumReducer) / e1values.length),
+      e2: roundToFirstDecimal(e2values.reduce(sumReducer) / e2values.length),
+      e3: roundToFirstDecimal(e3values.reduce(sumReducer) / e3values.length),
+      e4: roundToFirstDecimal(e4values.reduce(sumReducer) / e4values.length),
+      e5: roundToFirstDecimal(e5values.reduce(sumReducer) / e5values.length),
+      e6: roundToFirstDecimal(e6values.reduce(sumReducer) / e6values.length),
+    }
+    return {
+      ...user.props,
+      id: user.key,
+      allEvaluationNum: allEvaluations.length,
+      publishedEvaluationNum: publishedEvaluations.length,
+      averageEvaluation,
+    }
   } catch (e) {
     console.error('getUserById error: ', e)
     throw new Error(errorMessages.user.get)
@@ -69,55 +116,6 @@ export const updateUser = async (auth0Id: string, newUser: UpdateUserArg): Promi
   } catch (e) {
     console.error('updateUser error: ', e)
     throw new Error(errorMessages.user.update)
-  }
-}
-
-export const increaseUserAllEvaluationNum = async (userId: string): Promise<void> => {
-  try {
-    const user: DBUser = await users.get(userId)
-    const { allEvaluationNum } = user.props
-    const newAllEvaluationNum = allEvaluationNum + 1
-    await users.set(user.key, { ...user, allEvaluationNum: newAllEvaluationNum })
-  } catch (e) {
-    console.error('increaseUserAllEvaluationNum error: ', e)
-  }
-}
-
-export const increaseUserAvarageEvaluation = async (userId: string, evaluation: DBEvaluation['props']): Promise<void> => {
-  try {
-    const user: DBUser = await users.get(userId)
-    const { averageEvaluation, publishedEvaluationNum } = user.props
-    const newAverageEvaluation = {
-      e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum + evaluation.e1.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-      e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum + evaluation.e2.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-      e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum + evaluation.e3.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-      e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum + evaluation.e4.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-      e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum + evaluation.e5.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-      e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum + evaluation.e6.point) / (publishedEvaluationNum + 1)) * 10) / 10,
-    }
-    const newPublishedEvaluationNum = publishedEvaluationNum + 1
-    await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
-  } catch (e) {
-    console.error('increaseUserAvarageEvaluation error: ', e)
-  }
-}
-
-export const decreaseUserAvarageEvaluation = async (userId: string, evaluation: DBEvaluation['props']): Promise<void> => {
-  try {
-    const user: DBUser = await users.get(userId)
-    const { averageEvaluation, publishedEvaluationNum } = user.props
-    const newAverageEvaluation = {
-      e1: Math.round(((averageEvaluation.e1 * publishedEvaluationNum - evaluation.e1.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-      e2: Math.round(((averageEvaluation.e2 * publishedEvaluationNum - evaluation.e2.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-      e3: Math.round(((averageEvaluation.e3 * publishedEvaluationNum - evaluation.e3.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-      e4: Math.round(((averageEvaluation.e4 * publishedEvaluationNum - evaluation.e4.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-      e5: Math.round(((averageEvaluation.e5 * publishedEvaluationNum - evaluation.e5.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-      e6: Math.round(((averageEvaluation.e6 * publishedEvaluationNum - evaluation.e6.point) / (publishedEvaluationNum - 1)) * 10) / 10,
-    }
-    const newPublishedEvaluationNum = publishedEvaluationNum - 1
-    await users.set(user.key, { ...user, averageEvaluation: newAverageEvaluation, publishedEvaluationNum: newPublishedEvaluationNum })
-  } catch (e) {
-    console.error('decreaseUserAvarageEvaluation error: ', e)
   }
 }
 

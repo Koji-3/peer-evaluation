@@ -1,7 +1,7 @@
 import CyclicDb from '@cyclic.sh/dynamodb'
 import crypto from 'crypto'
 import { getIcon } from './s3'
-import { getUserByAuth0Id, increaseUserAvarageEvaluation, decreaseUserAvarageEvaluation, increaseUserAllEvaluationNum } from './user'
+import { getUserByAuth0Id } from './user'
 import { EvaluationInput, DBEvaluation, Evaluation } from '../types/types'
 import { errorMessages } from '../const/errorMessages'
 
@@ -11,9 +11,9 @@ const evaluations = db.collection('evaluations')
 export const createEvaluation = async (evaluation: EvaluationInput, evaluateeId: string): Promise<DBEvaluation> => {
   const uuid = crypto.randomUUID()
   const newEvaluation: Omit<DBEvaluation['props'], 'created'> = { ...evaluation, is_published: false, is_deleted: false, evaluateeId }
+
   try {
     const result = await evaluations.set(uuid, newEvaluation)
-    await increaseUserAllEvaluationNum(evaluateeId)
     return result
   } catch (e) {
     console.error('createEvaluation error: ', e)
@@ -75,27 +75,38 @@ const addParamsForReturnValueToEvaluations = async (results: DBEvaluation[], isS
   }
 }
 
-const getAllEvaluations = async (evaluateeId: string): Promise<Evaluation[]> => {
+export const getAllEvaluations = async (evaluateeId: string): Promise<DBEvaluation[]> => {
+  const res: { results: DBEvaluation[] } = await evaluations.filter({ evaluateeId, is_deleted: false })
+  return res.results
+}
+
+const getSortedAllEvaluations = async (evaluateeId: string): Promise<Evaluation[]> => {
   try {
-    const res: { results: DBEvaluation[] } = await evaluations.filter({ evaluateeId, is_deleted: false })
-    if (!res.results.length) return []
-    const sortedResults = sortByCreatedAt(res.results)
+    const allEvaluations = await getAllEvaluations(evaluateeId)
+    if (!allEvaluations.length) return []
+    const sortedResults = sortByCreatedAt(allEvaluations)
     return addParamsForReturnValueToEvaluations(sortedResults, true)
   } catch (e) {
-    console.error('getAllEvaluations error: ', e)
-    throw new Error('getAllEvaluations error')
+    console.error('getSortedAllEvaluations error: ', e)
+    throw new Error('getSortedAllEvaluations error')
   }
 }
 
-const getPublishedEvaluations = async (evaluateeId: string): Promise<Evaluation[]> => {
+export const getPublishedEvaluations = async (evaluateeId: string): Promise<DBEvaluation[]> => {
+  const res: { results: DBEvaluation[] } = await evaluations.filter({ evaluateeId, is_published: true, is_deleted: false })
+  if (!res.results.length) return []
+  return res.results
+}
+
+const getSortedPublishedEvaluations = async (evaluateeId: string): Promise<Evaluation[]> => {
   try {
-    const res: { results: DBEvaluation[] } = await evaluations.filter({ evaluateeId, is_published: true, is_deleted: false })
-    if (!res.results.length) return []
-    const sortedResults = sortByCreatedAt(res.results)
+    const publishedEvaluations = await getPublishedEvaluations(evaluateeId)
+    if (!publishedEvaluations.length) return []
+    const sortedResults = sortByCreatedAt(publishedEvaluations)
     return addParamsForReturnValueToEvaluations(sortedResults, false)
   } catch (e) {
-    console.error('getPublishedEvaluations error: ', e)
-    throw new Error('getPublishedEvaluations error')
+    console.error('getSortedPublishedEvaluations error: ', e)
+    throw new Error('getSortedPublishedEvaluations error')
   }
 }
 
@@ -108,16 +119,16 @@ export const getEvaluations = async (evaluateeId: string, auth0Id?: string): Pro
         throw new Error(errorMessages.evaluation.get)
       }
       if (evaluateeId === userId) {
-        return await getAllEvaluations(evaluateeId)
+        return await getSortedAllEvaluations(evaluateeId)
       }
-      return await getPublishedEvaluations(evaluateeId)
+      return await getSortedPublishedEvaluations(evaluateeId)
     } catch (e) {
       console.error('getEvaluations error: ', e)
       throw new Error(errorMessages.evaluation.get)
     }
   } else {
     try {
-      return await getPublishedEvaluations(evaluateeId)
+      return await getSortedPublishedEvaluations(evaluateeId)
     } catch (e) {
       console.error('getEvaluations error: ', e)
       throw new Error(errorMessages.evaluation.get)
@@ -141,11 +152,6 @@ export const updateEvaluation = async ({
       is_published: isPublished ?? evaluation.props.is_published,
       is_deleted: isDeleted ?? evaluation.props.is_deleted,
     })
-    if (isPublished) {
-      await increaseUserAvarageEvaluation(evaluation.props.evaluateeId, evaluation.props)
-    } else {
-      await decreaseUserAvarageEvaluation(evaluation.props.evaluateeId, evaluation.props)
-    }
     if (!!res) return { update: true }
     return { update: false }
   } catch (e) {
@@ -159,8 +165,8 @@ export const updateEvaluation = async ({
 // FIXME: データ確認用なので最後に消す
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllEvaluations = async (): Promise<void> => {
-  const usersList = await evaluations.list()
-  const targetKeys: string[] = usersList.results.map((result: DBEvaluation) => result.key)
+  const evaluationsList = await evaluations.list()
+  const targetKeys: string[] = evaluationsList.results.map((result: DBEvaluation) => result.key)
   targetKeys.forEach(async (key) => {
     await evaluations.delete(key)
   })
