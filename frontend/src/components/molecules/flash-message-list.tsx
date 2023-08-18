@@ -26,16 +26,16 @@ const StyledFlashMessageList = styled.div`
 export const FlashMessageList: React.FC<Props> = ({ className = '', flashMessageList }) => {
   const flashMessageListRef = useRef<HTMLDivElement>(null)
 
-  const handleScroll = useCallback(():void => {
+  const handleScroll = useCallback((): void => {
     if (!flashMessageListRef.current) return
     const scrollY = window.scrollY
     flashMessageListRef.current.style.top = scrollY === 0 ? '8rem' : `${scrollY + 15}px`
-  },[])
+  }, [])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  },[handleScroll])
+  }, [handleScroll])
 
   return (
     <StyledFlashMessageList className={className} ref={flashMessageListRef}>
