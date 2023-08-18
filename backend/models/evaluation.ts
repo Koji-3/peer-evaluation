@@ -62,7 +62,7 @@ const addParamsForReturnValueToEvaluations = async (results: DBEvaluation[], isS
           return { ...result.props, id: result.key, evaluatorIconUrl: undefined, shouldShowOperateButtons: isSelf }
         } else {
           const icon = await getIcon(result.props.evaluatorIconKey)
-          const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
+          const base64Image = Buffer.from(await icon.Body!.transformToByteArray()).toString('base64')
           const imageSrc = `data:image/jpeg;base64,${base64Image}`
           return { ...result.props, id: result.key, evaluatorIconUrl: imageSrc, shouldShowOperateButtons: isSelf }
         }

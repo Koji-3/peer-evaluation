@@ -75,7 +75,7 @@ const addParamsForReturnValueToEvaluations = (results, isSelf) => __awaiter(void
             }
             else {
                 const icon = yield (0, s3_1.getIcon)(result.props.evaluatorIconKey);
-                const base64Image = Buffer.from(icon.Body).toString('base64');
+                const base64Image = Buffer.from(yield icon.Body.transformToByteArray()).toString('base64');
                 const imageSrc = `data:image/jpeg;base64,${base64Image}`;
                 return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: imageSrc, shouldShowOperateButtons: isSelf });
             }

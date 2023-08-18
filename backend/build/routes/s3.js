@@ -74,7 +74,7 @@ router.get('/get-icon', (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     try {
         const icon = yield (0, s3_1.getIcon)(req.query.key);
-        const base64Image = Buffer.from(icon.Body).toString('base64');
+        const base64Image = Buffer.from(yield icon.Body.transformToByteArray()).toString('base64');
         const imageSrc = `data:image/jpeg;base64,${base64Image}`;
         res.send({ imageSrc });
     }

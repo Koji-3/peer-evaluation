@@ -63,7 +63,7 @@ router.get('/get-icon', async (req, res) => {
   }
   try {
     const icon = await getIcon(req.query.key as string)
-    const base64Image = Buffer.from(icon.Body as Buffer).toString('base64')
+    const base64Image = Buffer.from(await icon.Body!.transformToByteArray()).toString('base64')
     const imageSrc = `data:image/jpeg;base64,${base64Image}`
     res.send({ imageSrc })
   } catch (e) {
