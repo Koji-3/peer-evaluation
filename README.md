@@ -12,7 +12,7 @@ $ yarn start
 ```
 ## デプロイ
 Vercelを使用。  
-https://peer-evaluation.vercel.app/
+https://communicle.vercel.app/
 ```
 $ yarn pre-push
 ```
