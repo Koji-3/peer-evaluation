@@ -23,10 +23,11 @@ type Props = {
 
 const StyledWrapper = styled.div`
   min-width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
   background: url(${background});
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   display: flex;
   justify-content: center;
 
