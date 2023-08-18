@@ -149,7 +149,7 @@ export const UserTop: React.FC = () => {
   return (
     <>
       <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isLoading}>
-        {user && (
+        {user && !isLoading && (
           <UserTopTpl
             user={user}
             userIconUrl={userIconUrl}

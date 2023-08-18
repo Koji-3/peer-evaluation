@@ -122,7 +122,7 @@ export const EvaluationDetail: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      {evaluation && (
+      {evaluation && !isLoading && (
         <EvaluationDetailTpl
           evaluation={evaluation}
           evaluateeName={evaluateeName}

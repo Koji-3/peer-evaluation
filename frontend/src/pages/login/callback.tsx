@@ -73,7 +73,7 @@ export const LoginCallback: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      {!isEmailVerified && <LoginCallbackTpl onClickResend={onClickResend} />}
+      {!isEmailVerified && !isLoading && <LoginCallbackTpl onClickResend={onClickResend} />}
     </Layout>
   )
 }

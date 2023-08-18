@@ -139,7 +139,7 @@ export const UserEdit: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      {userInput && (
+      {userInput && !isLoading && (
         <UserEditTpl
           userId={params.id}
           userInput={userInput}

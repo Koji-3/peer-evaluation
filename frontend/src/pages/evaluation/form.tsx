@@ -140,7 +140,7 @@ export const EvaluationForm: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      {evaluatee && (
+      {evaluatee && !isLoading && (
         <EvaluationFormTpl
           evaluatee={evaluatee}
           evaluateeIconUrl={evaluateeIconUrl}

@@ -24,7 +24,7 @@ export const Signup: React.FC = () => {
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
   const [iconInputError, setIconInputError] = useState<string | null>(null)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -75,14 +75,16 @@ export const Signup: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      <SignupTpl
-        userInput={userInput}
-        iconObjectUrl={iconObjectUrl}
-        iconInputError={iconInputError}
-        onChangeUserInput={onChangeUserInput}
-        onChangeIconInput={onChangeIconInput}
-        register={register}
-      />
+      {!isLoading && (
+        <SignupTpl
+          userInput={userInput}
+          iconObjectUrl={iconObjectUrl}
+          iconInputError={iconInputError}
+          onChangeUserInput={onChangeUserInput}
+          onChangeIconInput={onChangeIconInput}
+          register={register}
+        />
+      )}
     </Layout>
   )
 }
