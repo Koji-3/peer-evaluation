@@ -113,8 +113,8 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
       <div className="inner">
         <header>
           <a href={`/user/${evaluateeId}`} className="to-user-top">
-            <img src={pagePrevIcon} alt="評価一覧ページへ" className="icon" />
-            <span>評価一覧ページへ</span>
+            <img src={pagePrevIcon} alt="紹介一覧ページへ" className="icon" />
+            <span>紹介一覧ページへ</span>
           </a>
 
           {shouldShowOperateButtons && (

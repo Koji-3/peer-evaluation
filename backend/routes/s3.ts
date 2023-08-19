@@ -16,7 +16,7 @@ const checkJwt = auth({
 })
 
 /* router */
-// s3にゲストアイコンをアップロードする(未登録の評価者用)
+// s3にゲストアイコンをアップロードする(未登録の紹介者用)
 router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'), async (req, res) => {
   try {
     if (!req.file) {

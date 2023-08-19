@@ -26,7 +26,7 @@ const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
     tokenSigningAlg: process.env.AUTH0_TOKEN_SIGNING_ALG,
 });
 /* router */
-// s3にゲストアイコンをアップロードする(未登録の評価者用)
+// s3にゲストアイコンをアップロードする(未登録の紹介者用)
 router.post('/upload-icon/evaluator/:evaluatorName', upload.single('icon_file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {

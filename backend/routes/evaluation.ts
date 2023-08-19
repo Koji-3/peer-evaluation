@@ -13,7 +13,7 @@ const checkJwt = auth({
 const router = express.Router()
 
 /* router */
-// 評価を投稿する
+// 紹介を投稿する
 router.post('/:evaluateeId', async (req, res) => {
   try {
     const evaluation = await createEvaluation(req.body.evaluation, req.params.evaluateeId)
@@ -26,7 +26,7 @@ router.post('/:evaluateeId', async (req, res) => {
   }
 })
 
-// 評価一覧を取得する(未ログイン or 他のユーザー)
+// 紹介一覧を取得する(未ログイン or 他のユーザー)
 router.get('/list/:evaluateeId', async (req, res) => {
   try {
     const evaluations = await getEvaluations(req.params.evaluateeId)
@@ -39,7 +39,7 @@ router.get('/list/:evaluateeId', async (req, res) => {
   }
 })
 
-// 評価一覧を取得する(ユーザー自身)
+// 紹介一覧を取得する(ユーザー自身)
 router.get('/list/self/:evaluateeId', checkJwt, async (req, res) => {
   const auth0Id = req.auth?.payload.sub
   if (!auth0Id) {
@@ -57,7 +57,7 @@ router.get('/list/self/:evaluateeId', checkJwt, async (req, res) => {
   }
 })
 
-// 評価を取得する(未ログイン or 他のユーザー)
+// 紹介を取得する(未ログイン or 他のユーザー)
 router.get('/:evaluationId', async (req, res) => {
   try {
     const evaluation = await getEvaluation(req.params.evaluationId)
@@ -70,7 +70,7 @@ router.get('/:evaluationId', async (req, res) => {
   }
 })
 
-// 評価を取得する(ユーザー自身)
+// 紹介を取得する(ユーザー自身)
 router.get('/self/:evaluationId', checkJwt, async (req, res) => {
   const auth0Id = req.auth?.payload.sub
   if (!auth0Id) {
@@ -89,7 +89,7 @@ router.get('/self/:evaluationId', checkJwt, async (req, res) => {
   }
 })
 
-// 評価を公開する
+// 紹介を公開する
 router.put('/publish/:evaluationId', checkJwt, async (req, res) => {
   try {
     const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isPublished: true })
@@ -102,7 +102,7 @@ router.put('/publish/:evaluationId', checkJwt, async (req, res) => {
   }
 })
 
-// 評価を非公開にする
+// 紹介を非公開にする
 router.put('/unpublish/:evaluationId', checkJwt, async (req, res) => {
   try {
     const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isPublished: false })
@@ -115,7 +115,7 @@ router.put('/unpublish/:evaluationId', checkJwt, async (req, res) => {
   }
 })
 
-// 評価を削除する
+// 紹介を削除する
 router.delete('/:evaluationId', checkJwt, async (req, res) => {
   try {
     const result = await updateEvaluation({ evaluationId: req.params.evaluationId, isDeleted: true })

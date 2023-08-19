@@ -84,7 +84,7 @@ export const UserTopTpl: React.FC<Props> = ({
 
   return (
     <StyledWrapper>
-      <a href={`/evaluation/form/${user.id}`}>評価を書く</a>
+      <a href={`/evaluation/form/${user.id}`}>紹介を書く</a>
       <div className="user">
         <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>
@@ -94,7 +94,7 @@ export const UserTopTpl: React.FC<Props> = ({
       <RadarChart data={getChartData()} className="chart" />
 
       <div className="evaluations">
-        <p className="title">{user.name}さんへの評価</p>
+        <p className="title">{user.name}さんへの紹介</p>
         {evaluations.length ? (
           <div className="evaluation-items-wrapper">
             {evaluations.map((evaluation) => (
@@ -109,7 +109,7 @@ export const UserTopTpl: React.FC<Props> = ({
           </div>
         ) : (
           // TODO:
-          <p style={{ textAlign: 'center' }}>評価はありません</p>
+          <p style={{ textAlign: 'center' }}>紹介はありません</p>
         )}
       </div>
 

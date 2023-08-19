@@ -24,7 +24,7 @@ const checkJwt = (0, express_oauth2_jwt_bearer_1.auth)({
 });
 const router = express_1.default.Router();
 /* router */
-// 評価を投稿する
+// 紹介を投稿する
 router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const evaluation = yield (0, evaluation_1.createEvaluation)(req.body.evaluation, req.params.evaluateeId);
@@ -37,7 +37,7 @@ router.post('/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, fun
         }
     }
 }));
-// 評価一覧を取得する(未ログイン or 他のユーザー)
+// 紹介一覧を取得する(未ログイン or 他のユーザー)
 router.get('/list/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const evaluations = yield (0, evaluation_1.getEvaluations)(req.params.evaluateeId);
@@ -50,7 +50,7 @@ router.get('/list/:evaluateeId', (req, res) => __awaiter(void 0, void 0, void 0,
         }
     }
 }));
-// 評価一覧を取得する(ユーザー自身)
+// 紹介一覧を取得する(ユーザー自身)
 router.get('/list/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const auth0Id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.payload.sub;
@@ -69,7 +69,7 @@ router.get('/list/self/:evaluateeId', checkJwt, (req, res) => __awaiter(void 0, 
         }
     }
 }));
-// 評価を取得する(未ログイン or 他のユーザー)
+// 紹介を取得する(未ログイン or 他のユーザー)
 router.get('/:evaluationId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const evaluation = yield (0, evaluation_1.getEvaluation)(req.params.evaluationId);
@@ -82,7 +82,7 @@ router.get('/:evaluationId', (req, res) => __awaiter(void 0, void 0, void 0, fun
         }
     }
 }));
-// 評価を取得する(ユーザー自身)
+// 紹介を取得する(ユーザー自身)
 router.get('/self/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const auth0Id = (_b = req.auth) === null || _b === void 0 ? void 0 : _b.payload.sub;
@@ -101,7 +101,7 @@ router.get('/self/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void
         }
     }
 }));
-// 評価を公開する
+// 紹介を公開する
 router.put('/publish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: true });
@@ -114,7 +114,7 @@ router.put('/publish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, v
         }
     }
 }));
-// 評価を非公開にする
+// 紹介を非公開にする
 router.put('/unpublish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isPublished: false });
@@ -127,7 +127,7 @@ router.put('/unpublish/:evaluationId', checkJwt, (req, res) => __awaiter(void 0,
         }
     }
 }));
-// 評価を削除する
+// 紹介を削除する
 router.delete('/:evaluationId', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, evaluation_1.updateEvaluation)({ evaluationId: req.params.evaluationId, isDeleted: true });
