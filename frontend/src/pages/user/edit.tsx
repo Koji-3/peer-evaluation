@@ -22,7 +22,7 @@ export const UserEdit: React.FC = () => {
   const [isIconChanged, setIsIconChanged] = useState<boolean>(false)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { isLoading: isAuth0Loading, user: auth0User, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
+  const { isLoading: isAuth0Loading, user: auth0User, isAuthenticated, loginWithRedirect, getAccessTokenSilently, logout } = useAuth0()
   const params = useParams()
   const navigate = useNavigate()
 
@@ -82,7 +82,7 @@ export const UserEdit: React.FC = () => {
       if (!!email && email !== auth0User?.email) {
         await updateEmail(email, token)
         setIsLoading(false)
-        navigate('/')
+        logout({ logoutParams: { returnTo: `${window.location.origin}/update/login` } })
       } else {
         setIsLoading(false)
         setFlashMessage({ type: 'success', message: 'プロフィールを更新しました。' })

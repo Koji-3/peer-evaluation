@@ -32,8 +32,6 @@ export const updateEmail = (auth0id: string, newEmail: string): void => {
       console.error('updateUser error', e)
       throw new Error(errorMessages.user.updateEmail)
     }
-    // メールアドレス変更後に新しいメールアドレスにverificationメールを送る
-    sendEmailVerification(auth0id, 'updateEmail')
   })
 }
 

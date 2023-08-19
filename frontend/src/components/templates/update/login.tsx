@@ -5,7 +5,7 @@ import { Button } from 'components/atoms'
 
 type Props = {
   className?: string
-  onClickResend: () => void
+  onClickLogin: () => void
 }
 
 const StyledWrapper = styled.div`
@@ -21,22 +21,22 @@ const StyledWrapper = styled.div`
       line-height: 1.7;
     }
 
-    .resend {
+    .login {
       margin: 0 auto;
     }
   }
 `
 
-export const LoginCallbackTpl: React.FC<Props> = ({ onClickResend }) => {
+export const UpdateLoginTpl: React.FC<Props> = ({ onClickLogin }) => {
   return (
     <StyledWrapper>
       <div className="inner">
         <p>
-          ご登録のメールアドレスに、認証のメールを送信しました。
+          メールアドレスを変更しました。
           <br />
-          メッセージが届かない場合は、時間を置くか、以下の「再送する」ボタンをクリックしてください。
+          以下の「ログイン」ボタンをクリックして新しいメールアドレスでログインし直してください。
         </p>
-        <Button buttonText="再送する" buttonType="primary" onClick={onClickResend} className="resend" />
+        <Button buttonText="ログイン" buttonType="primary" onClick={onClickLogin} className="login" />
       </div>
     </StyledWrapper>
   )

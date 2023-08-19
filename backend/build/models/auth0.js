@@ -33,8 +33,6 @@ const updateEmail = (auth0id, newEmail) => {
             console.error('updateUser error', e);
             throw new Error(errorMessages_1.errorMessages.user.updateEmail);
         }
-        // メールアドレス変更後に新しいメールアドレスにverificationメールを送る
-        (0, exports.sendEmailVerification)(auth0id, 'updateEmail');
     });
 };
 exports.updateEmail = updateEmail;
