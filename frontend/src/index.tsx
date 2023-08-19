@@ -9,7 +9,7 @@ const auth0RedirectUri = `${window.location.origin}/login/callback`
 root.render(
   <Auth0Provider
     domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ''}
-    clientId={'70vqeUX0AluoCUrRdSymICo8sbc6gUTQ'}
+    clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ''}
     authorizationParams={{
       redirect_uri: auth0RedirectUri,
       audience: process.env.REACT_APP_AUTH0_API_AUDIENCE,
