@@ -6,13 +6,13 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import {
   Top,
   LoginCallback,
+  EmailVerificationCallback,
   Signup,
   UserTop,
   UserEdit,
   EvaluationDetail,
   EvaluationForm,
   UpdateLogin,
-  UpdateCallback,
   Page404,
 } from 'pages'
 
@@ -30,14 +30,17 @@ export const App: React.FC = () => {
         <main>
           <Routes>
             <Route path="/" element={<Top />} />
-            <Route path="/login/callback" element={<LoginCallback />} />
             <Route path="/update/login" element={<UpdateLogin />} />
-            <Route path="/update/callback" element={<UpdateCallback />} />
-            <Route path="/signup" element={<Signup />} />
+
             <Route path="/user/:id" element={<UserTop />} />
             <Route path="/evaluation/form/:evaluateeId" element={<EvaluationForm />} />
             <Route path="/evaluation/:evaluateeId/:evaluationId" element={<EvaluationDetail />} />
             <Route path="/user/edit/:id" element={<UserEdit />} />
+            {/* Auth0のログインからのコールバック */}
+            <Route path="/login/callback" element={<LoginCallback />} />
+            {/* Auth0のメール認証からのコールバック */}
+            <Route path="/signup" element={<EmailVerificationCallback />} />
+            <Route path="/signup/new" element={<Signup />} />
             <Route path="*" element={<Page404 />} />
           </Routes>
         </main>

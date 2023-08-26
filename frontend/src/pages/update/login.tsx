@@ -11,7 +11,7 @@ export const UpdateLogin: React.FC = () => {
   const { loginWithRedirect } = useAuth0()
 
   const onClickLogin = (): void => {
-    loginWithRedirect({ authorizationParams: { redirect_uri: `${window.location.origin}/update/callback` } })
+    loginWithRedirect()
   }
 
   return (

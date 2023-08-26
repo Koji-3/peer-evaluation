@@ -81,7 +81,6 @@ export const UserEdit: React.FC = () => {
       }
       if (!!email && email !== auth0User?.email) {
         await updateEmail(email, token)
-        setIsLoading(false)
         logout({ logoutParams: { returnTo: `${window.location.origin}/update/login` } })
       } else {
         setIsLoading(false)

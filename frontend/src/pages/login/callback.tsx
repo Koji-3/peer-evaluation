@@ -1,23 +1,19 @@
 /**
- * Auth0でログイン後にマイページへリダイレクトする用のファイル。
+ * Auth0でログイン後にマイページ or 新規登録ページへリダイレクトする用のファイル。
  * Auth0のコールバックに動的URLを設定できないため。
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
-import { Layout, LoginCallbackTpl } from 'components/templates'
+import { LoadingTpl } from 'components/templates'
 
 /* lib, types, apis */
-import { fetchUserByAuth0Id, resendEmailVerification } from 'apis/user'
-import { FlashMessage } from 'types/types'
+import { fetchUserByAuth0Id } from 'apis/user'
 
 export const LoginCallback: React.FC = () => {
   const { user: auth0User, getAccessTokenSilently, isLoading: isAuth0Loading } = useAuth0()
-  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false)
-  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const navigate = useNavigate()
 
   const getUserId = useCallback(async (): Promise<string | undefined> => {
@@ -33,50 +29,17 @@ export const LoginCallback: React.FC = () => {
     }
   }, [getAccessTokenSilently])
 
-  const onClickResend = async (): Promise<void> => {
-    setIsLoading(true)
-    setFlashMessage(undefined)
-    const token = await getAccessTokenSilently()
-    try {
-      await resendEmailVerification(token)
-      setIsLoading(false)
-      setFlashMessage({ type: 'success', message: 'メールを再送しました。' })
-    } catch (e) {
-      setIsLoading(false)
-      if (e instanceof Error) {
-        setFlashMessage({ type: 'error', message: e.message })
-      }
-    }
-  }
-
-  useEffect(() => {
-    setIsEmailVerified(auth0User?.email_verified || false)
-  }, [auth0User])
-
   useEffect(() => {
     if (isAuth0Loading) return
-    // Auth0のメール認証を行ってから使えるようにする
-    if (!auth0User || !auth0User?.email_verified) {
-      setIsLoading(false)
-      return
-    }
     ;(async () => {
-      try {
-        const userId = await getUserId()
-        if (!!auth0User && !!userId) {
-          navigate(`/user/${userId}`)
-        } else {
-          navigate('/signup')
-        }
-      } catch (e) {
-        setIsLoading(false)
+      const userId = await getUserId()
+      if (!!auth0User && !!userId) {
+        navigate(`/user/${userId}`)
+      } else {
+        navigate('/signup/new')
       }
     })()
   }, [isAuth0Loading, auth0User, navigate, getAccessTokenSilently, getUserId])
 
-  return (
-    <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      {!isEmailVerified && !isLoading && <LoginCallbackTpl onClickResend={onClickResend} />}
-    </Layout>
-  )
+  return <LoadingTpl />
 }
