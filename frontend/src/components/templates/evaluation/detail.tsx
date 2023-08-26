@@ -2,13 +2,13 @@ import styled from 'styled-components'
 
 /* components */
 import { ButtonSmall, Icon } from 'components/atoms'
+import { LinkWithIcon } from 'components/molecules'
 import { EvaluationDetailItem } from 'components/organisms'
 
 /* lib, types */
 import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
 
 /* images */
-import pagePrevIcon from 'assets/images/icon/page-prev.svg'
 import defaultIcon from 'assets/images/icon/default-icon.svg'
 
 type Props = {
@@ -112,10 +112,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
     <StyledWrapper className={className}>
       <div className="inner">
         <header>
-          <a href={`/user/${evaluateeId}`} className="to-user-top">
-            <img src={pagePrevIcon} alt="紹介一覧ページへ" className="icon" />
-            <span>紹介一覧ページへ</span>
-          </a>
+          <LinkWithIcon linkText="紹介一覧ページへ" href={`/user/${evaluateeId}`} direction="left" />
 
           {shouldShowOperateButtons && (
             <div className="buttons">
