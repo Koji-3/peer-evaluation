@@ -1,17 +1,33 @@
-import { useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
 import { Button } from 'components/atoms'
 import { Layout } from 'components/templates'
 
+/* lib, types, apis */
+import { FlashMessage } from 'types/types'
+
 export const Top: React.FC = () => {
   const location = useLocation()
-  const stateFlashMessage = location.state?.flashMessage
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+      if(location.state && location.state.flashMessage) {
+        setFlashMessage(location.state.flashMessage)
+
+        setTimeout(() => {
+          // リロードするとstateが残ってしまうので、リロード後にstateを削除する
+          navigate(location.pathname, {replace: true})
+        }, 6000)
+      }
+  }, [location.pathname, location.state, navigate])
 
   return (
-    <Layout flashMessages={stateFlashMessage ? [stateFlashMessage] : undefined}>
+    <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
       <Button
         buttonText="ログイン"
         buttonType="primary"
