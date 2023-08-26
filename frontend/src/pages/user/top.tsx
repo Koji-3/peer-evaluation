@@ -12,6 +12,8 @@ import { fetchIconUrl } from 'apis/icon'
 import { fetchSelfEvaluations, fetchOthersEvaluations, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
 import { errorMessages } from 'const/errorMessages'
 
+const EVALUATIONS_PER_PAGE = 7
+
 export const UserTop: React.FC = () => {
   const [user, setUser] = useState<User>()
   const [userIconUrl, setUserIconUrl] = useState<string>('')
@@ -121,7 +123,7 @@ export const UserTop: React.FC = () => {
         setUserIconUrl(iconUrl)
         setEvaluations(evaluations)
         const evaluationNum = isAuthenticated ? user.allEvaluationNum : user.publishedEvaluationNum
-        const lastPage = evaluationNum % 4 === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / 4) + 1
+        const lastPage = evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
         setLastPage(lastPage)
         setIsLoading(false)
       } catch (e) {
@@ -138,11 +140,11 @@ export const UserTop: React.FC = () => {
     setCurrentPage(currentPage)
     // BEでの実装が厳しいのでFEでページネーションの表示だけ切り替え実装
     if (currentPage === 1) {
-      setEvaluationsToShow(evaluations.slice(0, 4))
+      setEvaluationsToShow(evaluations.slice(0, EVALUATIONS_PER_PAGE))
     } else if (currentPage !== lastPage) {
-      setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4 + 1, (currentPage - 1) * 4 + 1 + 4))
+      setEvaluationsToShow(evaluations.slice((currentPage - 1) * EVALUATIONS_PER_PAGE + 1, currentPage * EVALUATIONS_PER_PAGE + 1))
     } else {
-      setEvaluationsToShow(evaluations.slice((currentPage - 1) * 4))
+      setEvaluationsToShow(evaluations.slice((currentPage - 1) * EVALUATIONS_PER_PAGE))
     }
   }, [searchParams, lastPage, evaluations])
 
