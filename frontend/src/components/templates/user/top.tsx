@@ -40,7 +40,7 @@ const StyledWrapper = styled.div`
     .profile {
       width: 32.9rem;
       margin: 0 auto;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
     }
   }
 
@@ -62,7 +62,10 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2rem;
+      gap: 2.5rem;
+      &:has(.with-buttons) {
+        gap: 3rem;
+      }
     }
   }
 `
@@ -94,7 +97,9 @@ export const UserTopTpl: React.FC<Props> = ({
       <RadarChart data={getChartData()} className="chart" />
 
       <div className="evaluations">
-        <p className="title">{user.name}さんへの紹介</p>
+        <div className="title">
+          <p className="title">{user.name}さんの紹介一覧</p>
+        </div>
         {evaluations.length ? (
           <div className="evaluation-items-wrapper">
             {evaluations.map((evaluation) => (
@@ -104,6 +109,7 @@ export const UserTopTpl: React.FC<Props> = ({
                 onClickUnpublish={onClickUnpublish}
                 onClickDelete={onClickDelete}
                 key={evaluation.id}
+                className={evaluation.shouldShowOperateButtons ? 'with-buttons' : ''}
               />
             ))}
           </div>
