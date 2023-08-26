@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
@@ -26,6 +26,8 @@ export const UserTop: React.FC = () => {
   const { isLoading: isAuth0Loading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const [searchParams] = useSearchParams()
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const fetchEvaluations = useCallback(async (): Promise<Evaluation[]> => {
     try {
@@ -126,6 +128,15 @@ export const UserTop: React.FC = () => {
         const lastPage = evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
         setLastPage(lastPage)
         setIsLoading(false)
+
+        if(location.state && location.state.flashMessage) {
+          setFlashMessage(location.state.flashMessage)
+
+          setTimeout(() => {
+            // リロードするとstateが残ってしまうので、リロード後にstateを削除する
+            navigate(location.pathname, {replace: true})
+          }, 6000)
+        }
       } catch (e) {
         setIsLoading(false)
         if (e instanceof Error) {
@@ -133,7 +144,7 @@ export const UserTop: React.FC = () => {
         }
       }
     })()
-  }, [isAuth0Loading, params.id, isAuthenticated, getAccessTokenSilently, fetchEvaluations])
+  }, [isAuth0Loading, params.id, isAuthenticated,location.state, getAccessTokenSilently, fetchEvaluations, navigate, location.pathname])
 
   useEffect(() => {
     const currentPage = Number(searchParams.get('page') || 1)
