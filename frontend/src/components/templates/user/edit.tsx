@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 
 /* components */
-import { Icon, Button, ButtonSmall } from 'components/atoms'
+import { Icon, Button, ButtonSmall, TextButton } from 'components/atoms'
 import { IconInput, TextInputWithLabel, TextareaWithLabel } from 'components/molecules'
 
 /* lib, types */
@@ -26,7 +26,7 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
-  padding: 6rem 0 0;
+  padding: 6rem 0 7rem;
 
   > .inner {
     width: 33rem;
@@ -78,9 +78,9 @@ const StyledWrapper = styled.div`
         font-weight: 700;
       }
 
-      > a {
-        color: ${(props): string => props.theme.blue};
-        text-decoration: underline;
+      .login {
+        display: inline;
+        padding: 0 0.5rem 0 0;
       }
     }
   }
@@ -168,7 +168,8 @@ export const UserEditTpl: React.FC<Props> = ({
         <p className="change-password">
           <span>※パスワードを変更</span>する方は、
           <br />
-          <a onClick={login}>ログインページ</a>の「パスワードをお忘れですか？」よりご変更ください。
+          <TextButton buttonText="ログインページ" onClick={login} className="login" />
+          の「パスワードをお忘れですか？」よりご変更ください。
         </p>
       </div>
       <div className="leave">

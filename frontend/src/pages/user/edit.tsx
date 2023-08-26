@@ -58,7 +58,7 @@ export const UserEdit: React.FC = () => {
   }
 
   const login = (): void => {
-    loginWithRedirect()
+    loginWithRedirect({ authorizationParams: { prompt: 'login' } })
   }
 
   const updateUser = async (): Promise<void> => {
