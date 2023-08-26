@@ -125,16 +125,17 @@ export const UserTop: React.FC = () => {
         setUserIconUrl(iconUrl)
         setEvaluations(evaluations)
         const evaluationNum = isAuthenticated ? user.allEvaluationNum : user.publishedEvaluationNum
-        const lastPage = evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
+        const lastPage =
+          evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
         setLastPage(lastPage)
         setIsLoading(false)
 
-        if(location.state && location.state.flashMessage) {
+        if (location.state && location.state.flashMessage) {
           setFlashMessage(location.state.flashMessage)
 
           setTimeout(() => {
             // リロードするとstateが残ってしまうので、リロード後にstateを削除する
-            navigate(location.pathname, {replace: true})
+            navigate(location.pathname, { replace: true })
           }, 6000)
         }
       } catch (e) {
@@ -144,7 +145,7 @@ export const UserTop: React.FC = () => {
         }
       }
     })()
-  }, [isAuth0Loading, params.id, isAuthenticated,location.state, getAccessTokenSilently, fetchEvaluations, navigate, location.pathname])
+  }, [isAuth0Loading, params.id, isAuthenticated, location.state, getAccessTokenSilently, fetchEvaluations, navigate, location.pathname])
 
   useEffect(() => {
     const currentPage = Number(searchParams.get('page') || 1)

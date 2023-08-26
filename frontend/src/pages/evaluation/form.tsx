@@ -111,7 +111,14 @@ export const EvaluationForm: React.FC = () => {
     try {
       await submitEvaluation({ ...evaluationInput, evaluatorIconKey: iconKey }, params.evaluateeId)
       setIsLoading(false)
-      navigate(`/user/${params.evaluateeId}`, { state: { flashMessage: { type: 'success', message: `送信しました。${evaluatee?.name}さんがあなたの紹介を公開するとこのページに表示されます。` } } })
+      navigate(`/user/${params.evaluateeId}`, {
+        state: {
+          flashMessage: {
+            type: 'success',
+            message: `送信しました。${evaluatee?.name}さんがあなたの紹介を公開するとこのページに表示されます。`,
+          },
+        },
+      })
     } catch (e) {
       setIsLoading(false)
       if (e instanceof Error) {

@@ -16,14 +16,14 @@ export const Top: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-      if(location.state && location.state.flashMessage) {
-        setFlashMessage(location.state.flashMessage)
+    if (location.state && location.state.flashMessage) {
+      setFlashMessage(location.state.flashMessage)
 
-        setTimeout(() => {
-          // リロードするとstateが残ってしまうので、リロード後にstateを削除する
-          navigate(location.pathname, {replace: true})
-        }, 6000)
-      }
+      setTimeout(() => {
+        // リロードするとstateが残ってしまうので、リロード後にstateを削除する
+        navigate(location.pathname, { replace: true })
+      }, 6000)
+    }
   }, [location.pathname, location.state, navigate])
 
   return (
