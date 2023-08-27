@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 /* components */
 import { Icon } from 'components/atoms'
 import { Pagination, ButtonWithIcon, LinkWithIcon } from 'components/molecules'
-import { EvaluationItem, RadarChart } from 'components/organisms'
+import { EvaluationItem, RadarChart, NoEvaluation } from 'components/organisms'
 
 /* lib, types */
 import { parseNumberToOneDecimalText } from 'lib/function'
@@ -107,6 +107,10 @@ const StyledWrapper = styled.div`
         gap: 3rem;
       }
     }
+
+    .no-evaluation {
+      margin: 0 auto;
+    }
   }
 `
 
@@ -171,8 +175,7 @@ export const UserTopTpl: React.FC<Props> = ({
             ))}
           </div>
         ) : (
-          // TODO:
-          <p style={{ textAlign: 'center' }}>紹介はありません</p>
+          <NoEvaluation isSelfMypage={isSelfMyPage} onClickSharePage={onClickSharePage} className="no-evaluation" />
         )}
       </div>
 
