@@ -40,7 +40,7 @@ const StyledWrapper = styled.div`
     }
 
     > .icon {
-      margin: 0 0 6rem;
+      margin: 0 0 4rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -68,26 +68,30 @@ const StyledWrapper = styled.div`
     }
 
     .change-password {
-      width: 29.8rem;
-      margin: 0 auto 4.5rem;
-      font-size: 1.2rem;
-      line-height: 2rem;
-      letter-spacing: 0.05em;
+      width: 100%;
+      border-bottom: 0.1rem solid ${(props): string => props.theme.borderGray};
 
-      > span {
-        font-weight: 700;
-      }
+      > p {
+        width: 29.8rem;
+        margin: 0 auto 2rem;
+        font-size: 1.2rem;
+        line-height: 2rem;
+        letter-spacing: 0.05em;
 
-      .login {
-        display: inline;
-        padding: 0 0.5rem 0 0;
+        > span {
+          font-weight: 700;
+        }
+
+        .login {
+          display: inline;
+          padding: 0 0.5rem 0 0;
+        }
       }
     }
   }
 
   .leave {
-    padding: 2.5rem 0 4.3rem;
-    background: ${(props): string => props.theme.white};
+    padding: 2rem 0 0;
 
     > p {
       width: 29.8rem;
@@ -165,16 +169,18 @@ export const UserEditTpl: React.FC<Props> = ({
         <Button buttonText="変更する" buttonType="primary" disabled={isDisabledUpdate()} onClick={updateUser} className="update" />
         <Button buttonText="マイページへ" buttonType="white" onClick={goToMypage} className="to-mypage" />
 
-        <p className="change-password">
-          <span>※パスワードを変更</span>する方は、
-          <br />
-          <TextButton buttonText="ログインページ" onClick={login} className="login" />
-          の「パスワードをお忘れですか？」よりご変更ください。
-        </p>
-      </div>
-      <div className="leave">
-        <p>※退会をご希望の方は、下のボタンよりご退会ください。ご利用ありがとうございました。</p>
-        <ButtonSmall buttonText="退会する" buttonType="dark" onClick={deleteUser} className="leave-btn" />
+        <div className="change-password">
+          <p>
+            <span>※パスワードを変更</span>する方は、
+            <br />
+            <TextButton buttonText="ログインページ" onClick={login} className="login" />
+            の「パスワードをお忘れですか？」よりご変更ください。
+          </p>
+        </div>
+        <div className="leave">
+          <p>※退会をご希望の方は、下のボタンよりご退会ください。ご利用ありがとうございました。</p>
+          <ButtonSmall buttonText="退会する" buttonType="dark" onClick={deleteUser} className="leave-btn" />
+        </div>
       </div>
     </StyledWrapper>
   )

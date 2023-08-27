@@ -36,7 +36,7 @@ const StyledWrapper = styled.div`
     }
 
     > .icon {
-      margin: 0 0 6rem;
+      margin: 0 0 4rem;
       display: flex;
       flex-direction: column;
       align-items: center;
