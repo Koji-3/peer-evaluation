@@ -16,6 +16,7 @@ const StyledWrapper = styled.div`
     margin: 0 auto;
 
     .code {
+      margin: 0 0 1rem;
       font-size: 6.4rem;
       text-align: center;
     }
