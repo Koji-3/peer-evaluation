@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 /* components */
 import { Icon } from 'components/atoms'
-import { Pagination, ButtonWithIcon } from 'components/molecules'
+import { Pagination, ButtonWithIcon, LinkWithIcon } from 'components/molecules'
 import { EvaluationItem, RadarChart } from 'components/organisms'
 
 /* lib, types */
@@ -43,8 +43,15 @@ const StyledWrapper = styled.div`
 
     .profile {
       width: 35.8rem;
-      margin: 0 auto;
+      margin: 0 auto 0.5rem;
       font-size: 1.4rem;
+    }
+
+    .to-edit {
+      width: 35.8rem;
+      margin: 0 auto 0.5rem;
+      font-size: 1rem;
+      justify-content: flex-end;
     }
   }
 
@@ -116,11 +123,11 @@ export const UserTopTpl: React.FC<Props> = ({
 
   return (
     <StyledWrapper>
-      <a href={`/evaluation/form/${user.id}`}>紹介を書く</a>
       <div className="user">
         <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>
         <p className="profile">{user.profile}</p>
+        <LinkWithIcon linkText="プロフィールを編集" href={`/user/edit/${user.id}`} direction="right" className="to-edit" />
       </div>
 
       <RadarChart data={getChartData()} className="chart" />

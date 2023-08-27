@@ -13,7 +13,7 @@ type Props = {
 
 const StyledLink = styled.a`
   color: ${(props): string => props.theme.primary};
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   line-height: 1;
   display: flex;
   align-items: center;
