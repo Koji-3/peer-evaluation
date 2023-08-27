@@ -51,12 +51,12 @@ export type Auth0AuthenticatedBy = 'google' | 'auth0'
 
 export type EvaluationLabelKeys = 'e1' | 'e2' | 'e3' | 'e4' | 'e5' | 'e6'
 export const EvaluationLabels = {
-  e1: '情熱a',
-  e2: '情熱b',
-  e3: '情熱c',
-  e4: '情熱d',
-  e5: '情熱e',
-  e6: '情熱f',
+  e1: 'ポジティブ',
+  e2: 'ユーモア',
+  e3: 'おしゃれ',
+  e4: 'クリエイティブ',
+  e5: '優しさ',
+  e6: '親しみやすさ',
 } as const satisfies Record<EvaluationLabelKeys, string>
 export type EvaluationLabels = (typeof EvaluationLabels)[keyof typeof EvaluationLabels]
 export const EvaluationLabelKeys = Object.keys(EvaluationLabels) as EvaluationLabelKeys[]

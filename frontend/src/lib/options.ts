@@ -3,7 +3,7 @@ import { EvaluationLabels, RadioButton } from 'types/types'
 export const getE1Options = (
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ): { label: EvaluationLabels; buttons: RadioButton[] } => ({
-  label: '情熱a',
+  label: EvaluationLabels['e1'],
   buttons: [
     {
       id: 'e1_1',
@@ -45,7 +45,7 @@ export const getE1Options = (
 export const getE2Options = (
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ): { label: EvaluationLabels; buttons: RadioButton[] } => ({
-  label: '情熱b',
+  label: EvaluationLabels['e2'],
   buttons: [
     {
       id: 'e2_1',
@@ -87,7 +87,7 @@ export const getE2Options = (
 export const getE3Options = (
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ): { label: EvaluationLabels; buttons: RadioButton[] } => ({
-  label: '情熱c',
+  label: EvaluationLabels['e3'],
   buttons: [
     {
       id: 'e3_1',
@@ -129,7 +129,7 @@ export const getE3Options = (
 export const getE4Options = (
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ): { label: EvaluationLabels; buttons: RadioButton[] } => ({
-  label: '情熱d',
+  label: EvaluationLabels['e4'],
   buttons: [
     {
       id: 'e4_1',
@@ -171,7 +171,7 @@ export const getE4Options = (
 export const getE5Options = (
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ): { label: EvaluationLabels; buttons: RadioButton[] } => ({
-  label: '情熱e',
+  label: EvaluationLabels['e5'],
   buttons: [
     {
       id: 'e5_1',
@@ -213,7 +213,7 @@ export const getE5Options = (
 export const getE6Options = (
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ): { label: EvaluationLabels; buttons: RadioButton[] } => ({
-  label: '情熱f',
+  label: EvaluationLabels['e6'],
   buttons: [
     {
       id: 'e6_1',
