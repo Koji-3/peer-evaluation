@@ -17,15 +17,6 @@ export const updateName = (auth0id: string, newName: string): void => {
   })
 }
 
-export const sendEmailVerification = (auth0id: string, type: 'updateEmail' | 'resend'): void => {
-  auth0ManagementClient.sendEmailVerification({ user_id: auth0id, client_id: process.env.REACT_APP_AUTH0_CLIENT_ID }, (e) => {
-    if (e) {
-      console.error('sendEmailVerification error', e)
-      throw new Error(type === 'updateEmail' ? errorMessages.user.updateEmail : errorMessages.user.resendEmailVerification)
-    }
-  })
-}
-
 export const updateEmail = (auth0id: string, newEmail: string): void => {
   auth0ManagementClient.updateUser({ id: auth0id }, { email: newEmail }, (e) => {
     if (e) {
