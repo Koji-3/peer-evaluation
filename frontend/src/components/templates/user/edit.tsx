@@ -135,7 +135,7 @@ export const UserEditTpl: React.FC<Props> = ({
         <h1>プロフィールの編集</h1>
         <div className="icon">
           <Icon src={iconObjectUrl} alt={userInput.name} size={14.6} className="icon" />
-          <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
+          <IconInput label="アイコンを編集" onChange={onChangeIconInput} error={iconInputError} className="input" />
         </div>
 
         <div className="input-wrapper">
