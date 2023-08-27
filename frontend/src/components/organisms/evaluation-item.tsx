@@ -13,6 +13,7 @@ import defaultIcon from 'assets/images/icon/default-icon.svg'
 type Props = {
   className?: string
   evaluation: Evaluation
+  isSelfEvaluation: boolean
   onClickPublish: (id: string) => void
   onClickUnpublish: (id: string) => void
   onClickDelete: (id: string) => void
@@ -74,8 +75,15 @@ const StyledWrapper = styled.div`
   }
 `
 
-export const EvaluationItem: React.FC<Props> = ({ className = '', evaluation, onClickPublish, onClickUnpublish, onClickDelete }) => {
-  const { id, evaluatorIconUrl, evaluatorName, relationship, comment, is_published, evaluateeId, shouldShowOperateButtons } = evaluation
+export const EvaluationItem: React.FC<Props> = ({
+  className = '',
+  evaluation,
+  isSelfEvaluation,
+  onClickPublish,
+  onClickUnpublish,
+  onClickDelete,
+}) => {
+  const { id, evaluatorIconUrl, evaluatorName, relationship, comment, is_published, evaluateeId } = evaluation
 
   return (
     <StyledWrapper className={className}>
@@ -91,9 +99,9 @@ export const EvaluationItem: React.FC<Props> = ({ className = '', evaluation, on
             <LinkWithIcon linkText="詳しく見る" href={`/evaluation/${evaluateeId}/${id}`} direction="right" className="to-detail" />
           </div>
         </div>
-        {shouldShowOperateButtons && <EvaluationStatus isPublished={is_published} className="evaluation-status" />}
+        {isSelfEvaluation && <EvaluationStatus isPublished={is_published} className="evaluation-status" />}
       </div>
-      {shouldShowOperateButtons && (
+      {isSelfEvaluation && (
         <div className="buttons">
           {is_published ? (
             <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={() => onClickUnpublish(id)} />

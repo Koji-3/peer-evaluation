@@ -6,7 +6,7 @@ import { LinkWithIcon } from 'components/molecules'
 import { EvaluationDetailItem } from 'components/organisms'
 
 /* lib, types */
-import { Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
+import { User, Evaluation, EvaluationLabelKeys, EvaluationLabelValues } from 'types/types'
 
 /* images */
 import defaultIcon from 'assets/images/icon/default-icon.svg'
@@ -14,7 +14,8 @@ import defaultIcon from 'assets/images/icon/default-icon.svg'
 type Props = {
   className?: string
   evaluation: Evaluation
-  evaluateeName: string
+  evaluatee: User
+  isSelfMyPage: boolean
   onClickPublish: () => void
   onClickUnpublish: () => void
   onClickDelete: () => void
@@ -101,12 +102,13 @@ const StyledWrapper = styled.div`
 export const EvaluationDetailTpl: React.FC<Props> = ({
   className,
   evaluation,
-  evaluateeName,
+  evaluatee,
+  isSelfMyPage,
   onClickPublish,
   onClickUnpublish,
   onClickDelete,
 }) => {
-  const { is_published, evaluatorIconUrl, evaluatorName, relationship, evaluateeId, comment, shouldShowOperateButtons } = evaluation
+  const { is_published, evaluatorIconUrl, evaluatorName, relationship, evaluateeId, comment } = evaluation
 
   return (
     <StyledWrapper className={className}>
@@ -114,7 +116,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
         <header>
           <LinkWithIcon linkText="紹介一覧ページへ" href={`/user/${evaluateeId}`} direction="left" />
 
-          {shouldShowOperateButtons && (
+          {isSelfMyPage && (
             <div className="buttons">
               {is_published ? (
                 <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />
@@ -133,7 +135,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
               {evaluatorName} / {relationship}
             </p>
           </div>
-          <p className="title">{evaluateeName}について</p>
+          <p className="title">{evaluatee.name}について</p>
           <p className="comment">{comment}</p>
 
           {[...Array(6)].map((_, index) => {
@@ -148,7 +150,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
             )
           })}
         </div>
-        {shouldShowOperateButtons && (
+        {isSelfMyPage && (
           <div className="footer-buttons">
             {is_published ? (
               <ButtonSmall buttonText="非公開にする" buttonType="white" onClick={onClickUnpublish} />

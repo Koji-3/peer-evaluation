@@ -8,7 +8,7 @@ import { EvaluationItem, RadarChart } from 'components/organisms'
 
 /* lib, types */
 import { parseNumberToOneDecimalText } from 'lib/function'
-import { User,Auth0User, Evaluation } from 'types/types'
+import { User, Evaluation } from 'types/types'
 
 /* images */
 import pencilIcon from 'assets/images/icon/pencil.svg'
@@ -120,7 +120,7 @@ export const UserTopTpl: React.FC<Props> = ({
   }
 
   const onClickIntroduce = (): void => {
-    if(isSelfMyPage) {
+    if (isSelfMyPage) {
       window.alert('自分自身の紹介はできません。')
       return
     }
@@ -152,7 +152,8 @@ export const UserTopTpl: React.FC<Props> = ({
                 onClickUnpublish={onClickUnpublish}
                 onClickDelete={onClickDelete}
                 key={evaluation.id}
-                className={evaluation.shouldShowOperateButtons ? 'with-buttons' : ''}
+                isSelfEvaluation={isSelfMyPage}
+                className={isSelfMyPage ? 'with-buttons' : ''}
               />
             ))}
           </div>

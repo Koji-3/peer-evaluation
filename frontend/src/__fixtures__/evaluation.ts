@@ -35,7 +35,6 @@ export const fixtureEvaluation: Evaluation = {
   is_published: true,
   is_deleted: false,
   created: '',
-  shouldShowOperateButtons: true,
 }
 
 export const fixtureEvaluations: Evaluation[] = [
@@ -73,7 +72,6 @@ export const fixtureEvaluations: Evaluation[] = [
     is_published: false,
     is_deleted: false,
     created: '',
-    shouldShowOperateButtons: true,
   },
   {
     id: 'aa',
@@ -110,7 +108,6 @@ export const fixtureEvaluations: Evaluation[] = [
     is_published: true,
     is_deleted: false,
     created: '',
-    shouldShowOperateButtons: true,
   },
   {
     id: 'aaa',
@@ -147,7 +144,6 @@ export const fixtureEvaluations: Evaluation[] = [
     is_published: false,
     is_deleted: false,
     created: '',
-    shouldShowOperateButtons: true,
   },
   {
     id: 'aaaa',
@@ -185,7 +181,6 @@ export const fixtureEvaluations: Evaluation[] = [
     is_published: true,
     is_deleted: false,
     created: '',
-    shouldShowOperateButtons: true,
   },
 ]
 

@@ -6,7 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { UserTopTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
-import { User,Auth0User, Evaluation, FlashMessage } from 'types/types'
+import { User, Evaluation, FlashMessage } from 'types/types'
 import { fetchUser } from 'apis/user'
 import { fetchIconUrl } from 'apis/icon'
 import { fetchSelfEvaluations, fetchOthersEvaluations, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
@@ -23,15 +23,20 @@ export const UserTop: React.FC = () => {
   const [lastPage, setLastPage] = useState<number>(10)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { isLoading: isAuth0Loading, isAuthenticated,user: auth0User, getAccessTokenSilently } = useAuth0()
+  const { isLoading: isAuth0Loading, isAuthenticated, user: auth0User, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const navigate = useNavigate()
 
+  const isSelfMyPage = useMemo(() => {
+    if (!auth0User || !user) return false
+    return auth0User.sub === user.auth0_id
+  }, [auth0User, user])
+
   const fetchEvaluations = useCallback(async (): Promise<Evaluation[]> => {
     try {
-      if (isAuthenticated) {
+      if (isSelfMyPage) {
         const token = await getAccessTokenSilently()
         const evaluations = await fetchSelfEvaluations(token, params.id)
         return evaluations
@@ -45,7 +50,7 @@ export const UserTop: React.FC = () => {
       }
       throw new Error(errorMessages.evaluation.get)
     }
-  }, [getAccessTokenSilently, isAuthenticated, params.id])
+  }, [getAccessTokenSilently, isSelfMyPage, params.id])
 
   const refetchAfterUpdateEvaluation = async (): Promise<void> => {
     try {
@@ -159,11 +164,6 @@ export const UserTop: React.FC = () => {
       setEvaluationsToShow(evaluations.slice((currentPage - 1) * EVALUATIONS_PER_PAGE))
     }
   }, [searchParams, lastPage, evaluations])
-
-  const isSelfMyPage = useMemo(() => {
-    if (!auth0User || !user) return false
-    return auth0User.sub === user.auth0_id
-  }, [auth0User, user])
 
   return (
     <>

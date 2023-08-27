@@ -27,17 +27,10 @@ export const getEvaluation = async (evaluationId: string, auth0Id?: string): Pro
     const isPublished = evaluation.props.is_published
     const isDeleted = evaluation.props.is_deleted
     if (auth0Id) {
-      const user = await getUserByAuth0Id(auth0Id)
-      const userId = user?.key
-      if (!userId) {
-        throw new Error(errorMessages.evaluation.get)
-      }
-      if (evaluation.props.evaluateeId === userId) {
-        return !isDeleted ? { ...evaluation.props, id: evaluation.key, shouldShowOperateButtons: true } : null
-      }
-      return isPublished || !isDeleted ? { ...evaluation.props, id: evaluation.key, shouldShowOperateButtons: false } : null
+      // 自分の紹介の取得
+      return !isDeleted ? { ...evaluation.props, id: evaluation.key } : null
     } else {
-      return isPublished || !isDeleted ? { ...evaluation.props, id: evaluation.key, shouldShowOperateButtons: false } : null
+      return isPublished && !isDeleted ? { ...evaluation.props, id: evaluation.key } : null
     }
   } catch (e) {
     console.error('getEvaluation error: ', e)
@@ -54,17 +47,17 @@ const sortByCreatedAt = (results: DBEvaluation[]): DBEvaluation[] => {
   return sortedResults
 }
 
-const addParamsForReturnValueToEvaluations = async (results: DBEvaluation[], isSelf: boolean): Promise<Evaluation[]> => {
+const addParamsForReturnValueToEvaluations = async (results: DBEvaluation[]): Promise<Evaluation[]> => {
   try {
     const returnValue = await Promise.all(
       results.map(async (result) => {
         if (!result.props.evaluatorIconKey) {
-          return { ...result.props, id: result.key, evaluatorIconUrl: undefined, shouldShowOperateButtons: isSelf }
+          return { ...result.props, id: result.key, evaluatorIconUrl: undefined }
         } else {
           const icon = await getIcon(result.props.evaluatorIconKey)
           const base64Image = Buffer.from(await icon.Body!.transformToByteArray()).toString('base64')
           const imageSrc = `data:image/jpeg;base64,${base64Image}`
-          return { ...result.props, id: result.key, evaluatorIconUrl: imageSrc, shouldShowOperateButtons: isSelf }
+          return { ...result.props, id: result.key, evaluatorIconUrl: imageSrc }
         }
       }),
     )
@@ -85,7 +78,7 @@ const getSortedAllEvaluations = async (evaluateeId: string): Promise<Evaluation[
     const allEvaluations = await getAllEvaluations(evaluateeId)
     if (!allEvaluations.length) return []
     const sortedResults = sortByCreatedAt(allEvaluations)
-    return addParamsForReturnValueToEvaluations(sortedResults, true)
+    return addParamsForReturnValueToEvaluations(sortedResults)
   } catch (e) {
     console.error('getSortedAllEvaluations error: ', e)
     throw new Error('getSortedAllEvaluations error')
@@ -103,7 +96,7 @@ const getSortedPublishedEvaluations = async (evaluateeId: string): Promise<Evalu
     const publishedEvaluations = await getPublishedEvaluations(evaluateeId)
     if (!publishedEvaluations.length) return []
     const sortedResults = sortByCreatedAt(publishedEvaluations)
-    return addParamsForReturnValueToEvaluations(sortedResults, false)
+    return addParamsForReturnValueToEvaluations(sortedResults)
   } catch (e) {
     console.error('getSortedPublishedEvaluations error: ', e)
     throw new Error('getSortedPublishedEvaluations error')

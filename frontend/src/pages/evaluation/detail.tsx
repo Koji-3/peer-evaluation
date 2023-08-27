@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -6,18 +6,23 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { EvaluationDetailTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
-import { Evaluation, FlashMessage } from 'types/types'
+import { User, Evaluation, FlashMessage } from 'types/types'
 import { fetchUser } from 'apis/user'
 import { fetchSelfEvaluation, fetchOthersEvaluation, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
 import { errorMessages } from 'const/errorMessages'
 
 export const EvaluationDetail: React.FC = () => {
   const [evaluation, setEvaluation] = useState<Evaluation>()
-  const [evaluateeName, setEvaluateeName] = useState<string>('')
+  const [evaluatee, setEvaluatee] = useState<User>()
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { isLoading: isAuth0Loading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isLoading: isAuth0Loading, isAuthenticated, user: auth0User, getAccessTokenSilently } = useAuth0()
   const params = useParams()
+
+  const isSelfMyPage = useMemo(() => {
+    if (!auth0User || !evaluatee?.auth0_id) return false
+    return auth0User.sub === evaluatee.auth0_id
+  }, [auth0User, evaluatee])
 
   const fetchEvaluation = useCallback(async (): Promise<Evaluation> => {
     try {
@@ -109,7 +114,7 @@ export const EvaluationDetail: React.FC = () => {
         const evaluation = await fetchEvaluation()
         const user = await fetchUser(evaluation.evaluateeId)
         setEvaluation(evaluation)
-        setEvaluateeName(user.name)
+        setEvaluatee(user)
         setIsLoading(false)
       } catch (e) {
         setIsLoading(false)
@@ -122,10 +127,11 @@ export const EvaluationDetail: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
-      {evaluation && !isLoading && (
+      {evaluation && evaluatee && !isLoading && (
         <EvaluationDetailTpl
           evaluation={evaluation}
-          evaluateeName={evaluateeName}
+          evaluatee={evaluatee}
+          isSelfMyPage={isSelfMyPage}
           onClickPublish={onClickPublish}
           onClickUnpublish={onClickUnpublish}
           onClickDelete={onClickDelete}

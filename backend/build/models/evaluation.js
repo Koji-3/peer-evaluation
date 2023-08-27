@@ -39,18 +39,11 @@ const getEvaluation = (evaluationId, auth0Id) => __awaiter(void 0, void 0, void 
         const isPublished = evaluation.props.is_published;
         const isDeleted = evaluation.props.is_deleted;
         if (auth0Id) {
-            const user = yield (0, user_1.getUserByAuth0Id)(auth0Id);
-            const userId = user === null || user === void 0 ? void 0 : user.key;
-            if (!userId) {
-                throw new Error(errorMessages_1.errorMessages.evaluation.get);
-            }
-            if (evaluation.props.evaluateeId === userId) {
-                return !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key, shouldShowOperateButtons: true }) : null;
-            }
-            return isPublished || !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key, shouldShowOperateButtons: false }) : null;
+            // 自分の紹介の取得
+            return !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key }) : null;
         }
         else {
-            return isPublished || !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key, shouldShowOperateButtons: false }) : null;
+            return isPublished && !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key }) : null;
         }
     }
     catch (e) {
@@ -67,17 +60,17 @@ const sortByCreatedAt = (results) => {
     });
     return sortedResults;
 };
-const addParamsForReturnValueToEvaluations = (results, isSelf) => __awaiter(void 0, void 0, void 0, function* () {
+const addParamsForReturnValueToEvaluations = (results) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const returnValue = yield Promise.all(results.map((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (!result.props.evaluatorIconKey) {
-                return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: undefined, shouldShowOperateButtons: isSelf });
+                return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: undefined });
             }
             else {
                 const icon = yield (0, s3_1.getIcon)(result.props.evaluatorIconKey);
                 const base64Image = Buffer.from(yield icon.Body.transformToByteArray()).toString('base64');
                 const imageSrc = `data:image/jpeg;base64,${base64Image}`;
-                return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: imageSrc, shouldShowOperateButtons: isSelf });
+                return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: imageSrc });
             }
         })));
         return returnValue;
@@ -98,7 +91,7 @@ const getSortedAllEvaluations = (evaluateeId) => __awaiter(void 0, void 0, void 
         if (!allEvaluations.length)
             return [];
         const sortedResults = sortByCreatedAt(allEvaluations);
-        return addParamsForReturnValueToEvaluations(sortedResults, true);
+        return addParamsForReturnValueToEvaluations(sortedResults);
     }
     catch (e) {
         console.error('getSortedAllEvaluations error: ', e);
@@ -118,7 +111,7 @@ const getSortedPublishedEvaluations = (evaluateeId) => __awaiter(void 0, void 0,
         if (!publishedEvaluations.length)
             return [];
         const sortedResults = sortByCreatedAt(publishedEvaluations);
-        return addParamsForReturnValueToEvaluations(sortedResults, false);
+        return addParamsForReturnValueToEvaluations(sortedResults);
     }
     catch (e) {
         console.error('getSortedPublishedEvaluations error: ', e);
