@@ -119,6 +119,23 @@ export const UserTop: React.FC = () => {
     }
   }
 
+  const onClickSharePage = async (): Promise<void> => {
+    setFlashMessage(undefined)
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/users/${params.id}`)
+      setFlashMessage({
+        type: 'success',
+        message: isSelfMyPage
+          ? 'このページのURLがコピーされました。\nみんなに紹介を書いてもらおう！'
+          : `このページのURLがコピーされました。\n${user?.name}さんをみんなに知ってもらおう！`,
+      })
+    } catch (e) {
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: errorMessages.copy })
+      }
+    }
+  }
+
   useEffect(() => {
     if (isAuth0Loading) return
     ;(async () => {
@@ -179,6 +196,7 @@ export const UserTop: React.FC = () => {
             onClickPublish={onClickPublish}
             onClickUnpublish={onClickUnpublish}
             onClickDelete={onClickDelete}
+            onClickSharePage={onClickSharePage}
           />
         )}
       </Layout>

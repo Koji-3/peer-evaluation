@@ -54,6 +54,7 @@ const StyledFlashMessage = styled.div<StyleProps>`
     line-height: 1.67;
     display: grid;
     place-items: center start;
+    white-space: pre-wrap;
 
     &::before {
       width: 0.5rem;

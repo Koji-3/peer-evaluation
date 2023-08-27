@@ -17,4 +17,5 @@ export const errorMessages = {
     unpublish: '紹介の非公開に失敗しました。',
     delete: '紹介の削除に失敗しました。',
   },
+  copy: 'URLをコピーできませんでした。もう一度お試しください。',
 }

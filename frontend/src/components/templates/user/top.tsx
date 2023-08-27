@@ -12,6 +12,7 @@ import { User, Evaluation } from 'types/types'
 
 /* images */
 import pencilIcon from 'assets/images/icon/pencil.svg'
+import pageIcon from 'assets/images/icon/page.svg'
 
 type Props = {
   className?: string
@@ -24,35 +25,43 @@ type Props = {
   onClickPublish: (id: string) => void
   onClickUnpublish: (id: string) => void
   onClickDelete: (id: string) => void
+  onClickSharePage: () => void
 }
 
 const StyledWrapper = styled.div`
   padding: 3.5rem 0 14rem;
 
-  .user {
-    margin: 0 0 3rem;
+  .upper-part {
+    width: 35.8rem;
+    margin: 0 auto;
 
-    .icon {
-      margin: 0 auto 1.6rem;
+    .share {
+      margin: 0 0 2rem auto;
     }
 
-    .name {
-      margin: 0 0 1.6rem;
-      font-size: 2rem;
-      text-align: center;
-    }
+    .user {
+      margin: 0 0 3rem;
 
-    .profile {
-      width: 35.8rem;
-      margin: 0 auto 0.5rem;
-      font-size: 1.4rem;
-    }
+      .icon {
+        margin: 0 auto 1.6rem;
+      }
 
-    .to-edit {
-      width: 35.8rem;
-      margin: 0 auto 0.5rem;
-      font-size: 1rem;
-      justify-content: flex-end;
+      .name {
+        margin: 0 0 1.6rem;
+        font-size: 2rem;
+        text-align: center;
+      }
+
+      .profile {
+        margin: 0 0 0.5rem;
+        font-size: 1.4rem;
+      }
+
+      .to-edit {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+        justify-content: flex-end;
+      }
     }
   }
 
@@ -111,6 +120,7 @@ export const UserTopTpl: React.FC<Props> = ({
   onClickPublish,
   onClickUnpublish,
   onClickDelete,
+  onClickSharePage,
 }) => {
   const navigate = useNavigate()
 
@@ -129,11 +139,14 @@ export const UserTopTpl: React.FC<Props> = ({
 
   return (
     <StyledWrapper>
-      <div className="user">
-        <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
-        <p className="name">{user.name}</p>
-        <p className="profile">{user.profile}</p>
-        <LinkWithIcon linkText="プロフィールを編集" href={`/user/edit/${user.id}`} direction="right" className="to-edit" />
+      <div className="upper-part">
+        <ButtonWithIcon buttonText="このページを共有" icon={pageIcon} buttonType="primary" onClick={onClickSharePage} className="share" />
+        <div className="user">
+          <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
+          <p className="name">{user.name}</p>
+          <p className="profile">{user.profile}</p>
+          <LinkWithIcon linkText="プロフィールを編集" href={`/user/edit/${user.id}`} direction="right" className="to-edit" />
+        </div>
       </div>
 
       <RadarChart data={getChartData()} className="chart" />
