@@ -23,7 +23,7 @@ const StyledInputWrapper = styled.div`
   }
 
   .error {
-    padding: 1.5rem 0 0;
+    padding: 2rem 0 0;
     color: ${(props): string => props.theme.errorText};
     font-size: 1.2rem;
     letter-spacing: 0.1em;

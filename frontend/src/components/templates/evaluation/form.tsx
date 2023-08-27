@@ -64,7 +64,7 @@ const StyledWrapper = styled.div`
         }
 
         .icon {
-          margin: 0 auto 1.4rem;
+          margin: 0 auto 2rem;
         }
 
         .input {

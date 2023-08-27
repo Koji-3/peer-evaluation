@@ -36,11 +36,11 @@ const StyledWrapper = styled.div`
     }
 
     > .icon {
-      margin: 0 0 3rem;
+      margin: 0 0 6rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.4rem;
+      gap: 2rem;
     }
 
     > .name {
