@@ -45,14 +45,14 @@ export const Header: React.FC<Props> = ({ className, isLoggedIn, loginUserId, on
   const navigate = useNavigate()
 
   const onClickProfile = (): void => {
-    navigate(`/user/edit/${loginUserId}`)
+    navigate(`/user/${loginUserId}`)
   }
 
   const Button = (): React.ReactNode => {
     return isLoggedIn ? (
       <div className="header-button-wrapper">
         <HeaderButton icon={logoutIcon} text="ログアウト" onClick={onClickLogout} />
-        <HeaderButton icon={profileIcon} text="プロフィール" onClick={onClickProfile} className="profile-button" />
+        <HeaderButton icon={profileIcon} text="マイページ" onClick={onClickProfile} className="profile-button" />
       </div>
     ) : (
       <div className="header-button-wrapper">
