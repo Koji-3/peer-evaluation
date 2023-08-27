@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { useParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -6,7 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { UserTopTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
-import { User, Evaluation, FlashMessage } from 'types/types'
+import { User,Auth0User, Evaluation, FlashMessage } from 'types/types'
 import { fetchUser } from 'apis/user'
 import { fetchIconUrl } from 'apis/icon'
 import { fetchSelfEvaluations, fetchOthersEvaluations, publishEvaluation, unpublishEvaluation, deleteEvaluation } from 'apis/evaluation'
@@ -23,7 +23,7 @@ export const UserTop: React.FC = () => {
   const [lastPage, setLastPage] = useState<number>(10)
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { isLoading: isAuth0Loading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isLoading: isAuth0Loading, isAuthenticated,user: auth0User, getAccessTokenSilently } = useAuth0()
   const params = useParams()
   const [searchParams] = useSearchParams()
   const location = useLocation()
@@ -160,6 +160,11 @@ export const UserTop: React.FC = () => {
     }
   }, [searchParams, lastPage, evaluations])
 
+  const isSelfMyPage = useMemo(() => {
+    if (!auth0User || !user) return false
+    return auth0User.sub === user.auth0_id
+  }, [auth0User, user])
+
   return (
     <>
       <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isLoading}>
@@ -170,6 +175,7 @@ export const UserTop: React.FC = () => {
             evaluations={evaluationsToShow}
             currentPage={currentPage}
             lastPage={lastPage}
+            isSelfMyPage={isSelfMyPage}
             onClickPublish={onClickPublish}
             onClickUnpublish={onClickUnpublish}
             onClickDelete={onClickDelete}
