@@ -19,7 +19,7 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
-  width: 36rem;
+  width: 37rem;
 
   > .content {
     padding: 1.2rem 1.7rem;

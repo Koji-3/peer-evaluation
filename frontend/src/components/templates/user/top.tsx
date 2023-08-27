@@ -1,13 +1,17 @@
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 /* components */
 import { Icon } from 'components/atoms'
-import { Pagination } from 'components/molecules'
+import { Pagination, ButtonWithIcon } from 'components/molecules'
 import { EvaluationItem, RadarChart } from 'components/organisms'
 
 /* lib, types */
 import { parseNumberToOneDecimalText } from 'lib/function'
 import { User, Evaluation } from 'types/types'
+
+/* images */
+import pencilIcon from 'assets/images/icon/pencil.svg'
 
 type Props = {
   className?: string
@@ -38,7 +42,7 @@ const StyledWrapper = styled.div`
     }
 
     .profile {
-      width: 32.9rem;
+      width: 35.8rem;
       margin: 0 auto;
       font-size: 1.4rem;
     }
@@ -51,11 +55,30 @@ const StyledWrapper = styled.div`
   .evaluations {
     margin: 0 0 3.5rem;
 
-    .title {
-      margin: 0 0 2rem;
-      font-size: 1.6rem;
-      font-weight: 700;
-      text-align: center;
+    .title-wrapper {
+      width: 37rem;
+      margin: 0 auto 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title {
+        padding: 0 0 0 1.5rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-align: center;
+        position: relative;
+
+        &::before {
+          width: 0.5rem;
+          height: 100%;
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          background: ${(props): string => props.theme.primary};
+        }
+      }
     }
 
     .evaluation-items-wrapper {
@@ -80,9 +103,15 @@ export const UserTopTpl: React.FC<Props> = ({
   onClickUnpublish,
   onClickDelete,
 }) => {
+  const navigate = useNavigate()
+
   const getChartData = (): string[] => {
     const values = Object.values(user.averageEvaluation) as number[]
     return values.map((num) => (num === 0 ? '0' : parseNumberToOneDecimalText(num)))
+  }
+
+  const onClickIntroduce = (): void => {
+    navigate(`/evaluation/form/${user.id}`)
   }
 
   return (
@@ -97,8 +126,9 @@ export const UserTopTpl: React.FC<Props> = ({
       <RadarChart data={getChartData()} className="chart" />
 
       <div className="evaluations">
-        <div className="title">
+        <div className="title-wrapper">
           <p className="title">{user.name}さんの紹介一覧</p>
+          <ButtonWithIcon buttonText="紹介する" icon={pencilIcon} buttonType="primary" onClick={onClickIntroduce} />
         </div>
         {evaluations.length ? (
           <div className="evaluation-items-wrapper">
