@@ -139,9 +139,9 @@ export const UserTop: React.FC = () => {
           setFlashMessage(location.state.flashMessage)
 
           setTimeout(() => {
-            // リロードするとstateが残ってしまうので、リロード後にstateを削除する
+            // リロードするとstateが残ってしまうので、遷移後すぐにstateを削除する
             navigate(location.pathname, { replace: true })
-          }, 6000)
+          }, 100)
         }
       } catch (e) {
         setIsLoading(false)
