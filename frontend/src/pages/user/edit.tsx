@@ -95,6 +95,11 @@ export const UserEdit: React.FC = () => {
   }
 
   const deleteUser = async (): Promise<void> => {
+    const canProceed = confirm(
+      '本当に退会してもよろしいですか？\n退会するとプロフィールやマイページ内の情報が消去され、元に戻せなくなります。',
+    )
+    if (!canProceed) return
+
     try {
       const token = await getAccessTokenSilently()
       await deleteUserApi(token)
