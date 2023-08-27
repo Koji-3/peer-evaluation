@@ -133,12 +133,12 @@ export const RadarChart: React.FC<Props> = ({ className, data }) => {
     <StyledWrapper className={className}>
       <Radar data={chartData} options={options} />
       {[...Array(6)].map((_, index) => (
-        <>
+        <div key={index}>
           <span className={`label index${index}`}>{EvaluationLabelValues[index]}</span>
           <span className={`data index${index}`} key={index}>
             {data[index]}
           </span>
-        </>
+        </div>
       ))}
     </StyledWrapper>
   )
