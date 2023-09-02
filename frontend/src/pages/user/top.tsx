@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -29,33 +29,39 @@ export const UserTop: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const isSelfMyPage = useMemo(() => {
-    if (!auth0User || !user) return false
-    return auth0User.sub === user.auth0_id
-  }, [auth0User, user])
+  const isSelfMyPage = useCallback(
+    (user: User) => {
+      if (!auth0User || !user) return false
+      return auth0User.sub === user.auth0_id
+    },
+    [auth0User],
+  )
 
-  const fetchEvaluations = useCallback(async (): Promise<Evaluation[]> => {
-    try {
-      if (isSelfMyPage) {
-        const token = await getAccessTokenSilently()
-        const evaluations = await fetchSelfEvaluations(token, params.id)
-        return evaluations
-      } else {
-        const evaluations = await fetchOthersEvaluations(params.id)
-        return evaluations
+  const fetchEvaluations = useCallback(
+    async (user: User): Promise<Evaluation[]> => {
+      try {
+        if (isSelfMyPage(user)) {
+          const token = await getAccessTokenSilently()
+          const evaluations = await fetchSelfEvaluations(token, params.id)
+          return evaluations
+        } else {
+          const evaluations = await fetchOthersEvaluations(params.id)
+          return evaluations
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(e.message)
+        }
+        throw new Error(errorMessages.evaluation.get)
       }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw new Error(e.message)
-      }
-      throw new Error(errorMessages.evaluation.get)
-    }
-  }, [getAccessTokenSilently, isSelfMyPage, params.id])
+    },
+    [getAccessTokenSilently, isSelfMyPage, params.id],
+  )
 
   const refetchAfterUpdateEvaluation = async (): Promise<void> => {
     try {
       const user = await fetchUser(params.id)
-      const evaluations = await fetchEvaluations()
+      const evaluations = await fetchEvaluations(user)
       setUser(user)
       setEvaluations(evaluations)
     } catch (e) {
@@ -125,7 +131,7 @@ export const UserTop: React.FC = () => {
       await navigator.clipboard.writeText(`${window.location.origin}/users/${params.id}`)
       setFlashMessage({
         type: 'success',
-        message: isSelfMyPage
+        message: isSelfMyPage(user as User)
           ? 'このページのURLがコピーされました。\nみんなに紹介を書いてもらおう！'
           : `このページのURLがコピーされました。\n${user?.name}さんをみんなに知ってもらおう！`,
       })
@@ -142,7 +148,7 @@ export const UserTop: React.FC = () => {
       try {
         const user = await fetchUser(params.id)
         const iconUrl = await fetchIconUrl(user.icon_key)
-        const evaluations = await fetchEvaluations()
+        const evaluations = await fetchEvaluations(user)
         setUser(user)
         setUserIconUrl(iconUrl)
         setEvaluations(evaluations)
@@ -185,14 +191,14 @@ export const UserTop: React.FC = () => {
   return (
     <>
       <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isLoading}>
-        {user && !isLoading && (
+        {user && !isLoading && evaluations !== undefined && (
           <UserTopTpl
             user={user}
             userIconUrl={userIconUrl}
             evaluations={evaluationsToShow}
             currentPage={currentPage}
             lastPage={lastPage}
-            isSelfMyPage={isSelfMyPage}
+            isSelfMyPage={isSelfMyPage(user)}
             onClickPublish={onClickPublish}
             onClickUnpublish={onClickUnpublish}
             onClickDelete={onClickDelete}
