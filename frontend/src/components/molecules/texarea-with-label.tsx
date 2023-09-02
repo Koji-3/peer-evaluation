@@ -40,7 +40,7 @@ export const TextareaWithLabel: React.FC<Props> = ({ className = '', labelText, 
     <StyledWrapper className={className}>
       {!!labelText && <Label text={labelText} className="label" />}
       <Textarea name={name} placeholder={placeholder} value={value} maxLength={maxLength} onChange={onChange} />
-      {!!maxLength && <p className="max-length">※200文字以内</p>}
+      {!!maxLength && <p className="max-length">※{maxLength}文字以内</p>}
     </StyledWrapper>
   )
 }

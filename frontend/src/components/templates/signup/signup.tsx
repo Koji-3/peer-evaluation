@@ -91,7 +91,15 @@ export const SignupTpl: React.FC<Props> = ({
           <IconInput label="アイコンを登録" onChange={onChangeIconInput} error={iconInputError} className="input" />
         </div>
 
-        <TextInputWithLabel labelText="表示名" name="name" value={name} placeholder="taro" onChange={onChangeUserInput} className="name" />
+        <TextInputWithLabel
+          labelText="表示名"
+          name="name"
+          value={name}
+          placeholder="taro"
+          maxLength={7}
+          onChange={onChangeUserInput}
+          className="name"
+        />
         <TextareaWithLabel
           labelText="ひとことコメント"
           name="profile"

@@ -12,6 +12,7 @@ type TextInputProps = {
   name?: string
   value: string
   placeholder?: string
+  maxLength?: number
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -29,6 +30,12 @@ const StyledWrapper = styled.div`
     display: block;
   }
 
+  .max-length {
+    padding: 0.5rem 0 0;
+    font-size: 1.2rem;
+    text-align: right;
+  }
+
   .error {
     padding: 0.8rem 0 0;
     color: ${(props): string => props.theme.errorText};
@@ -37,11 +44,22 @@ const StyledWrapper = styled.div`
   }
 `
 
-export const TextInputWithLabel: React.FC<Props> = ({ className = '', labelText, type, name, value, placeholder, error, onChange }) => {
+export const TextInputWithLabel: React.FC<Props> = ({
+  className = '',
+  labelText,
+  type,
+  name,
+  value,
+  placeholder,
+  maxLength,
+  error,
+  onChange,
+}) => {
   return (
     <StyledWrapper className={className}>
       <Label text={labelText} className="label" />
-      <TextInput type={type} name={name} placeholder={placeholder} value={value} onChange={onChange} />
+      <TextInput type={type} name={name} placeholder={placeholder} value={value} maxLength={maxLength} onChange={onChange} />
+      {!!maxLength && <p className="max-length">※{maxLength}文字以内</p>}
       {!!error && <p className="error">{error}</p>}
     </StyledWrapper>
   )

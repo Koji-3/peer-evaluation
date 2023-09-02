@@ -6,6 +6,7 @@ type Props = {
   name?: string
   value: string
   placeholder?: string
+  maxLength?: number
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -30,6 +31,24 @@ const StyledInput = styled.input`
   }
 `
 
-export const TextInput: React.FC<Props> = ({ className = '', type = 'text', name = '', placeholder = '', value = '', onChange }) => {
-  return <StyledInput className={className} type={type} name={name} placeholder={placeholder} value={value || ''} onChange={onChange} />
+export const TextInput: React.FC<Props> = ({
+  className = '',
+  type = 'text',
+  name = '',
+  placeholder = '',
+  value = '',
+  maxLength,
+  onChange,
+}) => {
+  return (
+    <StyledInput
+      className={className}
+      type={type}
+      name={name}
+      placeholder={placeholder}
+      value={value || ''}
+      maxLength={maxLength}
+      onChange={onChange}
+    />
+  )
 }

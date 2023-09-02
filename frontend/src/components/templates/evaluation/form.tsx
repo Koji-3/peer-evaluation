@@ -159,6 +159,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
               placeholder="taro"
               name="evaluatorName"
               value={evaluatorName}
+              maxLength={7}
               onChange={onChangeEvaluationInput}
               className="evaluator-name"
             />
@@ -167,6 +168,7 @@ export const EvaluationFormTpl: React.FC<Props> = ({
               placeholder="友人"
               name="relationship"
               value={relationship}
+              maxLength={7}
               onChange={onChangeEvaluationInput}
             />
           </div>

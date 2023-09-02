@@ -143,7 +143,7 @@ export const UserEditTpl: React.FC<Props> = ({
         </div>
 
         <div className="input-wrapper">
-          <TextInputWithLabel labelText="表示名" name="name" value={userInput.name} onChange={onChangeUserInput} />
+          <TextInputWithLabel labelText="表示名" name="name" value={userInput.name} maxLength={7} onChange={onChangeUserInput} />
           {/* googleアカウントでログインしている場合はemail, passwordは変更できない */}
           {shouldShowEmailInput && (
             <TextInputWithLabel
