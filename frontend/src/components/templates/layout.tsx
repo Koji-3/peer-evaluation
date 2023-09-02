@@ -34,11 +34,15 @@ const StyledWrapper = styled.div`
   > .inner {
     width: 100%;
     max-width: 500px;
-    padding: 6.5rem 0 0;
     background: ${(props): string => props.theme.background};
     position: relative;
     overflow-x: hidden;
     transform: scale(1);
+
+    .header {
+      position: sticky;
+      top: 0;
+    }
 
     .loading {
       margin: -6.5rem 0 0;
@@ -69,10 +73,20 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
   return (
     <StyledWrapper>
       <div className="inner" id="top_inner">
-        {isAuth0Loading || (isLoading && <LoadingTpl className="loading" />)}
-        <Header isLoggedIn={isAuthenticated} loginUserId={userId} onClickLogin={loginWithRedirect} onClickLogout={logout} />
-        <FlashMessageList flashMessageList={flashMessages ? [layoutFlashMessage, ...flashMessages] : [layoutFlashMessage]} />
-        {children}
+        <div>
+          {isAuth0Loading || (isLoading && <LoadingTpl className="loading" />)}
+          <Header
+            isLoggedIn={isAuthenticated}
+            loginUserId={userId}
+            onClickLogin={loginWithRedirect}
+            onClickLogout={logout}
+            className="header"
+          />
+          {(!!layoutFlashMessage || !!flashMessages?.length) && (
+            <FlashMessageList flashMessageList={flashMessages ? [layoutFlashMessage, ...flashMessages] : [layoutFlashMessage]} />
+          )}
+          {children}
+        </div>
       </div>
     </StyledWrapper>
   )

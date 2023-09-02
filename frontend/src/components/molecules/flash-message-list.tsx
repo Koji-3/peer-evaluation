@@ -1,4 +1,3 @@
-import { useEffect, useRef, useCallback } from 'react'
 import styled from 'styled-components'
 
 /* components */
@@ -16,7 +15,8 @@ const StyledFlashMessageList = styled.div`
   width: 35.4rem;
   left: auto;
   z-index: 99;
-  position: fixed;
+  position: sticky;
+  top: 8.5rem;
 
   display: flex;
   flex-direction: column;
@@ -24,22 +24,8 @@ const StyledFlashMessageList = styled.div`
 `
 
 export const FlashMessageList: React.FC<Props> = ({ className = '', flashMessageList }) => {
-  const flashMessageListRef = useRef<HTMLDivElement>(null)
-
-  const handleScroll = useCallback((): void => {
-    if (!flashMessageListRef.current) return
-    const scrollY = window.scrollY
-    flashMessageListRef.current.style.top = scrollY === 0 ? '8rem' : `${scrollY / 10 + 1.5}rem`
-  }, [])
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
-
   return (
-    <StyledFlashMessageList className={className} ref={flashMessageListRef}>
+    <StyledFlashMessageList className={className}>
       {flashMessageList.map(
         (flashMessage, index) => flashMessage && <FlashMessage flashMessage={flashMessage} key={index} className="message" />,
       )}
