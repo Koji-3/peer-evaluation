@@ -33,7 +33,6 @@ const StyledWrapper = styled.div`
 
   .user {
     width: 35.8rem;
-    margin: 0 auto;
     margin: 0 auto 1.6rem;
 
     .icon {
@@ -144,7 +143,9 @@ export const UserTopTpl: React.FC<Props> = ({
         <Icon src={userIconUrl} alt={user.name} size={10} className="icon" />
         <p className="name">{user.name}</p>
         <p className="profile">{user.profile}</p>
-        <LinkWithIcon linkText="プロフィールを編集" href={`/user/edit/${user.id}`} direction="right" className="to-edit" />
+        {isSelfMyPage && (
+          <LinkWithIcon linkText="プロフィールを編集" href={`/user/edit/${user.id}`} direction="right" className="to-edit" />
+        )}
       </div>
 
       <ButtonWithIcon buttonText="このページを共有" icon={pageIcon} buttonType="primary" onClick={onClickSharePage} className="share" />
