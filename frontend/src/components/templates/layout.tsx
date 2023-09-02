@@ -43,10 +43,6 @@ const StyledWrapper = styled.div`
       position: sticky;
       top: 0;
     }
-
-    .loading {
-      margin: -6.5rem 0 0;
-    }
   }
 `
 
@@ -74,7 +70,7 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
     <StyledWrapper>
       <div className="inner" id="top_inner">
         <div>
-          {isAuth0Loading || (isLoading && <LoadingTpl className="loading" />)}
+          {(isAuth0Loading || isLoading) && <LoadingTpl />}
           <Header
             isLoggedIn={isAuthenticated}
             loginUserId={userId}
