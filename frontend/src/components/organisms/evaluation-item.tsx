@@ -23,7 +23,7 @@ const StyledWrapper = styled.div`
   width: 37rem;
 
   > .content {
-    padding: 1.2rem 1.7rem;
+    padding: 0 1.7rem 1.2rem;
     background: ${(props): string => props.theme.white};
     border: 0.1rem solid ${(props): string => props.theme.dividerGray};
     border-radius: 1.5rem;
@@ -33,13 +33,23 @@ const StyledWrapper = styled.div`
       display: flex;
       gap: 1.5rem;
 
+      .icon {
+        margin: 1.2rem 0 0;
+      }
+
       .right-content {
         width: 28rem;
 
-        .evaluateBy {
-          padding: 0 0 1rem;
-          font-size: 1.4rem;
+        .labels {
+          height: 3.6rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           border-bottom: 0.1rem solid ${(props): string => props.theme.dividerGray};
+
+          .evaluateBy {
+            font-size: 1.2rem;
+          }
         }
 
         .comment {
@@ -58,12 +68,6 @@ const StyledWrapper = styled.div`
           margin: 0 0 0 auto;
         }
       }
-    }
-
-    .evaluation-status {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.7rem;
     }
   }
 
@@ -89,17 +93,19 @@ export const EvaluationItem: React.FC<Props> = ({
     <StyledWrapper className={className}>
       <div className="content">
         <div className="flex-wrapper">
-          <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} />
+          <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} className="icon" />
 
           <div className="right-content">
-            <p className="evaluateBy">
-              {evaluatorName} / {relationship}
-            </p>
+            <div className="labels">
+              <p className="evaluateBy">
+                {evaluatorName} / {relationship}
+              </p>
+              {isSelfEvaluation && <EvaluationStatus isPublished={is_published} />}
+            </div>
             <p className="comment">{comment}</p>
             <LinkWithIcon linkText="詳しく見る" href={`/evaluation/${evaluateeId}/${id}`} direction="right" className="to-detail" />
           </div>
         </div>
-        {isSelfEvaluation && <EvaluationStatus isPublished={is_published} className="evaluation-status" />}
       </div>
       {isSelfEvaluation && (
         <div className="buttons">
