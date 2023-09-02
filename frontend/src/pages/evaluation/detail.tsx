@@ -112,9 +112,9 @@ export const EvaluationDetail: React.FC = () => {
     ;(async () => {
       try {
         const evaluation = await fetchEvaluation()
-        const user = await fetchUser(evaluation.evaluateeId)
+        const evaluatee = await fetchUser(evaluation.evaluateeId)
         setEvaluation(evaluation)
-        setEvaluatee(user)
+        setEvaluatee(evaluatee)
         setIsLoading(false)
       } catch (e) {
         setIsLoading(false)
