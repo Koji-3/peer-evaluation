@@ -13,22 +13,29 @@ type Props = {
 
 const StyledFlashMessageList = styled.div`
   width: 35.4rem;
+  height: 0;
   left: auto;
   z-index: 99;
   position: sticky;
   top: 8.5rem;
 
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  > .inner {
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 `
 
 export const FlashMessageList: React.FC<Props> = ({ className = '', flashMessageList }) => {
   return (
     <StyledFlashMessageList className={className}>
-      {flashMessageList.map(
-        (flashMessage, index) => flashMessage && <FlashMessage flashMessage={flashMessage} key={index} className="message" />,
-      )}
+      <div className="inner">
+        {flashMessageList.map(
+          (flashMessage, index) => flashMessage && <FlashMessage flashMessage={flashMessage} key={index} className="message" />,
+        )}
+      </div>
     </StyledFlashMessageList>
   )
 }

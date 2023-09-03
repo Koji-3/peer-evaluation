@@ -48,11 +48,12 @@ const StyledWrapper = styled.div<{ isLp: boolean }>`
       top: 0;
     }
 
-    >.content {
+    > .content {
       padding: 0 0 10rem;
       position: relative;
+      min-height: 100vh;
 
-      >footer {
+      > footer {
         width: 100%;
         height: 2.5rem;
         color: ${(props): string => props.theme.white};
@@ -64,7 +65,6 @@ const StyledWrapper = styled.div<{ isLp: boolean }>`
         bottom: 0;
       }
     }
-
   }
 `
 
@@ -77,8 +77,8 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
 
   const onClickProfile = (): void => {
     setLayoutFlashMessage(undefined)
-    if(!userId) {
-      setLayoutFlashMessage({type: 'error', message: errorMessages.user.get})
+    if (!userId) {
+      setLayoutFlashMessage({ type: 'error', message: errorMessages.user.get })
       return
     }
     navigate(`/user/${userId}`)
@@ -102,7 +102,7 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
   return (
     <StyledWrapper isLp={pathname === '/'}>
       <div className="inner" id="top_inner">
-          <div className='content'>
+        <div className="content">
           {(isAuth0Loading || isLoading) && <LoadingTpl />}
           <Header
             isLoggedIn={isAuthenticated}
@@ -116,8 +116,8 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
           )}
           {children}
 
-        <footer>©2023 communicle</footer>
-          </div>
+          <footer>©2023 communicle</footer>
+        </div>
       </div>
     </StyledWrapper>
   )
