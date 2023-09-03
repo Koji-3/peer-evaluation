@@ -141,7 +141,6 @@ export const updateEvaluation = async ({
   try {
     const evaluation: DBEvaluation = await evaluations.get(evaluationId)
     const res = await evaluations.set(evaluationId, {
-      ...evaluation,
       is_published: isPublished ?? evaluation.props.is_published,
       is_deleted: isDeleted ?? evaluation.props.is_deleted,
     })
@@ -155,7 +154,7 @@ export const updateEvaluation = async ({
   }
 }
 
-// FIXME: データ確認用なので最後に消す
+// データ確認用
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllEvaluations = async (): Promise<void> => {
   const evaluationsList = await evaluations.list()
@@ -164,6 +163,4 @@ const deleteAllEvaluations = async (): Promise<void> => {
     await evaluations.delete(key)
   })
 }
-
-// FIXME: データ確認用なので最後に消す
 // deleteAllEvaluations()

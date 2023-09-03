@@ -139,14 +139,12 @@ export const deleteUser = async (auth0Id: string): Promise<DBUser> => {
   }
 }
 
-// FIXME: データ確認用なので最後に消す
+/* データ確認用 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getUserList = async (): Promise<any> => {
   const usersList = await users.list()
   console.log('getUserList', usersList)
 }
-
-// FIXME: データ確認用なので最後に消す
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllUser = async (): Promise<void> => {
   const usersList = await users.list()
@@ -155,7 +153,6 @@ const deleteAllUser = async (): Promise<void> => {
     await users.delete(key)
   })
 }
-
-// FIXME: データ確認用なので最後に消す
 // deleteAllUser()
 getUserList()
+/* ここまで */

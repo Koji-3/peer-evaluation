@@ -150,7 +150,10 @@ exports.getEvaluations = getEvaluations;
 const updateEvaluation = ({ evaluationId, isPublished, isDeleted, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const evaluation = yield evaluations.get(evaluationId);
-        const res = yield evaluations.set(evaluationId, Object.assign(Object.assign({}, evaluation), { is_published: isPublished !== null && isPublished !== void 0 ? isPublished : evaluation.props.is_published, is_deleted: isDeleted !== null && isDeleted !== void 0 ? isDeleted : evaluation.props.is_deleted }));
+        const res = yield evaluations.set(evaluationId, {
+            is_published: isPublished !== null && isPublished !== void 0 ? isPublished : evaluation.props.is_published,
+            is_deleted: isDeleted !== null && isDeleted !== void 0 ? isDeleted : evaluation.props.is_deleted,
+        });
         if (!!res)
             return { update: true };
         return { update: false };
@@ -161,7 +164,7 @@ const updateEvaluation = ({ evaluationId, isPublished, isDeleted, }) => __awaite
     }
 });
 exports.updateEvaluation = updateEvaluation;
-// FIXME: データ確認用なので最後に消す
+// データ確認用
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllEvaluations = () => __awaiter(void 0, void 0, void 0, function* () {
     const evaluationsList = yield evaluations.list();
@@ -170,5 +173,4 @@ const deleteAllEvaluations = () => __awaiter(void 0, void 0, void 0, function* (
         yield evaluations.delete(key);
     }));
 });
-// FIXME: データ確認用なので最後に消す
 // deleteAllEvaluations()

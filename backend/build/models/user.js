@@ -127,13 +127,12 @@ const deleteUser = (auth0Id) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.deleteUser = deleteUser;
-// FIXME: データ確認用なので最後に消す
+/* データ確認用 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getUserList = () => __awaiter(void 0, void 0, void 0, function* () {
     const usersList = yield users.list();
     console.log('getUserList', usersList);
 });
-// FIXME: データ確認用なので最後に消す
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
     const usersList = yield users.list();
@@ -142,6 +141,6 @@ const deleteAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
         yield users.delete(key);
     }));
 });
-// FIXME: データ確認用なので最後に消す
 // deleteAllUser()
 getUserList();
+/* ここまで */
