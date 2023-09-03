@@ -3,17 +3,20 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
-import { Button } from 'components/atoms'
-import { Layout } from 'components/templates'
+import { Layout, TopTpl } from 'components/templates'
 
 /* lib, types, apis */
 import { FlashMessage } from 'types/types'
 
 export const Top: React.FC = () => {
   const location = useLocation()
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const { loginWithRedirect } = useAuth0()
   const [flashMessage, setFlashMessage] = useState<FlashMessage | undefined>()
   const navigate = useNavigate()
+
+  const signup = (): void => {
+    loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } })
+  }
 
   useEffect(() => {
     if (location.state && location.state.flashMessage) {
@@ -28,29 +31,7 @@ export const Top: React.FC = () => {
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined}>
-      <Button
-        buttonText="ログイン"
-        buttonType="primary"
-        onClick={() => {
-          loginWithRedirect()
-        }}
-      />
-      <Button
-        buttonText="新規登録"
-        buttonType="white"
-        onClick={() => {
-          loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } })
-        }}
-      />
-      {isAuthenticated && (
-        <button
-          onClick={() => {
-            logout({ logoutParams: { returnTo: window.location.origin } })
-          }}
-        >
-          ログアウト
-        </button>
-      )}
+      <TopTpl signup={signup} />
     </Layout>
   )
 }

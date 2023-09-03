@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import styled from 'styled-components'
 
@@ -14,6 +15,7 @@ import { errorMessages } from 'const/errorMessages'
 
 /* images */
 import background from 'assets/images/background.svg'
+import lpBackground from 'assets/images/lp/background.svg'
 
 type Props = {
   children?: React.ReactNode
@@ -21,7 +23,7 @@ type Props = {
   isLoading?: boolean
 }
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ isLp: boolean }>`
   min-width: 100vw;
   height: 100vh;
   background: url(${background});
@@ -34,10 +36,12 @@ const StyledWrapper = styled.div`
   > .inner {
     width: 100%;
     max-width: 500px;
-    background: ${(props): string => props.theme.background};
+    background: ${(props): string => (props.isLp ? `url(${lpBackground})` : props.theme.background)};
     position: relative;
     overflow-x: hidden;
     transform: scale(1);
+    background-size: cover;
+    background-repeat: no-repeat;
 
     .header {
       position: sticky;
@@ -50,6 +54,7 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
   const { isLoading: isAuth0Loading, isAuthenticated, logout, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const [userId, setUserId] = useState<string | undefined>(undefined)
   const [layoutFlashMessage, setLayoutFlashMessage] = useState<FlashMessageType | undefined>(undefined)
+  const { pathname } = useLocation()
 
   useEffect(() => {
     if (isAuth0Loading) return
@@ -67,7 +72,7 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
   }, [getAccessTokenSilently, isAuthenticated, isAuth0Loading])
 
   return (
-    <StyledWrapper>
+    <StyledWrapper isLp={pathname === '/'}>
       <div className="inner" id="top_inner">
         <div>
           {(isAuth0Loading || isLoading) && <LoadingTpl />}

@@ -2,6 +2,7 @@
  * Templates modules
  */
 export * from './layout'
+export * from './top/top'
 export * from './user/top'
 export * from './user/edit'
 export * from './evaluation/detail'

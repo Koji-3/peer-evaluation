@@ -15,6 +15,7 @@ export const theme = {
   darkGreen: '#31565d',
   background: '#fcfaf8',
   blue: '#00bbe4',
+  yellow: '#F4EB15',
   errorText: '#ee0e00',
   errorBg: '#bd5353',
 } as const
