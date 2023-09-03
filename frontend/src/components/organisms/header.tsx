@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 /* components */
@@ -13,9 +12,9 @@ import profileIcon from 'assets/images/icon/profile.svg'
 type Props = {
   className?: string
   isLoggedIn: boolean
-  loginUserId?: string
   onClickLogin: () => void
   onClickLogout: () => void
+  onClickProfile: () => void
 }
 
 const StyledWrapper = styled.div`
@@ -41,13 +40,7 @@ const StyledWrapper = styled.div`
   }
 `
 
-export const Header: React.FC<Props> = ({ className, isLoggedIn, loginUserId, onClickLogin, onClickLogout }) => {
-  const navigate = useNavigate()
-
-  const onClickProfile = (): void => {
-    navigate(`/user/${loginUserId}`)
-  }
-
+export const Header: React.FC<Props> = ({ className, isLoggedIn, onClickLogin, onClickLogout, onClickProfile }) => {
   const Button = (): React.ReactNode => {
     return isLoggedIn ? (
       <div className="header-button-wrapper">

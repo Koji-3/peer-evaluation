@@ -25,7 +25,7 @@ const StyledWrapper = styled.div`
   > .inner {
     width: 36rem;
     margin: 0 auto;
-    padding: 1.8rem 0 4.2rem;
+    padding: 1.8rem 0 0;
 
     > header {
       margin: 0 0 1.8rem;

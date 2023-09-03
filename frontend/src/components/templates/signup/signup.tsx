@@ -22,7 +22,7 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
-  padding: 6rem 0 15rem;
+  padding: 6rem 0 0;
 
   > .inner {
     width: 33rem;

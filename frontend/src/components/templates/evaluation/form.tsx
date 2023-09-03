@@ -28,7 +28,7 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
-  padding: 5.3rem 0;
+  padding: 5.3rem 0 0;
 
   .evaluatee {
     margin: 0 0 4.5rem;

@@ -17,7 +17,8 @@ type Props = {
 }
 
 const StyledWrapper = styled.div`
-  padding: 9.8rem 0 5rem;
+  padding: 4.5rem 0 0;
+
   > .inner {
     width: 35rem;
     margin: 0 auto;

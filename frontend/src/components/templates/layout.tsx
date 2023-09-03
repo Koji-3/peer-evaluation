@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import styled from 'styled-components'
 
@@ -47,6 +47,24 @@ const StyledWrapper = styled.div<{ isLp: boolean }>`
       position: sticky;
       top: 0;
     }
+
+    >.content {
+      padding: 0 0 10rem;
+      position: relative;
+
+      >footer {
+        width: 100%;
+        height: 2.5rem;
+        color: ${(props): string => props.theme.white};
+        font-size: 1rem;
+        text-align: center;
+        line-height: 2.5rem;
+        background: ${(props): string => props.theme.primary};
+        position: absolute;
+        bottom: 0;
+      }
+    }
+
   }
 `
 
@@ -55,6 +73,16 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
   const [userId, setUserId] = useState<string | undefined>(undefined)
   const [layoutFlashMessage, setLayoutFlashMessage] = useState<FlashMessageType | undefined>(undefined)
   const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  const onClickProfile = (): void => {
+    setLayoutFlashMessage(undefined)
+    if(!userId) {
+      setLayoutFlashMessage({type: 'error', message: errorMessages.user.get})
+      return
+    }
+    navigate(`/user/${userId}`)
+  }
 
   useEffect(() => {
     if (isAuth0Loading) return
@@ -74,20 +102,22 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
   return (
     <StyledWrapper isLp={pathname === '/'}>
       <div className="inner" id="top_inner">
-        <div>
+          <div className='content'>
           {(isAuth0Loading || isLoading) && <LoadingTpl />}
           <Header
             isLoggedIn={isAuthenticated}
-            loginUserId={userId}
             onClickLogin={loginWithRedirect}
             onClickLogout={logout}
+            onClickProfile={onClickProfile}
             className="header"
           />
           {(!!layoutFlashMessage || !!flashMessages?.length) && (
             <FlashMessageList flashMessageList={flashMessages ? [layoutFlashMessage, ...flashMessages] : [layoutFlashMessage]} />
           )}
           {children}
-        </div>
+
+        <footer>©2023 communicle</footer>
+          </div>
       </div>
     </StyledWrapper>
   )
