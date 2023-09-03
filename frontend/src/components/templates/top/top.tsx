@@ -27,7 +27,9 @@ const StyledWrapper = styled.div`
       color: ${(props): string => props.theme.primary};
       font-size: 2.4rem;
       font-weight: 700;
-      text-decoration: ${(props): string => props.theme.yellow} underline 0.7rem;
+      text-decoration-line: underline;
+      text-decoration-thickness: 0.7rem;
+      text-decoration-color: ${(props): string => props.theme.yellow};
       text-underline-offset: -0.5rem;
     }
 
