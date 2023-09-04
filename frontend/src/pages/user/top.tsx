@@ -6,6 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { UserTopTpl, Layout } from 'components/templates'
 
 /* lib, types, apis */
+import { keepScrollPosition, restoreScrollPosition } from 'lib/scroll-position'
 import { User, Evaluation, FlashMessage } from 'types/types'
 import { fetchUser } from 'apis/user'
 import { fetchIconUrl } from 'apis/icon'
@@ -72,12 +73,14 @@ export const UserTop: React.FC = () => {
   }
 
   const onClickPublish = async (id: string): Promise<void> => {
+    keepScrollPosition()
     setIsLoading(true)
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await publishEvaluation(token, id)
       await refetchAfterUpdateEvaluation()
+      restoreScrollPosition()
       setIsLoading(false)
       setFlashMessage({ type: 'success', message: '公開しました。' })
     } catch (e) {
@@ -89,12 +92,14 @@ export const UserTop: React.FC = () => {
   }
 
   const onClickUnpublish = async (id: string): Promise<void> => {
+    keepScrollPosition()
     setIsLoading(true)
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await unpublishEvaluation(token, id)
       await refetchAfterUpdateEvaluation()
+      restoreScrollPosition()
       setIsLoading(false)
       setFlashMessage({ type: 'success', message: '非公開にしました。' })
     } catch (e) {
@@ -109,12 +114,14 @@ export const UserTop: React.FC = () => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
 
+    keepScrollPosition()
     setIsLoading(true)
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
       await deleteEvaluation(token, id)
       await refetchAfterUpdateEvaluation()
+      restoreScrollPosition()
       setIsLoading(false)
       setFlashMessage({ type: 'success', message: '削除しました。' })
     } catch (e) {
@@ -191,7 +198,7 @@ export const UserTop: React.FC = () => {
   return (
     <>
       <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isLoading}>
-        {user && !isLoading && evaluations !== undefined && (
+        {user && evaluations !== undefined && (
           <UserTopTpl
             user={user}
             userIconUrl={userIconUrl}
