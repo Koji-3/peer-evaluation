@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
 /* components */
@@ -18,6 +18,7 @@ export const EvaluationDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { isLoading: isAuth0Loading, isAuthenticated, user: auth0User, getAccessTokenSilently } = useAuth0()
   const params = useParams()
+  const navigate = useNavigate()
 
   const isSelfMyPage = useMemo(() => {
     if (!auth0User || !evaluatee?.auth0_id) return false
@@ -96,9 +97,7 @@ export const EvaluationDetail: React.FC = () => {
     try {
       const token = await getAccessTokenSilently()
       await deleteEvaluation(token, params.evaluationId)
-      await refetchAfterUpdateEvaluation()
-      setIsLoading(false)
-      setFlashMessage({ type: 'success', message: '削除しました。' })
+      navigate(`/user/${evaluation?.evaluateeId}`, { state: { flashMessage: { type: 'success', message: '削除しました。' } } })
     } catch (e) {
       setIsLoading(false)
       if (e instanceof Error) {

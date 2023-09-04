@@ -195,6 +195,17 @@ export const UserTop: React.FC = () => {
     }
   }, [searchParams, lastPage, evaluations])
 
+  useEffect(() => {
+    if (location.state && location.state.flashMessage) {
+      setFlashMessage(location.state.flashMessage)
+
+      setTimeout(() => {
+        // リロードするとstateが残ってしまうので、遷移後すぐにstateを削除する
+        navigate(location.pathname, { replace: true })
+      }, 300)
+    }
+  }, [location.pathname, location.state, navigate])
+
   return (
     <>
       <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isLoading}>
