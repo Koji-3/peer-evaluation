@@ -33,8 +33,8 @@ export const App: React.FC = () => {
             <Route path="/update/login" element={<UpdateLogin />} />
 
             <Route path="/user/:id" element={<UserTop />} />
-            <Route path="/evaluation/form/:evaluateeId" element={<EvaluationForm />} />
-            <Route path="/evaluation/:evaluateeId/:evaluationId" element={<EvaluationDetail />} />
+            <Route path="/introduction/form/:evaluateeId" element={<EvaluationForm />} />
+            <Route path="/introduction/:evaluateeId/:evaluationId" element={<EvaluationDetail />} />
             <Route path="/user/edit/:id" element={<UserEdit />} />
             {/* Auth0のログインからのコールバック */}
             <Route path="/login/callback" element={<LoginCallback />} />

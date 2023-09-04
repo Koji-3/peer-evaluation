@@ -134,7 +134,7 @@ export const UserTopTpl: React.FC<Props> = ({
       window.alert('自分自身の紹介はできません。')
       return
     }
-    navigate(`/evaluation/form/${user.id}`)
+    navigate(`/introduction/form/${user.id}`)
   }
 
   return (

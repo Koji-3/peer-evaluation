@@ -103,7 +103,7 @@ export const EvaluationItem: React.FC<Props> = ({
               {isSelfEvaluation && <EvaluationStatus isPublished={is_published} />}
             </div>
             <p className="comment">{comment}</p>
-            <LinkWithIcon linkText="詳しく見る" href={`/evaluation/${evaluateeId}/${id}`} direction="right" className="to-detail" />
+            <LinkWithIcon linkText="詳しく見る" href={`/introduction/${evaluateeId}/${id}`} direction="right" className="to-detail" />
           </div>
         </div>
       </div>
