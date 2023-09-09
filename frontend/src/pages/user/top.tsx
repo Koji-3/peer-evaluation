@@ -135,7 +135,7 @@ export const UserTop: React.FC = () => {
   const onClickSharePage = async (): Promise<void> => {
     setFlashMessage(undefined)
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/users/${params.id}`)
+      await navigator.clipboard.writeText(`${window.location.origin}/user/${params.id}`)
       setFlashMessage({
         type: 'success',
         message: isSelfMyPage(user as User)
