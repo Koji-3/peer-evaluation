@@ -83,6 +83,7 @@ const StyledItem = styled.div`
 
       > strong {
         font-size: 2rem;
+        font-weight: inherit;
       }
     }
   }
