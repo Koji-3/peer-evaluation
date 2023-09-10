@@ -14,6 +14,7 @@ root.render(
       redirect_uri: auth0RedirectUri,
       audience: process.env.REACT_APP_AUTH0_API_AUDIENCE,
     }}
+    useRefreshTokens
   >
     <React.StrictMode>
       <App />
