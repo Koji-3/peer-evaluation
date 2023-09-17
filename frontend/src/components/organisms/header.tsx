@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 /* components */
@@ -41,6 +42,9 @@ const StyledWrapper = styled.div`
 `
 
 export const Header: React.FC<Props> = ({ className, isLoggedIn, onClickLogin, onClickLogout, onClickProfile }) => {
+  const { pathname } = useLocation()
+  const isSignupPage = pathname === '/signup/new'
+
   const Button = (): React.ReactNode => {
     return isLoggedIn ? (
       <div className="header-button-wrapper">
@@ -59,7 +63,8 @@ export const Header: React.FC<Props> = ({ className, isLoggedIn, onClickLogin, o
       <a href="/">
         <img src={logo} alt="コミュニクル" />
       </a>
-      {Button()}
+
+      {!isSignupPage && Button()}
     </StyledWrapper>
   )
 }
