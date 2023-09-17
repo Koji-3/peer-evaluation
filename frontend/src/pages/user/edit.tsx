@@ -83,8 +83,7 @@ export const UserEdit: React.FC = () => {
         await updateEmail(email, token)
         logout({ logoutParams: { returnTo: `${window.location.origin}/update/login` } })
       } else {
-        setIsLoading(false)
-        setFlashMessage({ type: 'success', message: 'プロフィールを更新しました。' })
+        navigate(`/user/${params.id}`, { state: { flashMessage: { type: 'success', message: 'プロフィールを更新しました。' } } })
       }
     } catch (e) {
       setIsLoading(false)

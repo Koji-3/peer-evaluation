@@ -196,7 +196,7 @@ export const UserTop: React.FC = () => {
   }, [searchParams, lastPage, evaluations])
 
   useEffect(() => {
-    if (location.state && location.state.flashMessage) {
+    if (location.state && location.state.flashMessage && !isLoading) {
       setFlashMessage(location.state.flashMessage)
 
       setTimeout(() => {
@@ -204,7 +204,7 @@ export const UserTop: React.FC = () => {
         navigate(location.pathname, { replace: true })
       }, 300)
     }
-  }, [location.pathname, location.state, navigate])
+  }, [location.pathname, location.state, isLoading, navigate])
 
   return (
     <>
