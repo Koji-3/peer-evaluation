@@ -6,7 +6,7 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import {
   Top,
   LoginCallback,
-  EmailVerificationCallback,
+  // EmailVerificationCallback,
   Signup,
   UserTop,
   UserEdit,
@@ -38,8 +38,8 @@ export const App: React.FC = () => {
             <Route path="/user/edit/:id" element={<UserEdit />} />
             {/* Auth0のログインからのコールバック */}
             <Route path="/login/callback" element={<LoginCallback />} />
-            {/* Auth0のメール認証からのコールバック */}
-            <Route path="/signup" element={<EmailVerificationCallback />} />
+            {/* Auth0のメール認証からのコールバック。使っていない。 */}
+            {/* <Route path="/signup" element={<EmailVerificationCallback />} /> */}
             <Route path="/signup/new" element={<Signup />} />
             <Route path="*" element={<Page404 />} />
           </Routes>
