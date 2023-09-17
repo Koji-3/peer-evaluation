@@ -88,3 +88,15 @@ export const deleteUser = async (token: string): Promise<boolean> => {
     throw new Error(errorMessages.user.delete)
   }
 }
+
+export const deleteAuth0User = async (token: string): Promise<boolean> => {
+  try {
+    const { deleteAuth0User, error } = await deleteData<{ deleteAuth0User: boolean; error?: string }>(`/user/delete/auth0`, token)
+    if (!deleteAuth0User) {
+      throw new Error(error)
+    }
+    return deleteAuth0User
+  } catch (e) {
+    throw new Error(errorMessages.user.deleteAuth0)
+  }
+}

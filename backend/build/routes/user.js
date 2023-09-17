@@ -143,10 +143,29 @@ router.put('/update-email', checkJwt, (req, res) => {
         }
     }
 });
-// 退会
-router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// 新規登録時のキャンセルでauth0のユーザーを削除する
+router.delete('/delete/auth0', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
     const auth0Id = (_d = req.auth) === null || _d === void 0 ? void 0 : _d.payload.sub;
+    if (!auth0Id) {
+        res.json({ deleteAuth0User: false, message: errorMessages_1.errorMessages.user.deleteAuth0 });
+        return;
+    }
+    try {
+        (0, auth0_1.deleteUser)(auth0Id);
+        res.json({ deleteAuth0User: true });
+    }
+    catch (e) {
+        if (e instanceof Error) {
+            res.json({ deleteAuth0User: false, error: e.message });
+            console.error('error in route /user/delete/auth0:', e);
+        }
+    }
+}));
+// 退会
+router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
+    const auth0Id = (_e = req.auth) === null || _e === void 0 ? void 0 : _e.payload.sub;
     if (!auth0Id) {
         res.json({ deleteUser: false, message: errorMessages_1.errorMessages.user.delete });
         return;

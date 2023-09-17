@@ -9,7 +9,7 @@ import { SignupTpl, Layout } from 'components/templates'
 import { validateIcon } from 'lib/validate'
 import { UserInput, FlashMessage } from 'types/types'
 import { userUploadIconToS3 } from 'apis/icon'
-import { createUser } from 'apis/user'
+import { createUser, deleteAuth0User } from 'apis/user'
 import { errorMessages } from 'const/errorMessages'
 
 export const Signup: React.FC = () => {
@@ -54,12 +54,32 @@ export const Signup: React.FC = () => {
     try {
       const iconKey = await userUploadIconToS3({ file: iconFile, token })
       const user = await createUser({ ...userInput, icon_key: iconKey }, token)
-      setIsLoading(false)
       navigate(`/user/${user.key}`)
     } catch (e) {
       setIsLoading(false)
       if (e instanceof Error) {
         setFlashMessage({ type: 'error', message: e.message })
+      }
+    }
+  }
+
+  const onClickCancel = async (): Promise<void> => {
+    setIsLoading(true)
+    setFlashMessage(undefined)
+    if (!auth0User || !auth0User.sub) {
+      setIsLoading(false)
+      setFlashMessage({ type: 'error', message: errorMessages.user.cancelSignup })
+      return
+    }
+
+    const token = await getAccessTokenSilently()
+    try {
+      await deleteAuth0User(token)
+      navigate('/')
+    } catch (e) {
+      setIsLoading(false)
+      if (e instanceof Error) {
+        setFlashMessage({ type: 'error', message: errorMessages.user.cancelSignup })
       }
     }
   }
@@ -74,6 +94,7 @@ export const Signup: React.FC = () => {
           onChangeUserInput={onChangeUserInput}
           onChangeIconInput={onChangeIconInput}
           register={register}
+          onClickCancel={onClickCancel}
         />
       )}
     </Layout>

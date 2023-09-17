@@ -125,6 +125,24 @@ router.put('/update-email', checkJwt, (req, res) => {
   }
 })
 
+// 新規登録時のキャンセルでauth0のユーザーを削除する
+router.delete('/delete/auth0', checkJwt, async (req, res) => {
+  const auth0Id = req.auth?.payload.sub
+  if (!auth0Id) {
+    res.json({ deleteAuth0User: false, message: errorMessages.user.deleteAuth0 })
+    return
+  }
+  try {
+    deleteAuth0User(auth0Id)
+    res.json({ deleteAuth0User: true })
+  } catch (e) {
+    if (e instanceof Error) {
+      res.json({ deleteAuth0User: false, error: e.message })
+      console.error('error in route /user/delete/auth0:', e)
+    }
+  }
+})
+
 // 退会
 router.delete('/delete', checkJwt, async (req, res) => {
   const auth0Id = req.auth?.payload.sub
