@@ -8,8 +8,8 @@ import evaluationFromOthers from 'assets/images/lp/evaluation-from-others.svg'
 import mypageNo1 from 'assets/images/lp/mypage-no1.svg'
 import mypageNo2 from 'assets/images/lp/mypage-no2.svg'
 import mypageNo3 from 'assets/images/lp/mypage-no3.svg'
-import mypage from 'assets/images/lp/mypage.svg'
-import share from 'assets/images/lp/share.svg'
+import mypage from 'assets/images/lp/mypage.png'
+import share from 'assets/images/lp/share.png'
 
 type Props = {
   className?: string
@@ -116,6 +116,7 @@ const StyledItem = styled.div`
     }
 
     > img {
+      width: 31rem;
       margin: 0 auto;
     }
   }
@@ -130,6 +131,7 @@ const StyledItem = styled.div`
     }
 
     > img {
+      width: 32.3rem;
       margin: 0 auto;
     }
   }
