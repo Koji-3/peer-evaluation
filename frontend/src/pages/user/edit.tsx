@@ -103,7 +103,7 @@ export const UserEdit: React.FC = () => {
       const token = await getAccessTokenSilently()
       await deleteUserApi(token)
       setIsLoading(false)
-      navigate('/', { state: { flashMessage: { type: 'success', message: '退会が完了しました。' } } })
+      logout({ logoutParams: { returnTo: `${window.location.origin}/delete-user/callback` } })
     } catch (e) {
       setIsLoading(false)
       if (e instanceof Error) {

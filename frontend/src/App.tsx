@@ -13,6 +13,7 @@ import {
   EvaluationDetail,
   EvaluationForm,
   UpdateLogin,
+  DeleteUserCallback,
   Page404,
 } from 'pages'
 
@@ -38,6 +39,8 @@ export const App: React.FC = () => {
             <Route path="/user/edit/:id" element={<UserEdit />} />
             {/* Auth0のログインからのコールバック */}
             <Route path="/login/callback" element={<LoginCallback />} />
+            {/* 退会時のコールバック */}
+            <Route path="/delete-user/callback" element={<DeleteUserCallback />} />
             {/* Auth0のメール認証からのコールバック。使っていない。 */}
             {/* <Route path="/signup" element={<EmailVerificationCallback />} /> */}
             <Route path="/signup/new" element={<Signup />} />
