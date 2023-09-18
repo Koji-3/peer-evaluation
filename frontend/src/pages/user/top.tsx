@@ -159,9 +159,11 @@ export const UserTop: React.FC = () => {
         setUser(user)
         setUserIconUrl(iconUrl)
         setEvaluations(evaluations)
-        const evaluationNum = isAuthenticated ? user.allEvaluationNum : user.publishedEvaluationNum
+        const evaluationNum = isSelfMyPage(user) ? user.allEvaluationNum : user.publishedEvaluationNum
         const lastPage =
-          evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / EVALUATIONS_PER_PAGE : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
+          evaluationNum % EVALUATIONS_PER_PAGE === 0
+            ? evaluationNum / EVALUATIONS_PER_PAGE
+            : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
         setLastPage(lastPage)
         setIsLoading(false)
 
@@ -180,7 +182,17 @@ export const UserTop: React.FC = () => {
         }
       }
     })()
-  }, [isAuth0Loading, params.id, isAuthenticated, location.state, getAccessTokenSilently, fetchEvaluations, navigate, location.pathname])
+  }, [
+    isAuth0Loading,
+    params.id,
+    isAuthenticated,
+    location.state,
+    getAccessTokenSilently,
+    fetchEvaluations,
+    navigate,
+    location.pathname,
+    isSelfMyPage,
+  ])
 
   useEffect(() => {
     const currentPage = Number(searchParams.get('page') || 1)
