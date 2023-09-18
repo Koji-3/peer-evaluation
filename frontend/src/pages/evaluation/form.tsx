@@ -45,6 +45,7 @@ export const EvaluationForm: React.FC = () => {
   }
   const [evaluatee, setEvaluatee] = useState<User>()
   const [evaluateeIconUrl, setEvaluateeIconUrl] = useState<string>('')
+  const [evaluator, setEvaluator] = useState<DBUser | null>(null)
   const [evaluationInput, setEvaluationInput] = useState<EvaluationInput>(initialEvaluationInput)
   const [iconFile, setIconFile] = useState<File>()
   const [iconObjectUrl, setIconObjectUrl] = useState<string>('')
@@ -95,17 +96,8 @@ export const EvaluationForm: React.FC = () => {
         return
       }
     } else if (isAuthenticated) {
-      try {
-        const token = await getAccessTokenSilently()
-        const user = (await fetchUserByAuth0Id(token)) as DBUser
-        iconKey = user?.props.icon_key
-      } catch (e) {
-        setIsLoading(false)
-        if (e instanceof Error) {
-          setFlashMessage({ type: 'error', message: e.message })
-        }
-        return
-      }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      iconKey = evaluator!.props.icon_key
     }
 
     try {
@@ -133,6 +125,12 @@ export const EvaluationForm: React.FC = () => {
       try {
         const evaluatee = await fetchUser(params.evaluateeId)
         const evaluateeIconUrl = await fetchIconUrl(evaluatee.icon_key)
+        if (isAuthenticated) {
+          const token = await getAccessTokenSilently()
+          const user = (await fetchUserByAuth0Id(token)) as DBUser
+          setEvaluator(user)
+          setEvaluationInput({ ...evaluationInput, evaluatorName: user.props.name })
+        }
         setEvaluatee(evaluatee)
         setEvaluateeIconUrl(evaluateeIconUrl)
         setIsLoading(false)
@@ -143,7 +141,8 @@ export const EvaluationForm: React.FC = () => {
         }
       }
     })()
-  }, [isAuth0Loading, params.evaluateeId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuth0Loading, params.evaluateeId, isAuthenticated, getAccessTokenSilently])
 
   return (
     <Layout flashMessages={flashMessage ? [flashMessage] : undefined} isLoading={isAuth0Loading || isLoading}>
