@@ -106,6 +106,15 @@ export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) 
     }
   }, [flashMessage])
 
+  useEffect(() => {
+    // かぶっている部分のボタンの操作ができないままになるのでdisplay: noneをつける
+    setTimeout(() => {
+      if (!flashMessageRef.current?.classList.contains('close')) {
+        flashMessageRef.current?.classList.add('close')
+      }
+    }, 6200)
+  }, [flashMessage])
+
   return (
     <StyledFlashMessage
       className={className}
