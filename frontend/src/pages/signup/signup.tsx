@@ -13,7 +13,7 @@ import { createUser, deleteAuth0User } from 'apis/user'
 import { errorMessages } from 'const/errorMessages'
 
 export const Signup: React.FC = () => {
-  const { user: auth0User, getAccessTokenSilently, isLoading: isAuth0Loading } = useAuth0()
+  const { user: auth0User, getAccessTokenSilently, isLoading: isAuth0Loading, logout } = useAuth0()
   const initialUserInput: UserInput = {
     name: '',
     profile: '',
@@ -75,7 +75,7 @@ export const Signup: React.FC = () => {
     const token = await getAccessTokenSilently()
     try {
       await deleteAuth0User(token)
-      navigate('/')
+      logout()
     } catch (e) {
       setIsLoading(false)
       if (e instanceof Error) {
