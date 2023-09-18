@@ -161,7 +161,7 @@ export const UserTop: React.FC = () => {
         setEvaluations(evaluations)
         const evaluationNum = isAuthenticated ? user.allEvaluationNum : user.publishedEvaluationNum
         const lastPage =
-          evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / 4 : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
+          evaluationNum % EVALUATIONS_PER_PAGE === 0 ? evaluationNum / EVALUATIONS_PER_PAGE : Math.floor(evaluationNum / EVALUATIONS_PER_PAGE) + 1
         setLastPage(lastPage)
         setIsLoading(false)
 
