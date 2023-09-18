@@ -21,6 +21,17 @@ export const createEvaluation = async (evaluation: EvaluationInput, evaluateeId:
   }
 }
 
+const formatDBEvaluationToEvaluation = async (evaluation: DBEvaluation): Promise<Evaluation> => {
+  if (!evaluation.props.evaluatorIconKey) {
+    return { ...evaluation.props, id: evaluation.key, evaluatorIconUrl: undefined }
+  } else {
+    const icon = await getIcon(evaluation.props.evaluatorIconKey)
+    const base64Image = Buffer.from(await icon.Body!.transformToByteArray()).toString('base64')
+    const imageSrc = `data:image/jpeg;base64,${base64Image}`
+    return { ...evaluation.props, id: evaluation.key, evaluatorIconUrl: imageSrc }
+  }
+}
+
 export const getEvaluation = async (evaluationId: string, auth0Id?: string): Promise<Evaluation | null> => {
   try {
     const evaluation: DBEvaluation = await evaluations.get(evaluationId)
@@ -28,9 +39,9 @@ export const getEvaluation = async (evaluationId: string, auth0Id?: string): Pro
     const isDeleted = evaluation.props.is_deleted
     if (auth0Id) {
       // 自分の紹介の取得
-      return !isDeleted ? { ...evaluation.props, id: evaluation.key } : null
+      return !isDeleted ? await formatDBEvaluationToEvaluation(evaluation) : null
     } else {
-      return isPublished && !isDeleted ? { ...evaluation.props, id: evaluation.key } : null
+      return isPublished && !isDeleted ? await formatDBEvaluationToEvaluation(evaluation) : null
     }
   } catch (e) {
     console.error('getEvaluation error: ', e)
@@ -49,18 +60,7 @@ const sortByCreatedAt = (results: DBEvaluation[]): DBEvaluation[] => {
 
 const addParamsForReturnValueToEvaluations = async (results: DBEvaluation[]): Promise<Evaluation[]> => {
   try {
-    const returnValue = await Promise.all(
-      results.map(async (result) => {
-        if (!result.props.evaluatorIconKey) {
-          return { ...result.props, id: result.key, evaluatorIconUrl: undefined }
-        } else {
-          const icon = await getIcon(result.props.evaluatorIconKey)
-          const base64Image = Buffer.from(await icon.Body!.transformToByteArray()).toString('base64')
-          const imageSrc = `data:image/jpeg;base64,${base64Image}`
-          return { ...result.props, id: result.key, evaluatorIconUrl: imageSrc }
-        }
-      }),
-    )
+    const returnValue = await Promise.all(results.map(async (result) => await formatDBEvaluationToEvaluation(result)))
     return returnValue
   } catch (e) {
     console.error('addParamsForReturnValueToEvaluations error: ', e)

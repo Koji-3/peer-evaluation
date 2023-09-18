@@ -33,6 +33,17 @@ const createEvaluation = (evaluation, evaluateeId) => __awaiter(void 0, void 0, 
     }
 });
 exports.createEvaluation = createEvaluation;
+const formatDBEvaluationToEvaluation = (evaluation) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!evaluation.props.evaluatorIconKey) {
+        return Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key, evaluatorIconUrl: undefined });
+    }
+    else {
+        const icon = yield (0, s3_1.getIcon)(evaluation.props.evaluatorIconKey);
+        const base64Image = Buffer.from(yield icon.Body.transformToByteArray()).toString('base64');
+        const imageSrc = `data:image/jpeg;base64,${base64Image}`;
+        return Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key, evaluatorIconUrl: imageSrc });
+    }
+});
 const getEvaluation = (evaluationId, auth0Id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const evaluation = yield evaluations.get(evaluationId);
@@ -40,10 +51,10 @@ const getEvaluation = (evaluationId, auth0Id) => __awaiter(void 0, void 0, void 
         const isDeleted = evaluation.props.is_deleted;
         if (auth0Id) {
             // 自分の紹介の取得
-            return !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key }) : null;
+            return !isDeleted ? yield formatDBEvaluationToEvaluation(evaluation) : null;
         }
         else {
-            return isPublished && !isDeleted ? Object.assign(Object.assign({}, evaluation.props), { id: evaluation.key }) : null;
+            return isPublished && !isDeleted ? yield formatDBEvaluationToEvaluation(evaluation) : null;
         }
     }
     catch (e) {
@@ -62,17 +73,7 @@ const sortByCreatedAt = (results) => {
 };
 const addParamsForReturnValueToEvaluations = (results) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const returnValue = yield Promise.all(results.map((result) => __awaiter(void 0, void 0, void 0, function* () {
-            if (!result.props.evaluatorIconKey) {
-                return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: undefined });
-            }
-            else {
-                const icon = yield (0, s3_1.getIcon)(result.props.evaluatorIconKey);
-                const base64Image = Buffer.from(yield icon.Body.transformToByteArray()).toString('base64');
-                const imageSrc = `data:image/jpeg;base64,${base64Image}`;
-                return Object.assign(Object.assign({}, result.props), { id: result.key, evaluatorIconUrl: imageSrc });
-            }
-        })));
+        const returnValue = yield Promise.all(results.map((result) => __awaiter(void 0, void 0, void 0, function* () { return yield formatDBEvaluationToEvaluation(result); })));
         return returnValue;
     }
     catch (e) {
