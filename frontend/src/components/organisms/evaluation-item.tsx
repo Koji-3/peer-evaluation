@@ -61,6 +61,7 @@ const StyledWrapper = styled.div`
           display: -webkit-box;
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 3;
+          white-space: pre-wrap;
         }
 
         .to-detail {
