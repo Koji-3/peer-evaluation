@@ -88,6 +88,7 @@ const StyledWrapper = styled.div`
         margin: 0 0 4.9rem;
         font-size: 1.4rem;
         line-height: 1.5;
+        white-space: pre-wrap;
       }
     }
 
@@ -130,7 +131,7 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
 
         <div className="content">
           <div className="evaluator">
-            <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={4.5} className="icon" />
+            <Icon src={evaluatorIconUrl || defaultIcon} alt={evaluatorName} size={10} className="icon" />
             <p>
               {evaluatorName} / {relationship}
             </p>
