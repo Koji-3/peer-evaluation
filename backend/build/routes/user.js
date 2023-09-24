@@ -140,9 +140,9 @@ router.delete('/delete/auth0', checkJwt, (req, res) => __awaiter(void 0, void 0,
         if (e) {
             res.json({ deleteAuth0User: false, error: errorMessages_1.errorMessages.user.delete });
             console.error('error in route /user/delete/auth0:', e);
+            return;
         }
     });
-    (0, auth0_1.deleteUser)(auth0Id);
     res.json({ deleteAuth0User: true });
 }));
 // 退会
@@ -154,10 +154,12 @@ router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 
         return;
     }
     const auth0ManagementClient = (0, auth0_1.getAuth0ManagementClient)();
+    // 退会処理でauth0上のデータは物理削除する
     auth0ManagementClient.deleteUser({ id: auth0Id }, (e) => __awaiter(void 0, void 0, void 0, function* () {
         if (e) {
             res.json({ deleteUser: false, error: errorMessages_1.errorMessages.user.delete });
             console.error('error in route /user/delete:', e);
+            return;
         }
         yield (0, user_1.deleteUser)(auth0Id);
         res.json({ deleteUser: true });

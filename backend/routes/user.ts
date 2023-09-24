@@ -1,12 +1,7 @@
 import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer'
 import { createUser, getUserByAuth0Id, getUserById, updateUser, deleteUser } from '../models/user'
-import {
-  updateName as updateAuth0Name,
-  updateEmail as updateAuth0Email,
-  deleteUser as deleteAuth0User,
-  getAuth0ManagementClient,
-} from '../models/auth0'
+import { updateName as updateAuth0Name, updateEmail as updateAuth0Email, getAuth0ManagementClient } from '../models/auth0'
 import { errorMessages } from '../const/errorMessages'
 
 /* auth0 jwt config */
@@ -128,9 +123,9 @@ router.delete('/delete/auth0', checkJwt, async (req, res) => {
     if (e) {
       res.json({ deleteAuth0User: false, error: errorMessages.user.delete })
       console.error('error in route /user/delete/auth0:', e)
+      return
     }
   })
-  deleteAuth0User(auth0Id)
   res.json({ deleteAuth0User: true })
 })
 
@@ -142,10 +137,12 @@ router.delete('/delete', checkJwt, async (req, res) => {
     return
   }
   const auth0ManagementClient = getAuth0ManagementClient()
+  // 退会処理でauth0上のデータは物理削除する
   auth0ManagementClient.deleteUser({ id: auth0Id }, async (e) => {
     if (e) {
       res.json({ deleteUser: false, error: errorMessages.user.delete })
       console.error('error in route /user/delete:', e)
+      return
     }
     await deleteUser(auth0Id)
     res.json({ deleteUser: true })

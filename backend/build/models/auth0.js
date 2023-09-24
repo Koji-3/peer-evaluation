@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAuth0ManagementClient = exports.deleteUser = exports.updateEmail = exports.updateName = void 0;
+exports.getAuth0ManagementClient = exports.updateEmail = exports.updateName = void 0;
 const auth0_1 = require("auth0");
 const errorMessages_1 = require("../const/errorMessages");
 const auth0ManagementClient = new auth0_1.ManagementClient({
@@ -32,15 +32,5 @@ const updateEmail = (auth0id, newEmail, res) => {
     });
 };
 exports.updateEmail = updateEmail;
-const deleteUser = (auth0id) => {
-    // 退会処理でauth0上のデータは物理削除する
-    auth0ManagementClient.deleteUser({ id: auth0id }, (e) => {
-        if (e) {
-            console.error('deleteUser error', e);
-            throw new Error(errorMessages_1.errorMessages.user.delete);
-        }
-    });
-};
-exports.deleteUser = deleteUser;
 const getAuth0ManagementClient = () => auth0ManagementClient;
 exports.getAuth0ManagementClient = getAuth0ManagementClient;
