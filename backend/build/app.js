@@ -42,6 +42,7 @@ app.use(express_1.default.json());
 // cors
 // const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN as string, process.env.FRONTEND_PROD_ORIGIN as string]
 app.use((0, cors_1.default)());
+app.options('*', (0, cors_1.default)());
 // routes
 app.use('/user', user_1.default);
 app.use('/s3', s3_1.default);
