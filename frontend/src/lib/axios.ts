@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const get = async <T, V = undefined>(path: string, token?: string, params?: V): Promise<T> => {
   const headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   }
   try {
