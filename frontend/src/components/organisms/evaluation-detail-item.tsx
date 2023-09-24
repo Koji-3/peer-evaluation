@@ -43,6 +43,7 @@ const StyledWrapper = styled.div`
     font-size: 1.4rem;
     line-height: 1.5;
     letter-spacing: 0.1em;
+    white-space: pre-wrap;
   }
 `
 

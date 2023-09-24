@@ -48,6 +48,7 @@ const StyledWrapper = styled.div`
     .profile {
       margin: 0 0 0.5rem;
       font-size: 1.4rem;
+      white-space: pre-wrap;
     }
 
     .to-edit {
