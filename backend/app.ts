@@ -15,11 +15,14 @@ const port = 3001
 app.use(express.json())
 
 // cors
-// const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN as string, process.env.FRONTEND_PROD_ORIGIN as string]
+const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN as string, process.env.FRONTEND_PROD_ORIGIN as string]
 app.use(
-  cors()
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  }),
 )
-app.options('*', cors())
 
 // routes
 app.use('/user', user)
