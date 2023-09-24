@@ -16,7 +16,7 @@ const StyledInputWrapper = styled.div`
     font-size: 1rem;
     line-height: 3rem;
     text-align: center;
-    border: 0.05rem solid ${(props): string => props.theme.black};
+    border: 0.1rem solid ${(props): string => props.theme.black};
     border-radius: 1.5rem;
     display: block;
     cursor: pointer;
