@@ -22,7 +22,7 @@ const getButtonStyle = (props: ThemedStyledProps<StyleProps, DefaultTheme>): str
   if (props.buttonType === 'white') {
     return `
       color: ${props.theme.black};
-      border: 0.1rem solid ${props.theme.primary};
+      border: 0.1rem solid ${props.theme.black};
       line-height: 2.8rem;
     `
   }
