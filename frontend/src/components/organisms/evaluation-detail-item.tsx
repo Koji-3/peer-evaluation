@@ -44,6 +44,7 @@ const StyledWrapper = styled.div`
     line-height: 1.5;
     letter-spacing: 0.1em;
     white-space: pre-wrap;
+    word-wrap: break-word;
   }
 `
 

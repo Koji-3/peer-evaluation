@@ -49,6 +49,7 @@ const StyledWrapper = styled.div`
       margin: 0 0 0.5rem;
       font-size: 1.4rem;
       white-space: pre-wrap;
+      word-wrap: break-word;
     }
 
     .to-edit {

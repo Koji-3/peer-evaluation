@@ -89,6 +89,7 @@ const StyledWrapper = styled.div`
         font-size: 1.4rem;
         line-height: 1.5;
         white-space: pre-wrap;
+        word-wrap: break-word;
       }
 
       .evaluation-detail-item-wrapper {

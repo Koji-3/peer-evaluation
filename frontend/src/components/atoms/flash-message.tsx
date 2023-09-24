@@ -55,6 +55,7 @@ const StyledFlashMessage = styled.div<StyleProps>`
     display: grid;
     place-items: center start;
     white-space: pre-wrap;
+    word-wrap: break-word;
 
     &::before {
       width: 0.5rem;
