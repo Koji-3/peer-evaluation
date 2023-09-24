@@ -58,7 +58,7 @@ const StyledWrapper = styled.div`
 
     &.index0 {
       top: -0.7rem;
-      left: calc(50% + 2.2rem);
+      left: calc(50% + 2.7rem);
       text-align: left;
     }
     &.index1 {
@@ -71,7 +71,7 @@ const StyledWrapper = styled.div`
     }
     &.index3 {
       bottom: -0.5rem;
-      left: calc(50% + 3rem);
+      left: calc(50% + 3.5rem);
       text-align: left;
     }
     &.index4 {
