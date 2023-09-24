@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateEmail = exports.updateName = void 0;
+exports.getAuth0ManagementClient = exports.deleteUser = exports.updateEmail = exports.updateName = void 0;
 const auth0_1 = require("auth0");
 const errorMessages_1 = require("../const/errorMessages");
 const auth0ManagementClient = new auth0_1.ManagementClient({
@@ -12,18 +12,23 @@ const auth0ManagementClient = new auth0_1.ManagementClient({
 const updateName = (auth0id, newName) => {
     auth0ManagementClient.updateUser({ id: auth0id }, { name: newName }, (e) => {
         if (e) {
+            // auth0の名前の更新に失敗しても致命的ではないのでエラーを投げない
             console.error('updateUser error', e);
-            throw new Error(errorMessages_1.errorMessages.user.update);
         }
     });
 };
 exports.updateName = updateName;
-const updateEmail = (auth0id, newEmail) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateEmail = (auth0id, newEmail, res) => {
     auth0ManagementClient.updateUser({ id: auth0id }, { email: newEmail }, (e) => {
         if (e) {
-            console.error('updateUser error', e);
-            throw new Error(errorMessages_1.errorMessages.user.updateEmail);
+            console.error('updateEmail error', e.message);
+            if (e.message.includes(errorMessages_1.errorMessages.auth0.emailAlreadyExists)) {
+                return res.json({ updateEmail: false, error: errorMessages_1.errorMessages.user.emailAlreadyExists });
+            }
+            return res.json({ updateEmail: false, error: errorMessages_1.errorMessages.user.updateEmail });
         }
+        return res.json({ updateEmail: true });
     });
 };
 exports.updateEmail = updateEmail;
@@ -37,3 +42,5 @@ const deleteUser = (auth0id) => {
     });
 };
 exports.deleteUser = deleteUser;
+const getAuth0ManagementClient = () => auth0ManagementClient;
+exports.getAuth0ManagementClient = getAuth0ManagementClient;

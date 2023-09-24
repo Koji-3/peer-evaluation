@@ -64,16 +64,8 @@ router.post('/signup', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0,
         }
     }
     if (!isGoogleIntegration) {
-        try {
-            // auth0の名前も変更する
-            (0, auth0_1.updateName)(auth0Id, req.body.user.name);
-        }
-        catch (e) {
-            if (e instanceof Error) {
-                res.json({ user: null, error: e.message });
-                console.error('updateAuth0Name user error in route /user/signup:', e);
-            }
-        }
+        // auth0の名前も変更する
+        (0, auth0_1.updateName)(auth0Id, req.body.user.name);
     }
 }));
 // ユーザーTOPでユーザー情報を取得する
@@ -133,15 +125,7 @@ router.put('/update-email', checkJwt, (req, res) => {
         res.json({ updateEmail: false, message: errorMessages_1.errorMessages.user.updateEmail });
         return;
     }
-    try {
-        (0, auth0_1.updateEmail)(auth0Id, req.body.email);
-        res.json({ updateEmail: true });
-    }
-    catch (e) {
-        if (e instanceof Error) {
-            res.json({ updateEmail: false, error: e.message });
-        }
-    }
+    (0, auth0_1.updateEmail)(auth0Id, req.body.email, res);
 });
 // 新規登録時のキャンセルでauth0のユーザーを削除する
 router.delete('/delete/auth0', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -151,16 +135,15 @@ router.delete('/delete/auth0', checkJwt, (req, res) => __awaiter(void 0, void 0,
         res.json({ deleteAuth0User: false, message: errorMessages_1.errorMessages.user.deleteAuth0 });
         return;
     }
-    try {
-        (0, auth0_1.deleteUser)(auth0Id);
-        res.json({ deleteAuth0User: true });
-    }
-    catch (e) {
-        if (e instanceof Error) {
-            res.json({ deleteAuth0User: false, error: e.message });
+    const auth0ManagementClient = (0, auth0_1.getAuth0ManagementClient)();
+    auth0ManagementClient.deleteUser({ id: auth0Id }, (e) => {
+        if (e) {
+            res.json({ deleteAuth0User: false, error: errorMessages_1.errorMessages.user.delete });
             console.error('error in route /user/delete/auth0:', e);
         }
-    }
+    });
+    (0, auth0_1.deleteUser)(auth0Id);
+    res.json({ deleteAuth0User: true });
 }));
 // 退会
 router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -170,16 +153,14 @@ router.delete('/delete', checkJwt, (req, res) => __awaiter(void 0, void 0, void 
         res.json({ deleteUser: false, message: errorMessages_1.errorMessages.user.delete });
         return;
     }
-    try {
-        yield (0, user_1.deleteUser)(auth0Id);
-        (0, auth0_1.deleteUser)(auth0Id);
-        res.json({ deleteUser: true });
-    }
-    catch (e) {
-        if (e instanceof Error) {
-            res.json({ deleteUser: false, error: e.message });
+    const auth0ManagementClient = (0, auth0_1.getAuth0ManagementClient)();
+    auth0ManagementClient.deleteUser({ id: auth0Id }, (e) => __awaiter(void 0, void 0, void 0, function* () {
+        if (e) {
+            res.json({ deleteUser: false, error: errorMessages_1.errorMessages.user.delete });
             console.error('error in route /user/delete:', e);
         }
-    }
+        yield (0, user_1.deleteUser)(auth0Id);
+        res.json({ deleteUser: true });
+    }));
 }));
 exports.default = router;

@@ -1,7 +1,12 @@
 import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer'
 import { createUser, getUserByAuth0Id, getUserById, updateUser, deleteUser } from '../models/user'
-import { updateName as updateAuth0Name, updateEmail as updateAuth0Email, deleteUser as deleteAuth0User } from '../models/auth0'
+import {
+  updateName as updateAuth0Name,
+  updateEmail as updateAuth0Email,
+  deleteUser as deleteAuth0User,
+  getAuth0ManagementClient,
+} from '../models/auth0'
 import { errorMessages } from '../const/errorMessages'
 
 /* auth0 jwt config */
@@ -50,15 +55,8 @@ router.post('/signup', checkJwt, async (req, res) => {
     }
   }
   if (!isGoogleIntegration) {
-    try {
-      // auth0の名前も変更する
-      updateAuth0Name(auth0Id, req.body.user.name)
-    } catch (e) {
-      if (e instanceof Error) {
-        res.json({ user: null, error: e.message })
-        console.error('updateAuth0Name user error in route /user/signup:', e)
-      }
-    }
+    // auth0の名前も変更する
+    updateAuth0Name(auth0Id, req.body.user.name)
   }
 })
 
@@ -115,14 +113,7 @@ router.put('/update-email', checkJwt, (req, res) => {
     res.json({ updateEmail: false, message: errorMessages.user.updateEmail })
     return
   }
-  try {
-    updateAuth0Email(auth0Id, req.body.email)
-    res.json({ updateEmail: true })
-  } catch (e) {
-    if (e instanceof Error) {
-      res.json({ updateEmail: false, error: e.message })
-    }
-  }
+  updateAuth0Email(auth0Id, req.body.email, res)
 })
 
 // 新規登録時のキャンセルでauth0のユーザーを削除する
@@ -132,15 +123,15 @@ router.delete('/delete/auth0', checkJwt, async (req, res) => {
     res.json({ deleteAuth0User: false, message: errorMessages.user.deleteAuth0 })
     return
   }
-  try {
-    deleteAuth0User(auth0Id)
-    res.json({ deleteAuth0User: true })
-  } catch (e) {
-    if (e instanceof Error) {
-      res.json({ deleteAuth0User: false, error: e.message })
+  const auth0ManagementClient = getAuth0ManagementClient()
+  auth0ManagementClient.deleteUser({ id: auth0Id }, (e) => {
+    if (e) {
+      res.json({ deleteAuth0User: false, error: errorMessages.user.delete })
       console.error('error in route /user/delete/auth0:', e)
     }
-  }
+  })
+  deleteAuth0User(auth0Id)
+  res.json({ deleteAuth0User: true })
 })
 
 // 退会
@@ -150,16 +141,15 @@ router.delete('/delete', checkJwt, async (req, res) => {
     res.json({ deleteUser: false, message: errorMessages.user.delete })
     return
   }
-  try {
-    await deleteUser(auth0Id)
-    deleteAuth0User(auth0Id)
-    res.json({ deleteUser: true })
-  } catch (e) {
-    if (e instanceof Error) {
-      res.json({ deleteUser: false, error: e.message })
+  const auth0ManagementClient = getAuth0ManagementClient()
+  auth0ManagementClient.deleteUser({ id: auth0Id }, async (e) => {
+    if (e) {
+      res.json({ deleteUser: false, error: errorMessages.user.delete })
       console.error('error in route /user/delete:', e)
     }
-  }
+    await deleteUser(auth0Id)
+    res.json({ deleteUser: true })
+  })
 })
 
 export default router

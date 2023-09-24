@@ -57,6 +57,10 @@ export const updateEmail = async (email: string, token: string): Promise<boolean
     }
     return updateEmail
   } catch (e) {
+    if (e instanceof Error) {
+      // メールアドレス重複のエラーを表示するため
+      throw new Error(e.message)
+    }
     throw new Error(errorMessages.user.updateEmail)
   }
 }

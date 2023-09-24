@@ -7,6 +7,7 @@ exports.errorMessages = {
         get: 'ユーザー情報の取得に失敗しました。',
         update: 'ユーザー情報の更新に失敗しました。',
         updateEmail: 'メールアドレスの更新に失敗しました。',
+        emailAlreadyExists: 'そのメールアドレスは既に登録されています。',
         delete: '退会処理に失敗しました。',
         deleteAuth0: 'Auth0のユーザーの削除に失敗しました。',
         cancelSignup: 'キャンセルに失敗しました。時間を置いてもう一度お試しください。',
@@ -21,5 +22,8 @@ exports.errorMessages = {
         publish: '紹介の公開に失敗しました。',
         unpublish: '紹介の非公開に失敗しました。',
         delete: '紹介の削除に失敗しました。',
+    },
+    auth0: {
+        emailAlreadyExists: 'The specified new email already exists',
     },
 };
