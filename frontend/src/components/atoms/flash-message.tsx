@@ -92,7 +92,7 @@ const StyledFlashMessage = styled.div<StyleProps>`
 
 export const FlashMessage: React.FC<Props> = ({ className = '', flashMessage }) => {
   const flashMessageRef = useRef<HTMLDivElement>(null)
-  const topInnerWidth: number = document.getElementById('top_inner')?.clientWidth || 0
+  const topInnerWidth: number = document.getElementById('top_inner')?.offsetWidth || 0
   const defaultMarginLeft = topInnerWidth >= 500 ? '50rem' : '100vw'
   const showMarginLeft = topInnerWidth >= 500 ? `${50 - 35.4}rem` : '10vw'
 
