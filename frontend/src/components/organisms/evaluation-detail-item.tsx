@@ -38,11 +38,8 @@ const StyledWrapper = styled.div`
     }
   }
 
-  .scale {
-    margin: 0 0 1.4rem;
-  }
-
   .reason {
+    margin: 1.4rem 0 0;
     font-size: 1.4rem;
     line-height: 1.5;
     letter-spacing: 0.1em;
@@ -56,8 +53,8 @@ export const EvaluationDetailItem: React.FC<Props> = ({ className = '', label, p
         <p className="label">{label}</p>
         <p className="point">{parseNumberToOneDecimalText(point)}</p>
       </div>
-      <Scale point={point} className="scale" />
-      <p className="reason">{reason}</p>
+      <Scale point={point} />
+      {!!reason && <p className="reason">{reason}</p>}
     </StyledWrapper>
   )
 }

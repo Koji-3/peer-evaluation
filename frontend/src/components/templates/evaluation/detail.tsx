@@ -90,6 +90,12 @@ const StyledWrapper = styled.div`
         line-height: 1.5;
         white-space: pre-wrap;
       }
+
+      .evaluation-detail-item-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 3.5rem;
+      }
     }
 
     .footer-buttons {
@@ -139,17 +145,19 @@ export const EvaluationDetailTpl: React.FC<Props> = ({
           <p className="title">{evaluatee.name}について</p>
           <p className="comment">{comment}</p>
 
-          {[...Array(6)].map((_, index) => {
-            const evalluation = evaluation[EvaluationLabelKeys[index]]
-            return (
-              <EvaluationDetailItem
-                label={EvaluationLabelValues[index]}
-                point={evalluation.point}
-                reason={evalluation.reason}
-                key={index}
-              />
-            )
-          })}
+          <div className="evaluation-detail-item-wrapper">
+            {[...Array(6)].map((_, index) => {
+              const evalluation = evaluation[EvaluationLabelKeys[index]]
+              return (
+                <EvaluationDetailItem
+                  label={EvaluationLabelValues[index]}
+                  point={evalluation.point}
+                  reason={evalluation.reason}
+                  key={index}
+                />
+              )
+            })}
+          </div>
         </div>
         {isSelfMyPage && (
           <div className="footer-buttons">
