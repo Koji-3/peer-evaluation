@@ -19,27 +19,27 @@ export const EvaluationForm: React.FC = () => {
     relationship: '',
     comment: '',
     e1: {
-      point: 1,
+      point: 5,
       reason: '',
     },
     e2: {
-      point: 1,
+      point: 5,
       reason: '',
     },
     e3: {
-      point: 1,
+      point: 5,
       reason: '',
     },
     e4: {
-      point: 1,
+      point: 5,
       reason: '',
     },
     e5: {
-      point: 1,
+      point: 5,
       reason: '',
     },
     e6: {
-      point: 1,
+      point: 5,
       reason: '',
     },
   }
