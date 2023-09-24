@@ -20,6 +20,7 @@ app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
+    preflightContinue: true,
     optionsSuccessStatus: 200,
   }),
 )

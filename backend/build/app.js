@@ -44,6 +44,7 @@ const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN, process.env.FRONTEND_
 app.use((0, cors_1.default)({
     origin: allowedOrigins,
     credentials: true,
+    preflightContinue: true,
     optionsSuccessStatus: 200,
 }));
 // routes
@@ -51,4 +52,3 @@ app.use('/user', user_1.default);
 app.use('/s3', s3_1.default);
 app.use('/evaluation', evaluation_1.default);
 app.listen(port);
-console.log('test')
