@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const get = async <T, V = undefined>(path: string, token?: string, params?: V): Promise<T> => {
   const headers = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'https://zenn.dev/httky/articles/2813c111141a47',
     Authorization: `Bearer ${token}`,
   }
   try {
