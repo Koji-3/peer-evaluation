@@ -51,3 +51,4 @@ app.use('/user', user_1.default);
 app.use('/s3', s3_1.default);
 app.use('/evaluation', evaluation_1.default);
 app.listen(port);
+console.log('test')
