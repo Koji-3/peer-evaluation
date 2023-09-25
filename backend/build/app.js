@@ -43,7 +43,6 @@ app.use(express_1.default.json());
 const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN, process.env.FRONTEND_PROD_ORIGIN];
 app.use((0, cors_1.default)({
     origin: allowedOrigins,
-    credentials: true,
     optionsSuccessStatus: 200,
 }));
 // routes

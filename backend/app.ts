@@ -19,7 +19,6 @@ const allowedOrigins = [process.env.FRONTEND_LOCAL_ORIGIN as string, process.env
 app.use(
   cors({
     origin: allowedOrigins,
-    credentials: true,
     optionsSuccessStatus: 200,
   }),
 )
