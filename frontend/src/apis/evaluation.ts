@@ -28,10 +28,13 @@ export const fetchOthersEvaluations = async (id?: string): Promise<Evaluation[]>
   }
 }
 
-export const fetchSelfEvaluation = async (token: string, id?: string): Promise<Evaluation> => {
-  if (!id) throw new Error(errorMessages.evaluation.get)
+export const fetchSelfEvaluation = async (token: string, evaluateeId?: string, evaluationId?: string): Promise<Evaluation> => {
+  if (!evaluateeId || !evaluationId) throw new Error(errorMessages.evaluation.get)
   try {
-    const { evaluation, error } = await get<{ evaluation: Evaluation | null; error?: string }>(`/evaluation/self/${id}`, token)
+    const { evaluation, error } = await get<{ evaluation: Evaluation | null; error?: string }>(
+      `/evaluation/self/${evaluateeId}/${evaluationId}`,
+      token,
+    )
     if (!evaluation) {
       throw new Error(error)
     }
@@ -41,10 +44,10 @@ export const fetchSelfEvaluation = async (token: string, id?: string): Promise<E
   }
 }
 
-export const fetchOthersEvaluation = async (id?: string): Promise<Evaluation> => {
-  if (!id) throw new Error(errorMessages.evaluation.get)
+export const fetchOthersEvaluation = async (evaluateeId?: string, evaluationId?: string): Promise<Evaluation> => {
+  if (!evaluateeId || !evaluationId) throw new Error(errorMessages.evaluation.get)
   try {
-    const { evaluation, error } = await get<{ evaluation: Evaluation | null; error?: string }>(`/evaluation/${id}`)
+    const { evaluation, error } = await get<{ evaluation: Evaluation | null; error?: string }>(`/evaluation/${evaluateeId}/${evaluationId}`)
     if (!evaluation) {
       throw new Error(error)
     }
@@ -71,10 +74,14 @@ export const submitEvaluation = async (evaluation: EvaluationInput, evaluateeId?
   }
 }
 
-export const publishEvaluation = async (token: string, id?: string): Promise<boolean> => {
-  if (!id) throw new Error(errorMessages.evaluation.publish)
+export const publishEvaluation = async (token: string, evaluateeId?: string, evaluationId?: string): Promise<boolean> => {
+  if (!evaluateeId || !evaluationId) throw new Error(errorMessages.evaluation.publish)
   try {
-    const { update, error } = await put<{ update: boolean; error?: string }>(`/evaluation/publish/${id}`, undefined, token)
+    const { update, error } = await put<{ update: boolean; error?: string }>(
+      `/evaluation/publish/${evaluateeId}/${evaluationId}`,
+      undefined,
+      token,
+    )
     if (!update) {
       throw new Error(error)
     }
@@ -84,10 +91,14 @@ export const publishEvaluation = async (token: string, id?: string): Promise<boo
   }
 }
 
-export const unpublishEvaluation = async (token: string, id?: string): Promise<boolean> => {
-  if (!id) throw new Error(errorMessages.evaluation.unpublish)
+export const unpublishEvaluation = async (token: string, evaluateeId?: string, evaluationId?: string): Promise<boolean> => {
+  if (!evaluateeId || !evaluationId) throw new Error(errorMessages.evaluation.unpublish)
   try {
-    const { update, error } = await put<{ update: boolean; error?: string }>(`/evaluation/unpublish/${id}`, undefined, token)
+    const { update, error } = await put<{ update: boolean; error?: string }>(
+      `/evaluation/unpublish/${evaluateeId}/${evaluationId}`,
+      undefined,
+      token,
+    )
     if (!update) {
       throw new Error(error)
     }
@@ -97,10 +108,10 @@ export const unpublishEvaluation = async (token: string, id?: string): Promise<b
   }
 }
 
-export const deleteEvaluation = async (token: string, id?: string): Promise<boolean> => {
-  if (!id) throw new Error(errorMessages.evaluation.delete)
+export const deleteEvaluation = async (token: string, evaluateeId?: string, evaluationId?: string): Promise<boolean> => {
+  if (!evaluateeId || !evaluationId) throw new Error(errorMessages.evaluation.delete)
   try {
-    const { update, error } = await deleteData<{ update: boolean; error?: string }>(`/evaluation/${id}`, token)
+    const { update, error } = await deleteData<{ update: boolean; error?: string }>(`/evaluation/${evaluateeId}/${evaluationId}`, token)
     if (!update) {
       throw new Error(error)
     }

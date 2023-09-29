@@ -72,13 +72,13 @@ export const UserTop: React.FC = () => {
     }
   }
 
-  const onClickPublish = async (id: string): Promise<void> => {
+  const onClickPublish = async (evaluationId: string): Promise<void> => {
     keepScrollPosition()
     setIsLoading(true)
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
-      await publishEvaluation(token, id)
+      await publishEvaluation(token, params.id, evaluationId)
       await refetchAfterUpdateEvaluation()
       restoreScrollPosition()
       setIsLoading(false)
@@ -91,13 +91,13 @@ export const UserTop: React.FC = () => {
     }
   }
 
-  const onClickUnpublish = async (id: string): Promise<void> => {
+  const onClickUnpublish = async (evaluationId: string): Promise<void> => {
     keepScrollPosition()
     setIsLoading(true)
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
-      await unpublishEvaluation(token, id)
+      await unpublishEvaluation(token, params.id, evaluationId)
       await refetchAfterUpdateEvaluation()
       restoreScrollPosition()
       setIsLoading(false)
@@ -110,7 +110,7 @@ export const UserTop: React.FC = () => {
     }
   }
 
-  const onClickDelete = async (id: string): Promise<void> => {
+  const onClickDelete = async (evaluationId: string): Promise<void> => {
     const canProceed = confirm('本当に削除してもよろしいですか？\nこの処理は元に戻すことはできません。')
     if (!canProceed) return
 
@@ -119,7 +119,7 @@ export const UserTop: React.FC = () => {
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
-      await deleteEvaluation(token, id)
+      await deleteEvaluation(token, params.id, evaluationId)
       await refetchAfterUpdateEvaluation()
       restoreScrollPosition()
       setIsLoading(false)

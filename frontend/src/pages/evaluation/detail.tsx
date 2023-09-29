@@ -29,10 +29,10 @@ export const EvaluationDetail: React.FC = () => {
     try {
       if (isAuthenticated) {
         const token = await getAccessTokenSilently()
-        const evaluation = await fetchSelfEvaluation(token, params.evaluationId)
+        const evaluation = await fetchSelfEvaluation(token, params.evaluateeId, params.evaluationId)
         return evaluation
       } else {
-        const evaluation = await fetchOthersEvaluation(params.evaluationId)
+        const evaluation = await fetchOthersEvaluation(params.evaluateeId, params.evaluationId)
         return evaluation
       }
     } catch (e) {
@@ -41,7 +41,7 @@ export const EvaluationDetail: React.FC = () => {
       }
       throw new Error(errorMessages.evaluation.get)
     }
-  }, [isAuthenticated, getAccessTokenSilently, params.evaluationId])
+  }, [isAuthenticated, getAccessTokenSilently, params.evaluationId, params.evaluateeId])
 
   const refetchAfterUpdateEvaluation = async (): Promise<void> => {
     try {
@@ -59,7 +59,7 @@ export const EvaluationDetail: React.FC = () => {
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
-      await publishEvaluation(token, params.evaluationId)
+      await publishEvaluation(token, params.evaluateeId, params.evaluationId)
       await refetchAfterUpdateEvaluation()
       setIsLoading(false)
       setFlashMessage({ type: 'success', message: '公開しました。' })
@@ -76,7 +76,7 @@ export const EvaluationDetail: React.FC = () => {
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
-      await unpublishEvaluation(token, params.evaluationId)
+      await unpublishEvaluation(token, params.evaluateeId, params.evaluationId)
       await refetchAfterUpdateEvaluation()
       setIsLoading(false)
       setFlashMessage({ type: 'success', message: '非公開にしました。' })
@@ -96,7 +96,7 @@ export const EvaluationDetail: React.FC = () => {
     setFlashMessage(undefined)
     try {
       const token = await getAccessTokenSilently()
-      await deleteEvaluation(token, params.evaluationId)
+      await deleteEvaluation(token, params.evaluateeId, params.evaluationId)
       navigate(`/user/${evaluation?.evaluateeId}`, { state: { flashMessage: { type: 'success', message: '削除しました。' } } })
     } catch (e) {
       setIsLoading(false)
