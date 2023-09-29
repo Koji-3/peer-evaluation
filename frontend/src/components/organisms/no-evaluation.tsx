@@ -9,6 +9,7 @@ import pageIcon from 'assets/images/icon/page-large.svg'
 type Props = {
   className?: string
   isSelfMypage: boolean
+  userName: string
   onClickSharePage: () => void
 }
 
@@ -33,7 +34,7 @@ const StyledWrapper = styled.div`
   }
 `
 
-export const NoEvaluation: React.FC<Props> = ({ className = '', isSelfMypage, onClickSharePage }) => {
+export const NoEvaluation: React.FC<Props> = ({ className = '', isSelfMypage, userName, onClickSharePage }) => {
   return (
     <StyledWrapper className={className}>
       {isSelfMypage ? (
@@ -56,7 +57,7 @@ export const NoEvaluation: React.FC<Props> = ({ className = '', isSelfMypage, on
           <p>
             まだ紹介者がいません。
             <br />
-            kojiさんを紹介しよう！
+            {userName}さんを紹介しよう！
           </p>
         </div>
       )}

@@ -173,7 +173,7 @@ export const UserTopTpl: React.FC<Props> = ({
             ))}
           </div>
         ) : (
-          <NoEvaluation isSelfMypage={isSelfMyPage} onClickSharePage={onClickSharePage} className="no-evaluation" />
+          <NoEvaluation isSelfMypage={isSelfMyPage} userName={user.name} onClickSharePage={onClickSharePage} className="no-evaluation" />
         )}
       </div>
 
