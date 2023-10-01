@@ -16,6 +16,7 @@ root.render(
     }}
     useRefreshTokens
     cacheLocation="localstorage"
+    useRefreshTokensFallback
   >
     <React.StrictMode>
       <App />
