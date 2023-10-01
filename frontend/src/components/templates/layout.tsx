@@ -94,10 +94,14 @@ export const Layout: React.FC<Props> = ({ children, flashMessages, isLoading }) 
         const user = await fetchUserByAuth0Id(token)
         setUserId(user?.key)
       } catch (e) {
+        if (e instanceof Error && e.message.includes('Missing Refresh Token')) {
+          logout()
+          return
+        }
         setLayoutFlashMessage({ type: 'error', message: errorMessages.user.get })
       }
     })()
-  }, [getAccessTokenSilently, isAuthenticated, isAuth0Loading])
+  }, [getAccessTokenSilently, logout, isAuthenticated, isAuth0Loading])
 
   return (
     <StyledWrapper isLp={pathname === '/'}>
